@@ -30,7 +30,7 @@ export const Footer = () => {
           {/* Bottom */}
           <div className="border-t border-background/20 pt-8">
             <p className="text-background/60 text-sm mb-4">
-              © 2025 [Your Name]. All rights reserved.
+              © 2025 Dasu prabhu kumar. All rights reserved.
             </p>
             <p className="text-background/60 text-sm flex items-center justify-center">
               Built with <Heart className="h-4 w-4 mx-1 text-red-400" /> using{" "}

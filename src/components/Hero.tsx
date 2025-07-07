@@ -11,7 +11,7 @@ export const Hero = () => {
         <div className="max-w-4xl mx-auto animate-fade-in">
           {/* Main Heading */}
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent leading-tight">
-            👨‍💻 [Your Name]
+            👨‍💻 Dasu prabhu kumar
           </h1>
           
           {/* Subtitle */}
