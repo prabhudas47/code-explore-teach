@@ -6,54 +6,54 @@
 
 @layer base {
   :root {
-    /* Core Colors - White & Dark Green Professional */
+    /* Core Colors - White, Black & Dark Green */
     --background: 0 0% 100%;
-    --foreground: 210 11% 15%;
+    --foreground: 0 0% 0%;
     
     /* Cards & Surfaces */
     --card: 0 0% 100%;
-    --card-foreground: 210 11% 15%;
-    --surface: 210 14% 97%;
+    --card-foreground: 0 0% 0%;
+    --surface: 0 0% 98%;
     
     /* Primary - Dark Green */
-    --primary: 150 70% 18%;
+    --primary: 120 100% 15%;
     --primary-foreground: 0 0% 100%;
-    --primary-soft: 150 70% 95%;
+    --primary-soft: 120 100% 95%;
     
-    /* Secondary - Light Surfaces */
-    --secondary: 210 14% 96%;
-    --secondary-foreground: 210 11% 15%;
+    /* Secondary - Light Greys */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 0%;
     
     /* Muted - Professional Greys */
-    --muted: 210 14% 96%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
     
-    /* Accent - Muted Gold */
-    --accent: 43 91% 38%;
+    /* Accent - Black */
+    --accent: 0 0% 0%;
     --accent-foreground: 0 0% 100%;
-    --accent-soft: 43 91% 95%;
+    --accent-soft: 0 0% 95%;
     
     /* Status Colors */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --success: 150 70% 35%;
+    --success: 120 100% 25%;
     --success-foreground: 0 0% 100%;
     
     /* Borders & Inputs */
-    --border: 210 14% 90%;
-    --input: 210 14% 90%;
-    --ring: 150 70% 18%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 120 100% 15%;
     
-    /* Technology Hub Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(150 70% 18%), hsl(43 91% 38%));
-    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 14% 97%));
-    --gradient-hero: linear-gradient(135deg, hsl(150 70% 18% / 0.08), hsl(43 91% 38% / 0.05));
+    /* Clean Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(120 100% 15%), hsl(0 0% 0%));
+    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-hero: linear-gradient(135deg, hsl(120 100% 15% / 0.08), hsl(0 0% 0% / 0.05));
     
-    /* Professional Shadows */
-    --shadow-soft: 0 2px 8px hsl(150 70% 18% / 0.04);
-    --shadow-medium: 0 4px 16px hsl(150 70% 18% / 0.08);
-    --shadow-hard: 0 8px 32px hsl(150 70% 18% / 0.12);
-    --shadow-primary: 0 4px 20px hsl(150 70% 18% / 0.25);
+    /* Minimal Shadows */
+    --shadow-soft: 0 2px 8px hsl(0 0% 0% / 0.08);
+    --shadow-medium: 0 4px 16px hsl(0 0% 0% / 0.12);
+    --shadow-hard: 0 8px 32px hsl(0 0% 0% / 0.16);
+    --shadow-primary: 0 4px 20px hsl(120 100% 15% / 0.25);
     
     /* Swiss Typography Scale */
     --font-size-xs: 0.75rem;
