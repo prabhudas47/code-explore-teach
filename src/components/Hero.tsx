@@ -11,17 +11,17 @@ export const Hero = () => {
         <div className="max-w-4xl mx-auto animate-fade-in">
           {/* Main Heading */}
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent leading-tight">
-            👨‍💻 Dasu prabhu kumar
+            Dasu Prabhu Kumar
           </h1>
           
           {/* Subtitle */}
           <h2 className="text-2xl md:text-3xl font-semibold text-foreground mb-4">
-            AI Enthusiast & Learning Architect
+            Data Scientist & Technology Innovator
           </h2>
           
           {/* Quote */}
           <p className="text-lg md:text-xl text-muted-foreground italic mb-8 max-w-3xl mx-auto">
-            "Designing intelligence, one line of code and one clear explanation at a time."
+            "Exploring the frontiers of data and technology to build intelligent solutions for tomorrow's challenges."
           </p>
           
           {/* Action Buttons */}

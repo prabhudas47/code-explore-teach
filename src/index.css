@@ -2,58 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Swiss Aesthetic AI Portfolio Design System - All colors MUST be HSL */
+/* Technology Hub Portfolio Design System - All colors MUST be HSL */
 
 @layer base {
   :root {
-    /* Core Colors - Purple & Teal Modern */
+    /* Core Colors - White & Dark Green Professional */
     --background: 0 0% 100%;
-    --foreground: 260 15% 15%;
+    --foreground: 210 11% 15%;
     
     /* Cards & Surfaces */
     --card: 0 0% 100%;
-    --card-foreground: 260 15% 15%;
-    --surface: 260 10% 98%;
+    --card-foreground: 210 11% 15%;
+    --surface: 210 14% 97%;
     
-    /* Primary - Deep Purple */
-    --primary: 260 75% 60%;
+    /* Primary - Dark Green */
+    --primary: 150 70% 18%;
     --primary-foreground: 0 0% 100%;
-    --primary-soft: 260 75% 95%;
+    --primary-soft: 150 70% 95%;
     
-    /* Secondary - Light Purples */
-    --secondary: 260 25% 96%;
-    --secondary-foreground: 260 50% 20%;
+    /* Secondary - Light Surfaces */
+    --secondary: 210 14% 96%;
+    --secondary-foreground: 210 11% 15%;
     
-    /* Muted - Professional Purples */
-    --muted: 260 25% 96%;
-    --muted-foreground: 260 20% 45%;
+    /* Muted - Professional Greys */
+    --muted: 210 14% 96%;
+    --muted-foreground: 0 0% 60%;
     
-    /* Accent - Vibrant Teal */
-    --accent: 180 75% 50%;
+    /* Accent - Muted Gold */
+    --accent: 43 91% 38%;
     --accent-foreground: 0 0% 100%;
-    --accent-soft: 180 75% 95%;
+    --accent-soft: 43 91% 95%;
     
     /* Status Colors */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --success: 142 71% 45%;
+    --success: 150 70% 35%;
     --success-foreground: 0 0% 100%;
     
     /* Borders & Inputs */
-    --border: 260 25% 90%;
-    --input: 260 25% 90%;
-    --ring: 260 75% 60%;
+    --border: 210 14% 90%;
+    --input: 210 14% 90%;
+    --ring: 150 70% 18%;
     
-    /* Purple & Teal Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(260 75% 60%), hsl(180 75% 50%));
-    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(260 10% 98%));
-    --gradient-hero: linear-gradient(135deg, hsl(260 75% 60% / 0.08), hsl(180 75% 50% / 0.05));
+    /* Technology Hub Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(150 70% 18%), hsl(43 91% 38%));
+    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 14% 97%));
+    --gradient-hero: linear-gradient(135deg, hsl(150 70% 18% / 0.08), hsl(43 91% 38% / 0.05));
     
     /* Professional Shadows */
-    --shadow-soft: 0 2px 8px hsl(260 75% 60% / 0.04);
-    --shadow-medium: 0 4px 16px hsl(260 75% 60% / 0.08);
-    --shadow-hard: 0 8px 32px hsl(260 75% 60% / 0.12);
-    --shadow-primary: 0 4px 20px hsl(260 75% 60% / 0.25);
+    --shadow-soft: 0 2px 8px hsl(150 70% 18% / 0.04);
+    --shadow-medium: 0 4px 16px hsl(150 70% 18% / 0.08);
+    --shadow-hard: 0 8px 32px hsl(150 70% 18% / 0.12);
+    --shadow-primary: 0 4px 20px hsl(150 70% 18% / 0.25);
     
     /* Swiss Typography Scale */
     --font-size-xs: 0.75rem;
@@ -91,46 +91,46 @@
   }
 
   .dark {
-    /* Dark Mode - Purple & Teal Theme */
-    --background: 260 25% 4%;
+    /* Dark Mode - Technology Hub Theme */
+    --background: 150 30% 8%;
     --foreground: 0 0% 98%;
     
-    --card: 260 25% 6%;
+    --card: 150 30% 10%;
     --card-foreground: 0 0% 98%;
-    --surface: 260 25% 8%;
+    --surface: 150 30% 12%;
     
-    --primary: 180 75% 55%;
-    --primary-foreground: 260 25% 5%;
-    --primary-soft: 180 75% 15%;
+    --primary: 43 91% 45%;
+    --primary-foreground: 150 30% 8%;
+    --primary-soft: 43 91% 15%;
     
-    --secondary: 260 25% 10%;
+    --secondary: 150 30% 15%;
     --secondary-foreground: 0 0% 80%;
     
-    --muted: 260 25% 10%;
+    --muted: 150 30% 15%;
     --muted-foreground: 0 0% 60%;
     
-    --accent: 260 75% 65%;
+    --accent: 150 70% 40%;
     --accent-foreground: 0 0% 100%;
-    --accent-soft: 260 75% 15%;
+    --accent-soft: 150 70% 15%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --success: 142 71% 45%;
+    --success: 150 70% 45%;
     --success-foreground: 0 0% 100%;
     
-    --border: 260 25% 15%;
-    --input: 260 25% 15%;
-    --ring: 180 75% 55%;
+    --border: 150 30% 20%;
+    --input: 150 30% 20%;
+    --ring: 43 91% 45%;
     
     /* Dark Mode Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(180 75% 55%), hsl(260 75% 65%));
-    --gradient-surface: linear-gradient(180deg, hsl(260 25% 4%), hsl(260 25% 6%));
-    --gradient-hero: linear-gradient(135deg, hsl(180 75% 55% / 0.08), hsl(260 75% 65% / 0.05));
+    --gradient-primary: linear-gradient(135deg, hsl(43 91% 45%), hsl(150 70% 40%));
+    --gradient-surface: linear-gradient(180deg, hsl(150 30% 8%), hsl(150 30% 10%));
+    --gradient-hero: linear-gradient(135deg, hsl(43 91% 45% / 0.08), hsl(150 70% 40% / 0.05));
     
     --shadow-soft: 0 2px 8px hsl(0 0% 0% / 0.4);
     --shadow-medium: 0 4px 16px hsl(0 0% 0% / 0.5);
     --shadow-hard: 0 8px 32px hsl(0 0% 0% / 0.6);
-    --shadow-primary: 0 4px 20px hsl(180 75% 55% / 0.25);
+    --shadow-primary: 0 4px 20px hsl(43 91% 45% / 0.25);
   }
 }
 

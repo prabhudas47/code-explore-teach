@@ -5,45 +5,40 @@ import { GraduationCap, Award, Calendar } from "lucide-react";
 export const Education = () => {
   const education = [
     {
-      year: "2021–2025",
-      degree: "B.Tech in [Your Branch]",
-      institution: "[Your University Name]",
-      status: "Final Year",
-      description: "Specialized in AI/ML coursework with focus on deep learning and computer vision"
+      year: "2022–2026",
+      degree: "B.Tech, Data Science",
+      institution: "NRI Institute of Technology (NRIIT), Guntur",
+      status: "3rd Year",
+      description: "Pursuing comprehensive coursework in data science, machine learning, and artificial intelligence"
     },
     {
-      year: "2019–2021", 
-      degree: "Higher Secondary (Science Stream)",
-      institution: "[Your School Name]",
+      year: "2020–2022", 
+      degree: "Intermediate, MPC",
+      institution: "Sri Chaitanya Junior College, Vijayawada",
       status: "Completed",
-      description: "Mathematics, Physics, Chemistry with Computer Science"
+      description: "Mathematics, Physics, Chemistry - Strong foundation in analytical and scientific thinking"
+    },
+    {
+      year: "2020",
+      degree: "SSC (10th Class)",
+      institution: "Vamsi High School, Vundavalli",
+      status: "Completed",
+      description: "Completed secondary education with focus on mathematics and sciences"
     }
   ];
 
   const certifications = [
     {
-      title: "Deep Learning Specialization",
-      platform: "Coursera (Andrew Ng)",
-      year: "2025",
-      badge: "Specialist"
-    },
-    {
-      title: "Google Data Analytics Certificate",
-      platform: "Google",
+      title: "Virtual Internship on leveraging Tableau for metrics and data analysis",
+      platform: "Deloitte",
       year: "2024",
-      badge: "Certified"
+      badge: "Completed"
     },
     {
-      title: "Introduction to Machine Learning",
-      platform: "edX",
-      year: "2023",
-      badge: "Verified"
-    },
-    {
-      title: "Prompt Engineering for Developers",
-      platform: "OpenAI",
-      year: "2025",
-      badge: "Expert"
+      title: "Virtual Internship on Artificial Intelligence",
+      platform: "AIMERS Indian Servers",
+      year: "2024",
+      badge: "Completed"
     }
   ];
 

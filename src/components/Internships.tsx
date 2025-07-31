@@ -5,28 +5,28 @@ import { Briefcase, Calendar, ArrowRight } from "lucide-react";
 export const Internships = () => {
   const internships = [
     {
-      title: "AI Intern",
-      company: "XYZ Research Lab",
-      period: "May 2025 – July 2025",
-      status: "Recent",
+      title: "Virtual Intern, AI",
+      company: "AIMERS Indian Servers",
+      period: "2024",
+      status: "Completed",
       achievements: [
-        "Optimized transformer models for domain-specific intent recognition",
-        "Improved model accuracy by 15% through fine-tuning techniques",
-        "Collaborated with senior researchers on NLP pipeline development"
+        "Developed and trained image classification models for practical applications",
+        "Engineered and deployed functional AI and Telegram chatbots from the ground up",
+        "Built interactive data-driven websites and web applications using the Streamlit framework"
       ],
-      skills: ["Transformers", "PyTorch", "NLP", "Model Optimization"]
+      skills: ["Python", "Machine Learning", "Image Classification", "Telegram Bot API", "Streamlit"]
     },
     {
-      title: "Content Creator Intern",
-      company: "LearnTech Ed",
-      period: "Jan 2025 – Mar 2025",
-      status: "Recent",
+      title: "Virtual Intern, Data Analysis",
+      company: "Deloitte",
+      period: "2024",
+      status: "Completed",
       achievements: [
-        "Created 8+ micro-courses on Python and Intro to ML",
-        "Designed interactive learning experiences for 15-22 age group",
-        "Increased student engagement by 40% through gamified content"
+        "Gained hands-on experience using Tableau to analyze data and create insightful performance metrics dashboards",
+        "Developed comprehensive analytics solutions for business intelligence",
+        "Mentored by Deloitte's analytics team on industry best practices"
       ],
-      skills: ["Educational Design", "Python", "Content Creation", "Curriculum Development"]
+      skills: ["Tableau", "Data Analysis", "Dashboard Creation", "Business Intelligence", "Performance Metrics"]
     }
   ];
 

@@ -5,40 +5,42 @@ import { Code, Lightbulb, Users, Clock } from "lucide-react";
 
 export const Skills = () => {
   const technicalSkills = [
-    { name: "Python", level: 90 },
-    { name: "Machine Learning", level: 85 },
-    { name: "Deep Learning", level: 80 },
-    { name: "NLP", level: 75 },
-    { name: "TensorFlow/PyTorch", level: 85 },
-    { name: "OpenCV", level: 70 }
+    { name: "Python", level: 85 },
+    { name: "Machine Learning", level: 80 },
+    { name: "Data Analysis", level: 85 },
+    { name: "Tableau", level: 75 },
+    { name: "Image Classification", level: 75 },
+    { name: "AI Chatbot Development", level: 80 }
   ];
 
   const softSkills = [
     {
       icon: Lightbulb,
-      title: "Public Speaking & Tech Talks",
-      description: "Delivered presentations to 500+ peers"
+      title: "Innovation & Problem Solving",
+      description: "Creating novel solutions for data-driven challenges"
     },
     {
       icon: Users,
-      title: "Educational Design & Storytelling",
-      description: "Created engaging learning experiences"
+      title: "Team Collaboration",
+      description: "Working effectively with diverse teams on complex projects"
     },
     {
       icon: Users,
-      title: "Team Collaboration & Leadership",
-      description: "Led cross-functional project teams"
+      title: "Technical Communication",
+      description: "Explaining data insights and AI concepts to stakeholders"
     },
     {
       icon: Clock,
-      title: "Time Management & Adaptability",
-      description: "Balanced academics with content creation"
+      title: "Analytical Thinking",
+      description: "Systematic approach to data analysis and problem-solving"
     }
   ];
 
   const technologies = [
-    "Python", "C/C++", "HTML/CSS/JS", "NumPy", "Pandas", "Matplotlib", 
-    "scikit-learn", "TensorFlow", "PyTorch", "OpenCV", "Streamlit"
+    "Python", "Machine Learning", "Data Analysis", "Image Classification", 
+    "AI Chatbot Development", "Streamlit", "Tableau", "Git", 
+    "Telegram Bot API", "Pandas", "NumPy", "Data Visualization",
+    "Business Intelligence", "Performance Metrics", "Dashboard Creation"
   ];
 
   return (
