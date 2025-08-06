@@ -31,7 +31,7 @@ export const Education = () => {
     {
       title: "Virtual Internship on leveraging Tableau for metrics and data analysis",
       platform: "Deloitte",
-      year: "2024",
+      year: "2025",
       badge: "Completed"
     },
     {
