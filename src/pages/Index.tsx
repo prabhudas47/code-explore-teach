@@ -1,50 +1,42 @@
 import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
-import { Projects } from "@/components/Projects";
-import { Skills } from "@/components/Skills";
-import { Internships } from "@/components/Internships";
 import { Education } from "@/components/Education";
+import { Skills } from "@/components/Skills";
+import { Philosophy } from "@/components/Philosophy";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Hero Section */}
+      {/* Hero */}
       <Hero />
       
-      {/* About Section */}
-      <div id="about">
+      {/* About */}
+      <section id="about">
         <About />
-      </div>
+      </section>
       
-      {/* Projects Section */}
-      <div id="projects">
-        <Projects />
-      </div>
-      
-      {/* Skills Section */}
-      <div id="skills">
-        <Skills />
-      </div>
-      
-      {/* Experience Section */}
-      <div id="experience">
-        <Internships />
-      </div>
-      
-      {/* Education Section */}
-      <div id="education">
+      {/* Education */}
+      <section id="education">
         <Education />
-      </div>
+      </section>
       
-      {/* Contact Section */}
-      <div id="contact">
+      {/* Skills */}
+      <section id="skills">
+        <Skills />
+      </section>
+      
+      {/* Philosophy */}
+      <Philosophy />
+      
+      {/* Contact */}
+      <section id="contact">
         <Contact />
-      </div>
+      </section>
       
       <Footer />
     </div>

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Menu, X, Download } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -17,10 +16,8 @@ export const Navigation = () => {
 
   const navItems = [
     { name: "About", href: "#about" },
-    { name: "Projects", href: "#projects" },
-    { name: "Skills", href: "#skills" },
-    { name: "Experience", href: "#experience" },
     { name: "Education", href: "#education" },
+    { name: "Skills", href: "#skills" },
     { name: "Contact", href: "#contact" }
   ];
 
@@ -33,63 +30,60 @@ export const Navigation = () => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? "bg-background/80 backdrop-blur-md shadow-soft" : "bg-transparent"
-    }`}>
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-background/90 backdrop-blur-md border-b border-border"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="container mx-auto px-6 lg:px-12">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <div className="font-bold text-xl text-foreground">
-            <span className="text-primary">AI</span>Portfolio
-          </div>
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="text-xl font-bold tracking-tight text-foreground hover:text-primary transition-colors duration-300"
+          >
+            Dasu<span className="text-primary">.</span>
+          </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center gap-10">
             {navItems.map((item) => (
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="text-muted-foreground hover:text-primary transition-colors duration-200 font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300 relative group"
               >
                 {item.name}
+                <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
               </button>
             ))}
-            <Button variant="outline" size="sm">
-              <Download className="mr-2 h-4 w-4" />
-              Resume
-            </Button>
           </div>
 
           {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
+          <button
+            className="md:hidden p-2 text-muted-foreground hover:text-foreground transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+          </button>
         </div>
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-background/95 backdrop-blur-md border-t border-border">
-            <div className="py-4 space-y-2">
+          <div className="md:hidden py-6 border-t border-border animate-fade-in">
+            <div className="flex flex-col gap-4">
               {navItems.map((item) => (
                 <button
                   key={item.name}
                   onClick={() => scrollToSection(item.href)}
-                  className="block w-full text-left px-4 py-2 text-muted-foreground hover:text-primary hover:bg-muted/50 transition-colors duration-200"
+                  className="text-left text-lg text-muted-foreground hover:text-foreground transition-colors duration-300 py-2"
                 >
                   {item.name}
                 </button>
               ))}
-              <div className="px-4 pt-2">
-                <Button variant="outline" size="sm" className="w-full">
-                  <Download className="mr-2 h-4 w-4" />
-                  Resume
-                </Button>
-              </div>
             </div>
           </div>
         )}

@@ -1,115 +1,104 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { GraduationCap, Award, Calendar } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 export const Education = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.querySelectorAll(".reveal").forEach((el) => {
+              el.classList.add("visible");
+            });
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const education = [
     {
-      year: "2022–2026",
-      degree: "B.Tech, Data Science",
-      institution: "NRI Institute of Technology (NRIIT), Guntur",
-      status: "3rd Year",
-      description: "Pursuing comprehensive coursework in data science, machine learning, and artificial intelligence"
+      period: "2023 – 2027",
+      degree: "B.Tech in Computer Science",
+      institution: "NRI Institute of Technology",
+      status: "In Progress",
+      description: "Core focus on programming fundamentals, data structures, algorithms, and data science applications."
     },
     {
-      year: "2020–2022", 
-      degree: "Intermediate, MPC",
+      period: "2020 – 2022",
+      degree: "Intermediate (MPC)",
       institution: "Sri Chaitanya Junior College, Vijayawada",
       status: "Completed",
-      description: "Mathematics, Physics, Chemistry - Strong foundation in analytical and scientific thinking"
+      description: "Mathematics, Physics, Chemistry—building strong analytical foundations."
     },
     {
-      year: "2020",
-      degree: "SSC (10th Class)",
+      period: "2020",
+      degree: "Secondary School Certificate",
       institution: "Vamsi High School, Vundavalli",
       status: "Completed",
-      description: "Completed secondary education with focus on mathematics and sciences"
-    }
-  ];
-
-  const certifications = [
-    {
-      title: "Virtual Internship on leveraging Tableau for metrics and data analysis",
-      platform: "Deloitte",
-      year: "2025",
-      badge: "Completed"
-    },
-    {
-      title: "Virtual Internship on Artificial Intelligence",
-      platform: "AIMERS Indian Servers",
-      year: "2024",
-      badge: "Completed"
+      description: "Foundational education with focus on mathematics and sciences."
     }
   ];
 
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-6">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 text-foreground">Education & Certifications</h2>
-            <div className="w-20 h-1 bg-gradient-primary mx-auto rounded-full"></div>
+    <section ref={sectionRef} className="py-32 bg-background">
+      <div className="container mx-auto px-6 lg:px-12">
+        <div className="max-w-5xl">
+          {/* Section label */}
+          <div className="reveal">
+            <span className="text-sm font-medium text-primary tracking-widest uppercase mb-6 block">
+              Education
+            </span>
           </div>
           
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Education Timeline */}
-            <div>
-              <h3 className="text-2xl font-bold mb-8 flex items-center text-foreground">
-                <GraduationCap className="mr-3 h-6 w-6 text-primary" />
-                Education Timeline
-              </h3>
-              
-              <div className="space-y-6">
-                {education.map((edu, index) => (
-                  <Card key={index} className="shadow-soft hover:shadow-medium transition-all duration-300 border-l-4 border-l-primary">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <Badge variant="outline" className="text-xs">
-                          <Calendar className="mr-1 h-3 w-3" />
-                          {edu.year}
-                        </Badge>
-                        <Badge variant={edu.status === "Final Year" ? "default" : "secondary"}>
-                          {edu.status}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-xl">{edu.degree}</CardTitle>
-                      <p className="text-primary font-medium">{edu.institution}</p>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground">{edu.description}</p>
-                    </CardContent>
-                  </Card>
-                ))}
+          {/* Heading */}
+          <h2 className="reveal reveal-delay-1 text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-16">
+            Building a strong foundation.
+          </h2>
+          
+          {/* Timeline */}
+          <div className="space-y-0">
+            {education.map((item, index) => (
+              <div
+                key={index}
+                className={`reveal reveal-delay-${index + 1} group`}
+              >
+                <div className="grid md:grid-cols-[200px_1fr] gap-6 py-10 border-t border-border hover:bg-card/50 transition-colors duration-300 -mx-6 px-6">
+                  {/* Period */}
+                  <div>
+                    <span className="text-sm text-muted-foreground font-medium">
+                      {item.period}
+                    </span>
+                  </div>
+                  
+                  {/* Content */}
+                  <div>
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
+                        {item.degree}
+                      </h3>
+                      <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full shrink-0">
+                        {item.status}
+                      </span>
+                    </div>
+                    <p className="text-muted-foreground font-medium mb-2">
+                      {item.institution}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-            
-            {/* Certifications */}
-            <div>
-              <h3 className="text-2xl font-bold mb-8 flex items-center text-foreground">
-                <Award className="mr-3 h-6 w-6 text-primary" />
-                Certifications
-              </h3>
-              
-              <div className="space-y-4">
-                {certifications.map((cert, index) => (
-                  <Card key={index} className="shadow-soft hover:shadow-medium transition-all duration-300 hover:border-primary/50">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-foreground mb-1">{cert.title}</h4>
-                          <p className="text-sm text-muted-foreground mb-2">{cert.platform}</p>
-                        </div>
-                        <div className="flex flex-col items-end space-y-2">
-                          <Badge variant="outline" className="text-xs">{cert.year}</Badge>
-                          <Badge variant="secondary" className="text-xs">{cert.badge}</Badge>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
