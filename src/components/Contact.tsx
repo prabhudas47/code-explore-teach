@@ -47,43 +47,45 @@ export const Contact = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="py-32 bg-card">
+    <section ref={sectionRef} className="py-24 md:py-32 bg-surface">
       <div className="container mx-auto px-6 lg:px-12">
-        <div className="max-w-4xl">
+        <div className="max-w-2xl mx-auto text-center">
           {/* Section label */}
-          <div className="reveal">
-            <span className="text-sm font-medium text-primary tracking-widest uppercase mb-6 block">
+          <div className="reveal mb-4">
+            <span className="text-sm font-medium text-primary tracking-widest uppercase">
               Contact
             </span>
           </div>
           
           {/* Heading */}
-          <h2 className="reveal reveal-delay-1 text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-8">
+          <h2 className="reveal reveal-delay-1 text-3xl md:text-4xl font-bold text-foreground leading-tight mb-6">
             Let's connect.
           </h2>
           
-          <p className="reveal reveal-delay-2 text-lg text-muted-foreground mb-16 max-w-2xl">
+          <p className="reveal reveal-delay-2 text-lg text-muted-foreground mb-12">
             Open for opportunities, collaborations, and conversations about 
-            technology, data science, and meaningful projects.
+            technology and meaningful projects.
           </p>
           
-          {/* Contact Links */}
-          <div className="space-y-0">
+          {/* Contact Cards */}
+          <div className="space-y-4">
             {contactInfo.map((item, index) => (
               <a
                 key={item.label}
                 href={item.href}
                 target={item.label === "LinkedIn" ? "_blank" : undefined}
                 rel={item.label === "LinkedIn" ? "noopener noreferrer" : undefined}
-                className={`reveal reveal-delay-${index + 2} group flex items-center justify-between py-6 border-t border-border hover:bg-background/50 transition-all duration-300 -mx-6 px-6`}
+                className={`reveal reveal-delay-${index + 2} group flex items-center justify-between p-5 bg-card border border-border rounded-2xl hover-lift hover-glow`}
               >
                 <div className="flex items-center gap-4">
-                  <item.icon className="h-5 w-5 text-primary" />
-                  <div>
-                    <span className="text-sm text-muted-foreground block">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <item.icon className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="text-left">
+                    <span className="text-xs text-muted-foreground block">
                       {item.label}
                     </span>
-                    <span className="text-lg font-medium text-foreground group-hover:text-primary transition-colors duration-300">
+                    <span className="text-base font-medium text-foreground group-hover:text-primary transition-colors duration-300">
                       {item.value}
                     </span>
                   </div>
