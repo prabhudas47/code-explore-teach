@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Database, Brain, Languages, LineChart } from "lucide-react";
 
 export const Skills = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -26,18 +27,22 @@ export const Skills = () => {
 
   const focusAreas = [
     {
+      icon: Database,
       title: "Data Science",
-      description: "Analysis, visualization, and extracting insights from data."
+      description: "Analysis, visualization, and extracting insights from complex datasets."
     },
     {
+      icon: Brain,
       title: "Problem Solving",
-      description: "Systematic approach to breaking down complex challenges."
+      description: "Systematic approach to breaking down and solving challenges."
     },
     {
+      icon: Languages,
       title: "Language Tools",
       description: "Building tools for linguistic analysis and communication."
     },
     {
+      icon: LineChart,
       title: "Machine Learning",
       description: "Understanding patterns and building predictive models."
     }
@@ -49,36 +54,40 @@ export const Skills = () => {
     "Tableau",
     "Machine Learning",
     "Git",
-    "SQL"
+    "SQL",
+    "Streamlit"
   ];
 
   return (
-    <section ref={sectionRef} className="py-32 bg-card">
+    <section ref={sectionRef} className="py-24 md:py-32 bg-surface">
       <div className="container mx-auto px-6 lg:px-12">
-        <div className="max-w-5xl">
+        <div className="max-w-4xl mx-auto">
           {/* Section label */}
-          <div className="reveal">
-            <span className="text-sm font-medium text-primary tracking-widest uppercase mb-6 block">
+          <div className="reveal text-center mb-4">
+            <span className="text-sm font-medium text-primary tracking-widest uppercase">
               Skills & Focus
             </span>
           </div>
           
           {/* Heading */}
-          <h2 className="reveal reveal-delay-1 text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-16">
-            Areas of focus.
+          <h2 className="reveal reveal-delay-1 text-3xl md:text-4xl font-bold text-foreground leading-tight mb-16 text-center">
+            Areas I'm passionate about.
           </h2>
           
-          {/* Focus Areas - Equal Grid */}
+          {/* Focus Areas Grid */}
           <div className="grid md:grid-cols-2 gap-6 mb-16">
             {focusAreas.map((area, index) => (
               <div
                 key={index}
-                className={`reveal reveal-delay-${index + 1} p-8 bg-background border border-border rounded-sm hover-lift hover-glow`}
+                className={`reveal reveal-delay-${index + 1} p-6 bg-card border border-border rounded-2xl hover-lift hover-glow`}
               >
-                <h3 className="text-xl font-semibold text-foreground mb-3">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                  <area.icon className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
                   {area.title}
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {area.description}
                 </p>
               </div>
@@ -86,15 +95,15 @@ export const Skills = () => {
           </div>
           
           {/* Technologies */}
-          <div className="reveal reveal-delay-4 pt-12 border-t border-border">
+          <div className="reveal reveal-delay-4 text-center">
             <span className="text-sm text-muted-foreground font-medium block mb-6">
               Technologies & Tools
             </span>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 justify-center">
               {technologies.map((tech) => (
                 <span
                   key={tech}
-                  className="px-4 py-2 text-sm font-medium text-foreground bg-secondary border border-border rounded-sm hover:border-primary/30 transition-colors duration-300"
+                  className="px-4 py-2 text-sm font-medium text-foreground bg-card border border-border rounded-full hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
                 >
                   {tech}
                 </span>

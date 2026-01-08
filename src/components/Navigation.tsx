@@ -33,7 +33,7 @@ export const Navigation = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-background/90 backdrop-blur-md border-b border-border"
+          ? "bg-background/95 backdrop-blur-md border-b border-border shadow-soft"
           : "bg-transparent"
       }`}
     >
@@ -42,9 +42,9 @@ export const Navigation = () => {
           {/* Logo */}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="text-xl font-bold tracking-tight text-foreground hover:text-primary transition-colors duration-300"
+            className="text-xl font-semibold tracking-tight text-foreground hover:text-primary transition-colors duration-300"
           >
-            Dasu<span className="text-primary">.</span>
+            Prabhukumar<span className="text-primary">.</span>
           </button>
 
           {/* Desktop Navigation */}
@@ -56,7 +56,7 @@ export const Navigation = () => {
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300 relative group"
               >
                 {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary rounded-full transition-all duration-300 group-hover:w-full" />
               </button>
             ))}
           </div>
@@ -73,7 +73,7 @@ export const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-6 border-t border-border animate-fade-in">
+          <div className="md:hidden py-6 border-t border-border animate-fade-in bg-background">
             <div className="flex flex-col gap-4">
               {navItems.map((item) => (
                 <button

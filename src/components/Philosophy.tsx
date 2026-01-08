@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Quote } from "lucide-react";
 
 export const Philosophy = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -25,26 +26,30 @@ export const Philosophy = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-32 bg-background relative overflow-hidden">
-      {/* Subtle accent glow */}
-      <div className="absolute left-1/4 top-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+    <section ref={sectionRef} className="py-24 md:py-32 bg-background relative overflow-hidden">
+      {/* Decorative gradient */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/[0.04] rounded-full blur-[120px] pointer-events-none" />
       
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           <div className="reveal">
-            <span className="text-sm font-medium text-primary tracking-widest uppercase mb-8 block">
-              Philosophy
-            </span>
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
+              <Quote className="h-5 w-5 text-primary" />
+            </div>
           </div>
           
           <blockquote className="reveal reveal-delay-1">
-            <p className="text-2xl md:text-3xl lg:text-4xl font-light text-foreground leading-relaxed mb-8">
+            <p className="text-2xl md:text-3xl font-medium text-foreground leading-relaxed mb-8">
               "The best way to predict the future is to learn continuously, 
               build deliberately, and stay curious."
             </p>
           </blockquote>
           
-          <div className="reveal reveal-delay-2 w-12 h-px bg-primary mx-auto" />
+          <div className="reveal reveal-delay-2">
+            <span className="text-sm text-muted-foreground font-medium">
+              — My guiding principle
+            </span>
+          </div>
         </div>
       </div>
     </section>
