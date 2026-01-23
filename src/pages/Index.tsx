@@ -6,15 +6,13 @@ import { Skills } from "@/components/Skills";
 import { Philosophy } from "@/components/Philosophy";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
+import { ChessBoard3D } from "@/components/ChessBoard3D";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background relative">
-      {/* Subtle grid pattern background */}
-      <div className="fixed inset-0 bg-grid-pattern pointer-events-none" />
-      
-      {/* Dark gradient overlay */}
-      <div className="fixed inset-0 bg-gradient-to-b from-background via-transparent to-background pointer-events-none" />
+    <div className="min-h-screen relative">
+      {/* 3D Chess Board Background */}
+      <ChessBoard3D />
       
       <Navigation />
       
