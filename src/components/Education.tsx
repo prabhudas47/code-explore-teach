@@ -53,8 +53,11 @@ export const Education = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-32 bg-background">
-      <div className="container mx-auto px-6 lg:px-12">
+    <section ref={sectionRef} className="py-24 md:py-32 relative">
+      {/* Ambient glow */}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
+      
+      <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* Section label */}
           <div className="reveal text-center mb-4">
@@ -68,18 +71,18 @@ export const Education = () => {
             Strong foundations, steady growth.
           </h2>
           
-          {/* Education Cards */}
+          {/* Education Cards - Floating timeline */}
           <div className="space-y-6">
             {education.map((item, index) => (
               <div
                 key={index}
                 className={`reveal reveal-delay-${index + 1} group`}
               >
-                <div className="bg-card border border-border rounded-2xl p-6 md:p-8 hover-lift hover-glow">
+                <div className="bg-card border border-border/50 rounded-2xl p-6 md:p-8 card-3d hover-glow">
                   <div className="flex flex-col md:flex-row md:items-start gap-6">
                     {/* Icon */}
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                      <item.icon className="h-5 w-5 text-primary" />
+                    <div className="w-14 h-14 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center shrink-0">
+                      <item.icon className="h-6 w-6 text-primary" />
                     </div>
                     
                     {/* Content */}
@@ -88,7 +91,7 @@ export const Education = () => {
                         <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
                           {item.degree}
                         </h3>
-                        <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full w-fit">
+                        <span className="text-xs font-medium text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full w-fit">
                           {item.status}
                         </span>
                       </div>
@@ -98,7 +101,7 @@ export const Education = () => {
                       <p className="text-sm text-muted-foreground mb-3">
                         {item.description}
                       </p>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-muted-foreground/70 font-medium">
                         {item.period}
                       </span>
                     </div>

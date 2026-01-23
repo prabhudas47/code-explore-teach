@@ -59,8 +59,11 @@ export const Skills = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-32 bg-surface">
-      <div className="container mx-auto px-6 lg:px-12">
+    <section ref={sectionRef} className="py-24 md:py-32 relative">
+      {/* Ambient glow */}
+      <div className="absolute left-0 top-1/3 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
+      
+      <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* Section label */}
           <div className="reveal text-center mb-4">
@@ -74,14 +77,14 @@ export const Skills = () => {
             Areas I'm passionate about.
           </h2>
           
-          {/* Focus Areas Grid */}
+          {/* Focus Areas Grid - Equal tiles */}
           <div className="grid md:grid-cols-2 gap-6 mb-16">
             {focusAreas.map((area, index) => (
               <div
                 key={index}
-                className={`reveal reveal-delay-${index + 1} p-6 bg-card border border-border rounded-2xl hover-lift hover-glow`}
+                className={`reveal reveal-delay-${index + 1} p-6 bg-card border border-border/50 rounded-2xl card-3d hover-glow`}
               >
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center mb-4">
                   <area.icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
@@ -103,7 +106,7 @@ export const Skills = () => {
               {technologies.map((tech) => (
                 <span
                   key={tech}
-                  className="px-4 py-2 text-sm font-medium text-foreground bg-card border border-border rounded-full hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
+                  className="px-4 py-2 text-sm font-medium text-foreground bg-card border border-border/50 rounded-full hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
                 >
                   {tech}
                 </span>

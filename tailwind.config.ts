@@ -65,11 +65,12 @@ export default {
 				'gradient-surface': 'var(--gradient-surface)',
 				'gradient-hero': 'var(--gradient-hero)'
 			},
-			boxShadow: {
+		boxShadow: {
 				'soft': 'var(--shadow-soft)',
 				'medium': 'var(--shadow-medium)',
 				'hard': 'var(--shadow-hard)',
-				'primary': 'var(--shadow-primary)'
+				'glow': 'var(--shadow-glow)',
+				'lift': 'var(--shadow-lift)'
 			},
 			fontSize: {
 				'xs': 'var(--font-size-xs)',

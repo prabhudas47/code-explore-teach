@@ -9,7 +9,13 @@ import { Footer } from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      {/* Subtle grid pattern background */}
+      <div className="fixed inset-0 bg-grid-pattern pointer-events-none" />
+      
+      {/* Dark gradient overlay */}
+      <div className="fixed inset-0 bg-gradient-to-b from-background via-transparent to-background pointer-events-none" />
+      
       <Navigation />
       
       {/* Hero */}

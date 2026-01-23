@@ -47,8 +47,11 @@ export const Contact = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-32 bg-surface">
-      <div className="container mx-auto px-6 lg:px-12">
+    <section ref={sectionRef} className="py-24 md:py-32 relative">
+      {/* Ambient glow */}
+      <div className="absolute right-1/4 bottom-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
+      
+      <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
           {/* Section label */}
           <div className="reveal mb-4">
@@ -67,7 +70,7 @@ export const Contact = () => {
             technology and meaningful projects.
           </p>
           
-          {/* Contact Cards */}
+          {/* Contact Cards - Floating tiles */}
           <div className="space-y-4">
             {contactInfo.map((item, index) => (
               <a
@@ -75,11 +78,11 @@ export const Contact = () => {
                 href={item.href}
                 target={item.label === "LinkedIn" ? "_blank" : undefined}
                 rel={item.label === "LinkedIn" ? "noopener noreferrer" : undefined}
-                className={`reveal reveal-delay-${index + 2} group flex items-center justify-between p-5 bg-card border border-border rounded-2xl hover-lift hover-glow`}
+                className={`reveal reveal-delay-${index + 2} group flex items-center justify-between p-5 bg-card border border-border/50 rounded-2xl card-3d hover-glow`}
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <item.icon className="h-4 w-4 text-primary" />
+                  <div className="w-11 h-11 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center">
+                    <item.icon className="h-5 w-5 text-primary" />
                   </div>
                   <div className="text-left">
                     <span className="text-xs text-muted-foreground block">

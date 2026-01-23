@@ -31,9 +31,9 @@ export const Navigation = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? "bg-background/95 backdrop-blur-md border-b border-border shadow-soft"
+          ? "glass-dark border-b border-border/50"
           : "bg-transparent"
       }`}
     >
@@ -73,7 +73,7 @@ export const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-6 border-t border-border animate-fade-in bg-background">
+          <div className="md:hidden py-6 border-t border-border/50 animate-fade-in glass-dark">
             <div className="flex flex-col gap-4">
               {navItems.map((item) => (
                 <button
