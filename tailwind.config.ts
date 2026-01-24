@@ -24,11 +24,15 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
-				surface: 'hsl(var(--surface))',
+				surface: {
+					DEFAULT: 'hsl(var(--surface))',
+					elevated: 'hsl(var(--surface-elevated))'
+				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',
-					soft: 'hsl(var(--primary-soft))'
+					soft: 'hsl(var(--primary-soft))',
+					glow: 'hsl(var(--primary-glow))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -60,17 +64,14 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				}
 			},
-			backgroundImage: {
-				'gradient-primary': 'var(--gradient-primary)',
-				'gradient-surface': 'var(--gradient-surface)',
-				'gradient-hero': 'var(--gradient-hero)'
-			},
-		boxShadow: {
+			boxShadow: {
+				'subtle': 'var(--shadow-subtle)',
 				'soft': 'var(--shadow-soft)',
 				'medium': 'var(--shadow-medium)',
 				'hard': 'var(--shadow-hard)',
 				'glow': 'var(--shadow-glow)',
-				'lift': 'var(--shadow-lift)'
+				'lift': 'var(--shadow-lift)',
+				'deep': 'var(--shadow-deep)'
 			},
 			fontSize: {
 				'xs': 'var(--font-size-xs)',
