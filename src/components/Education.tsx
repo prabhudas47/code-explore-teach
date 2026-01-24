@@ -1,29 +1,9 @@
-import { useEffect, useRef } from "react";
-import { GraduationCap, BookOpen, School } from "lucide-react";
+import { GraduationCap, BookOpen, School, ChevronRight } from "lucide-react";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
+import { SpatialCard } from "@/components/ui/spatial-card";
 
 export const Education = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.querySelectorAll(".reveal").forEach((el) => {
-              el.classList.add("visible");
-            });
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+  const sectionRef = useScrollReveal<HTMLElement>();
 
   const education = [
     {
@@ -32,7 +12,8 @@ export const Education = () => {
       degree: "B.Tech in Computer Science",
       institution: "NRI Institute of Technology",
       status: "In Progress",
-      description: "Core focus on programming fundamentals, data structures, algorithms, and data science."
+      description: "Core focus on programming fundamentals, data structures, algorithms, and data science.",
+      highlight: true
     },
     {
       icon: BookOpen,
@@ -40,7 +21,8 @@ export const Education = () => {
       degree: "Intermediate (MPC)",
       institution: "Sri Chaitanya Junior College, Vijayawada",
       status: "Completed",
-      description: "Mathematics, Physics, Chemistry—building analytical foundations."
+      description: "Mathematics, Physics, Chemistry—building analytical foundations.",
+      highlight: false
     },
     {
       icon: School,
@@ -48,65 +30,73 @@ export const Education = () => {
       degree: "Secondary School Certificate",
       institution: "Vamsi High School, Vundavalli",
       status: "Completed",
-      description: "Strong foundation in mathematics and sciences."
+      description: "Strong foundation in mathematics and sciences.",
+      highlight: false
     }
   ];
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-32 relative">
+    <section ref={sectionRef} className="py-28 md:py-40 relative">
       {/* Ambient glow */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[180px] pointer-events-none" />
       
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           {/* Section label */}
-          <div className="reveal text-center mb-4">
-            <span className="text-sm font-medium text-primary tracking-widest uppercase">
+          <div className="reveal text-center mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold text-primary tracking-[0.2em] uppercase bg-primary/8 border border-primary/15 rounded-full">
               Education
             </span>
           </div>
           
           {/* Heading */}
-          <h2 className="reveal reveal-delay-1 text-3xl md:text-4xl font-bold text-foreground leading-tight mb-16 text-center">
-            Strong foundations, steady growth.
+          <h2 className="reveal reveal-delay-1 text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-16 text-center">
+            Strong foundations,{" "}
+            <span className="text-gradient">steady growth.</span>
           </h2>
           
-          {/* Education Cards - Floating timeline */}
-          <div className="space-y-6">
+          {/* Education Cards - Timeline */}
+          <div className="space-y-8">
             {education.map((item, index) => (
               <div
                 key={index}
-                className={`reveal reveal-delay-${index + 1} group`}
+                className={`reveal reveal-delay-${index + 1}`}
               >
-                <div className="bg-card border border-border/50 rounded-2xl p-6 md:p-8 card-3d hover-glow">
-                  <div className="flex flex-col md:flex-row md:items-start gap-6">
+                <SpatialCard
+                  className={`p-8 md:p-10 ${item.highlight ? 'border-primary/30' : ''}`}
+                  depth={item.highlight ? "deep" : "medium"}
+                  glowColor={item.highlight ? "primary" : "accent"}
+                >
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-8">
                     {/* Icon */}
-                    <div className="w-14 h-14 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center shrink-0">
-                      <item.icon className="h-6 w-6 text-primary" />
+                    <div className={`w-16 h-16 ${item.highlight ? 'bg-gradient-to-br from-primary/20 to-primary/5' : 'bg-primary/10'} border border-primary/20 rounded-2xl flex items-center justify-center shrink-0`}>
+                      <item.icon className="h-7 w-7 text-primary" />
                     </div>
                     
                     {/* Content */}
                     <div className="flex-1">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
-                        <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
+                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4">
+                        <h3 className="text-2xl font-bold text-foreground">
                           {item.degree}
                         </h3>
-                        <span className="text-xs font-medium text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full w-fit">
+                        <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-1.5 rounded-full w-fit ${item.highlight ? 'text-primary bg-primary/15 border border-primary/25' : 'text-muted-foreground bg-muted/50 border border-border/50'}`}>
+                          {item.highlight && <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />}
                           {item.status}
                         </span>
                       </div>
-                      <p className="text-muted-foreground font-medium mb-2">
+                      
+                      <p className="text-muted-foreground font-medium text-lg mb-3 flex items-center gap-2">
                         {item.institution}
+                        <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+                        <span className="text-sm text-muted-foreground/70">{item.period}</span>
                       </p>
-                      <p className="text-sm text-muted-foreground mb-3">
+                      
+                      <p className="text-muted-foreground leading-relaxed">
                         {item.description}
                       </p>
-                      <span className="text-xs text-muted-foreground/70 font-medium">
-                        {item.period}
-                      </span>
                     </div>
                   </div>
-                </div>
+                </SpatialCard>
               </div>
             ))}
           </div>

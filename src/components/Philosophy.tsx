@@ -1,58 +1,45 @@
-import { useEffect, useRef } from "react";
-import { Quote } from "lucide-react";
+import { Quote, Sparkles } from "lucide-react";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
+import { FloatingPanel } from "@/components/ui/spatial-card";
 
 export const Philosophy = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.querySelectorAll(".reveal").forEach((el) => {
-              el.classList.add("visible");
-            });
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+  const sectionRef = useScrollReveal<HTMLElement>();
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-32 relative overflow-hidden">
-      {/* Decorative gradient */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-primary/8 rounded-full blur-[180px] pointer-events-none" />
+    <section ref={sectionRef} className="py-28 md:py-40 relative overflow-hidden">
+      {/* Decorative gradients */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-primary/6 rounded-full blur-[220px] pointer-events-none" />
+      <div className="absolute right-0 top-0 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[150px] pointer-events-none" />
       
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
-        <div className="max-w-3xl mx-auto">
-          {/* Floating quote panel */}
-          <div className="floating-panel border border-border/50 rounded-3xl p-10 md:p-14 text-center">
+        <div className="max-w-4xl mx-auto">
+          {/* Premium quote panel */}
+          <FloatingPanel className="p-12 md:p-16 lg:p-20 text-center">
             <div className="reveal">
-              <div className="w-14 h-14 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center mx-auto mb-8">
-                <Quote className="h-6 w-6 text-primary" />
+              <div className="relative w-20 h-20 mx-auto mb-10">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-xl" />
+                <div className="relative w-20 h-20 bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20 rounded-full flex items-center justify-center">
+                  <Quote className="h-8 w-8 text-primary" />
+                </div>
               </div>
             </div>
             
             <blockquote className="reveal reveal-delay-1">
-              <p className="text-2xl md:text-3xl font-medium text-foreground leading-relaxed mb-8">
-                "The best way to predict the future is to learn continuously, 
+              <p className="text-2xl md:text-3xl lg:text-4xl font-medium text-foreground leading-relaxed mb-10">
+                "The best way to predict the future is to{" "}
+                <span className="text-gradient">learn continuously</span>, 
                 build deliberately, and stay curious."
               </p>
             </blockquote>
             
-            <div className="reveal reveal-delay-2">
-              <span className="text-sm text-muted-foreground font-medium">
-                — My guiding principle
+            <div className="reveal reveal-delay-2 flex items-center justify-center gap-3">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span className="text-sm text-muted-foreground font-semibold tracking-wider">
+                MY GUIDING PRINCIPLE
               </span>
+              <Sparkles className="h-4 w-4 text-primary" />
             </div>
-          </div>
+          </FloatingPanel>
         </div>
       </div>
     </section>

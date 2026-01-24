@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronRight } from "lucide-react";
 
 export const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,9 +31,9 @@ export const Navigation = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
         isScrolled
-          ? "glass-dark border-b border-border/50"
+          ? "bg-background/70 backdrop-blur-2xl backdrop-saturate-150 border-b border-border/30 shadow-[0_4px_30px_hsl(0,0%,0%,0.3)]"
           : "bg-transparent"
       }`}
     >
@@ -42,28 +42,29 @@ export const Navigation = () => {
           {/* Logo */}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="text-xl font-semibold tracking-tight text-foreground hover:text-primary transition-colors duration-300"
+            className="group text-xl font-bold tracking-tight text-foreground hover:text-primary transition-colors duration-300"
           >
-            Prabhukumar<span className="text-primary">.</span>
+            Prabhukumar
+            <span className="text-primary group-hover:text-accent transition-colors duration-300">.</span>
           </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-10">
+          <div className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300 relative group"
+                className="relative px-5 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 rounded-full hover:bg-primary/5 group"
               >
                 {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary rounded-full transition-all duration-300 group-hover:w-full" />
+                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary rounded-full transition-all duration-300 group-hover:w-1/2" />
               </button>
             ))}
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="md:hidden p-2.5 text-muted-foreground hover:text-foreground transition-colors rounded-xl hover:bg-primary/5"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -73,15 +74,16 @@ export const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-6 border-t border-border/50 animate-fade-in glass-dark">
-            <div className="flex flex-col gap-4">
+          <div className="md:hidden py-6 border-t border-border/30 animate-fade-in">
+            <div className="flex flex-col gap-2">
               {navItems.map((item) => (
                 <button
                   key={item.name}
                   onClick={() => scrollToSection(item.href)}
-                  className="text-left text-lg text-muted-foreground hover:text-foreground transition-colors duration-300 py-2"
+                  className="flex items-center justify-between text-lg text-muted-foreground hover:text-foreground transition-colors duration-300 py-3 px-4 rounded-xl hover:bg-primary/5 group"
                 >
                   {item.name}
+                  <ChevronRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
                 </button>
               ))}
             </div>
