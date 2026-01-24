@@ -1,130 +1,147 @@
-import { useRef, useMemo, useState, useCallback } from 'react';
+import { useRef, useMemo, useCallback, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float } from '@react-three/drei';
 import * as THREE from 'three';
 
-// Animated chess tile with advanced motion
+// Individual chess tile with advanced wave animation
 const ChessTile = ({ 
   position, 
-  size,
+  baseHeight,
   delay,
-  isLight,
-  mousePosition 
+  colorIndex,
+  mousePosition,
+  time
 }: { 
   position: [number, number, number]; 
-  size: [number, number, number];
+  baseHeight: number;
   delay: number;
-  isLight: boolean;
+  colorIndex: number;
   mousePosition: React.MutableRefObject<{ x: number; y: number }>;
+  time: React.MutableRefObject<number>;
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.MeshStandardMaterial>(null);
-  const [hovered, setHovered] = useState(false);
   
-  // Premium color palette
-  const darkColor = useMemo(() => new THREE.Color('#0c0c14'), []);
-  const lightColor = useMemo(() => new THREE.Color('#16161f'), []);
+  // Premium color palette - 4 shades for variation
+  const colors = useMemo(() => [
+    new THREE.Color('#0d0d16'),
+    new THREE.Color('#111119'),
+    new THREE.Color('#15151f'),
+    new THREE.Color('#191925'),
+  ], []);
+  
   const accentColor = useMemo(() => new THREE.Color('#6366f1'), []);
-  const glowColor = useMemo(() => new THREE.Color('#8b5cf6'), []);
+  const highlightColor = useMemo(() => new THREE.Color('#818cf8'), []);
 
-  useFrame((state) => {
+  useFrame(() => {
     if (!meshRef.current || !materialRef.current) return;
     
-    const time = state.clock.getElapsedTime();
+    const t = time.current;
+    const [px, , pz] = position;
     
-    // Complex wave pattern - multiple frequencies for organic feel
-    const wave1 = Math.sin(time * 0.4 + position[0] * 0.3 + position[2] * 0.2 + delay) * 0.12;
-    const wave2 = Math.cos(time * 0.25 + position[0] * 0.15 - position[2] * 0.25) * 0.08;
-    const wave3 = Math.sin(time * 0.6 + (position[0] + position[2]) * 0.1) * 0.04;
+    // Complex wave system - architectural breathing
+    const wave1 = Math.sin(t * 0.3 + px * 0.25 + pz * 0.2 + delay) * 0.15;
+    const wave2 = Math.cos(t * 0.2 + px * 0.15 - pz * 0.18 + delay * 0.5) * 0.1;
+    const wave3 = Math.sin(t * 0.15 + (px + pz) * 0.08) * 0.08;
+    const depthBreath = Math.sin(t * 0.12) * 0.05;
     
-    // Mouse interaction - ripple effect
-    const dx = (mousePosition.current.x * 8) - position[0];
-    const dz = (mousePosition.current.y * -8) - position[2];
+    // Mouse proximity influence - controlled ripple
+    const mx = mousePosition.current.x * 12;
+    const mz = mousePosition.current.y * -10;
+    const dx = mx - px;
+    const dz = mz - pz;
     const distance = Math.sqrt(dx * dx + dz * dz);
-    const mouseWave = Math.sin(time * 2 - distance * 0.5) * Math.max(0, 1 - distance / 6) * 0.1;
+    const influence = Math.max(0, 1 - distance / 8);
+    const mouseWave = Math.sin(t * 1.5 - distance * 0.4) * influence * 0.2;
     
-    // Final Y position with smooth easing
-    const targetY = position[1] + wave1 + wave2 + wave3 + mouseWave;
-    meshRef.current.position.y += (targetY - meshRef.current.position.y) * 0.08;
+    // Final position with smooth interpolation
+    const targetY = wave1 + wave2 + wave3 + depthBreath + mouseWave;
+    meshRef.current.position.y += (targetY - meshRef.current.position.y) * 0.06;
     
-    // Subtle rotation based on waves
-    meshRef.current.rotation.x = wave1 * 0.15;
-    meshRef.current.rotation.z = wave2 * 0.1;
+    // Subtle rotation for organic feel
+    meshRef.current.rotation.x = (wave1 * 0.08 + mouseWave * 0.1);
+    meshRef.current.rotation.z = (wave2 * 0.06);
     
-    // Dynamic hover effect
-    const hoverScale = hovered ? 1.08 : 1;
-    meshRef.current.scale.lerp(new THREE.Vector3(hoverScale, hoverScale, hoverScale), 0.1);
+    // Height scaling based on proximity
+    const heightScale = 1 + influence * 0.4;
+    meshRef.current.scale.y += (heightScale - meshRef.current.scale.y) * 0.08;
     
-    // Color transitions
-    const baseColor = isLight ? lightColor : darkColor;
-    const targetColor = hovered ? accentColor : baseColor;
-    materialRef.current.color.lerp(targetColor, 0.1);
+    // Color and glow based on proximity
+    const baseColor = colors[colorIndex];
+    const targetColor = influence > 0.3 ? highlightColor : baseColor;
+    materialRef.current.color.lerp(targetColor, 0.04);
     
-    // Emissive glow on hover and proximity
-    const proximityGlow = Math.max(0, 1 - distance / 5) * 0.02;
-    const hoverGlow = hovered ? 0.15 : 0;
-    materialRef.current.emissive.lerp(glowColor, 0.1);
-    materialRef.current.emissiveIntensity += ((proximityGlow + hoverGlow) - materialRef.current.emissiveIntensity) * 0.1;
+    // Emissive intensity
+    const targetEmissive = influence * 0.25 + Math.sin(t * 0.5 + delay) * 0.02;
+    materialRef.current.emissiveIntensity += (targetEmissive - materialRef.current.emissiveIntensity) * 0.08;
   });
 
   return (
     <mesh
       ref={meshRef}
       position={position}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
       castShadow
       receiveShadow
     >
-      <boxGeometry args={size} />
+      <boxGeometry args={[0.88, baseHeight, 0.88]} />
       <meshStandardMaterial
         ref={materialRef}
-        color={isLight ? lightColor : darkColor}
-        roughness={0.6}
-        metalness={0.2}
-        envMapIntensity={0.5}
-        emissive={glowColor}
+        color={colors[colorIndex]}
+        roughness={0.7}
+        metalness={0.15}
+        envMapIntensity={0.4}
+        emissive={accentColor}
         emissiveIntensity={0}
       />
     </mesh>
   );
 };
 
-// Enhanced chess grid with staggered pattern
-const ChessGrid = ({ mousePosition }: { mousePosition: React.MutableRefObject<{ x: number; y: number }> }) => {
-  const gridRef = useRef<THREE.Group>(null);
-  const gridSize = 10;
-  const tileSize = 0.95;
-  const gap = 0.1;
+// Main chess grid with extended depth
+const ChessGrid = ({ mousePosition, time }: { 
+  mousePosition: React.MutableRefObject<{ x: number; y: number }>;
+  time: React.MutableRefObject<number>;
+}) => {
+  const groupRef = useRef<THREE.Group>(null);
+  
+  // Extended grid for depth perception
+  const gridX = 16;
+  const gridZ = 20;
+  const spacing = 1.0;
   
   const tiles = useMemo(() => {
-    const items: { 
-      position: [number, number, number]; 
-      size: [number, number, number];
+    const items: {
+      position: [number, number, number];
+      baseHeight: number;
       delay: number;
-      isLight: boolean;
+      colorIndex: number;
     }[] = [];
     
-    for (let x = 0; x < gridSize; x++) {
-      for (let z = 0; z < gridSize; z++) {
-        const isLight = (x + z) % 2 === 0;
-        const centerOffset = gridSize / 2 - 0.5;
-        
-        // Height variation based on distance from center
+    const centerX = (gridX - 1) / 2;
+    const centerZ = (gridZ - 1) / 2;
+    
+    for (let x = 0; x < gridX; x++) {
+      for (let z = 0; z < gridZ; z++) {
+        // Distance-based height variation
         const distFromCenter = Math.sqrt(
-          Math.pow(x - gridSize / 2, 2) + Math.pow(z - gridSize / 2, 2)
+          Math.pow((x - centerX) / centerX, 2) + 
+          Math.pow((z - centerZ) / centerZ, 2)
         );
-        const heightVariation = 0.15 + Math.random() * 0.1 + distFromCenter * 0.02;
+        
+        // Height increases toward edges for bowl effect
+        const baseHeight = 0.15 + distFromCenter * 0.12 + Math.random() * 0.08;
+        
+        // 4-color pattern for visual depth
+        const colorIndex = ((x % 2) + (z % 2) * 2) % 4;
         
         items.push({
           position: [
-            (x - centerOffset) * (tileSize + gap),
+            (x - centerX) * spacing,
             0,
-            (z - centerOffset) * (tileSize + gap)
+            (z - centerZ) * spacing
           ],
-          size: [tileSize, heightVariation, tileSize],
-          delay: (x + z) * 0.2 + Math.random() * 0.5,
-          isLight
+          baseHeight,
+          delay: x * 0.15 + z * 0.1 + Math.random() * 0.3,
+          colorIndex
         });
       }
     }
@@ -132,56 +149,115 @@ const ChessGrid = ({ mousePosition }: { mousePosition: React.MutableRefObject<{ 
     return items;
   }, []);
 
-  useFrame((state) => {
-    if (!gridRef.current) return;
-    // Slow rotation of entire grid
-    gridRef.current.rotation.y += 0.0003;
+  // Slow grid rotation
+  useFrame(() => {
+    if (!groupRef.current) return;
+    groupRef.current.rotation.y += 0.0002;
   });
 
   return (
-    <group ref={gridRef} rotation={[-0.6, 0.4, 0]} position={[0, -1.5, -8]}>
+    <group 
+      ref={groupRef} 
+      rotation={[-0.55, 0.25, 0]} 
+      position={[0, -2, -12]}
+    >
       {tiles.map((tile, i) => (
         <ChessTile
           key={i}
           position={tile.position}
-          size={tile.size}
+          baseHeight={tile.baseHeight}
           delay={tile.delay}
-          isLight={tile.isLight}
+          colorIndex={tile.colorIndex}
           mousePosition={mousePosition}
+          time={time}
         />
       ))}
     </group>
   );
 };
 
-// Floating accent particles
-const FloatingParticles = () => {
-  const particlesRef = useRef<THREE.Points>(null);
-  const count = 50;
+// Atmospheric light rays
+const LightRays = ({ time }: { time: React.MutableRefObject<number> }) => {
+  const groupRef = useRef<THREE.Group>(null);
   
-  const positions = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = Math.random() * 10 - 2;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 20 - 5;
-    }
-    return pos;
+  const rays = useMemo(() => {
+    return Array.from({ length: 5 }, (_, i) => ({
+      position: [(i - 2) * 4, 8, -15] as [number, number, number],
+      delay: i * 0.4,
+    }));
   }, []);
 
-  useFrame((state) => {
-    if (!particlesRef.current) return;
-    particlesRef.current.rotation.y += 0.0002;
-    
-    const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-    for (let i = 0; i < count; i++) {
-      positions[i * 3 + 1] += Math.sin(state.clock.elapsedTime * 0.3 + i) * 0.002;
-    }
-    particlesRef.current.geometry.attributes.position.needsUpdate = true;
+  useFrame(() => {
+    if (!groupRef.current) return;
+    groupRef.current.children.forEach((child, i) => {
+      const mesh = child as THREE.Mesh;
+      const material = mesh.material as THREE.MeshBasicMaterial;
+      const pulse = Math.sin(time.current * 0.3 + rays[i].delay) * 0.5 + 0.5;
+      material.opacity = 0.02 + pulse * 0.03;
+    });
   });
 
   return (
-    <points ref={particlesRef}>
+    <group ref={groupRef}>
+      {rays.map((ray, i) => (
+        <mesh key={i} position={ray.position} rotation={[0.3, 0, 0.1 * (i - 2)]}>
+          <planeGeometry args={[0.5, 25]} />
+          <meshBasicMaterial 
+            color="#6366f1" 
+            transparent 
+            opacity={0.03}
+            side={THREE.DoubleSide}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+};
+
+// Floating ambient particles
+const AmbientParticles = ({ time }: { time: React.MutableRefObject<number> }) => {
+  const pointsRef = useRef<THREE.Points>(null);
+  const count = 80;
+  
+  const [positions, velocities] = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    const vel = new Float32Array(count * 3);
+    
+    for (let i = 0; i < count; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 30;
+      pos[i * 3 + 1] = Math.random() * 15 - 5;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 30 - 10;
+      
+      vel[i * 3] = (Math.random() - 0.5) * 0.002;
+      vel[i * 3 + 1] = (Math.random() - 0.5) * 0.003;
+      vel[i * 3 + 2] = (Math.random() - 0.5) * 0.002;
+    }
+    
+    return [pos, vel];
+  }, []);
+
+  useFrame(() => {
+    if (!pointsRef.current) return;
+    
+    const posArray = pointsRef.current.geometry.attributes.position.array as Float32Array;
+    
+    for (let i = 0; i < count; i++) {
+      posArray[i * 3] += velocities[i * 3];
+      posArray[i * 3 + 1] += velocities[i * 3 + 1] + Math.sin(time.current * 0.2 + i) * 0.001;
+      posArray[i * 3 + 2] += velocities[i * 3 + 2];
+      
+      // Wrap around bounds
+      if (Math.abs(posArray[i * 3]) > 15) velocities[i * 3] *= -1;
+      if (posArray[i * 3 + 1] > 10 || posArray[i * 3 + 1] < -5) velocities[i * 3 + 1] *= -1;
+      if (Math.abs(posArray[i * 3 + 2] + 10) > 15) velocities[i * 3 + 2] *= -1;
+    }
+    
+    pointsRef.current.geometry.attributes.position.needsUpdate = true;
+  });
+
+  return (
+    <points ref={pointsRef}>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
@@ -191,106 +267,137 @@ const FloatingParticles = () => {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.05}
-        color="#6366f1"
+        size={0.04}
+        color="#8b5cf6"
         transparent
-        opacity={0.4}
+        opacity={0.5}
         sizeAttenuation
+        blending={THREE.AdditiveBlending}
       />
     </points>
   );
 };
 
-// Camera with smooth parallax
-const CameraController = ({ mousePosition }: { mousePosition: React.MutableRefObject<{ x: number; y: number }> }) => {
+// Camera with smooth parallax movement
+const CameraController = ({ mousePosition }: { 
+  mousePosition: React.MutableRefObject<{ x: number; y: number }> 
+}) => {
   const { camera } = useThree();
+  const targetPos = useRef(new THREE.Vector3(0, 5, 12));
   
   useFrame(() => {
-    const targetX = mousePosition.current.x * 1.5;
-    const targetY = 4 + mousePosition.current.y * 0.8;
+    // Smooth parallax based on mouse
+    targetPos.current.x = mousePosition.current.x * 2;
+    targetPos.current.y = 5 + mousePosition.current.y * 1;
     
-    camera.position.x += (targetX - camera.position.x) * 0.015;
-    camera.position.y += (targetY - camera.position.y) * 0.015;
-    camera.lookAt(0, 0, -8);
+    camera.position.lerp(targetPos.current, 0.015);
+    camera.lookAt(0, -1, -8);
   });
 
   return null;
 };
 
-// Main scene with enhanced lighting
-const Scene = ({ mousePosition }: { mousePosition: React.MutableRefObject<{ x: number; y: number }> }) => {
+// Complete scene with premium lighting
+const Scene = ({ mousePosition, time }: { 
+  mousePosition: React.MutableRefObject<{ x: number; y: number }>;
+  time: React.MutableRefObject<number>;
+}) => {
   return (
     <>
-      {/* Ambient base */}
-      <ambientLight intensity={0.1} />
+      {/* Deep ambient base */}
+      <ambientLight intensity={0.08} color="#1a1a2e" />
       
-      {/* Primary key light */}
+      {/* Primary key light - warm white */}
       <directionalLight
-        position={[8, 12, 5]}
-        intensity={0.35}
+        position={[10, 15, 8]}
+        intensity={0.3}
         castShadow
         shadow-mapSize={[2048, 2048]}
-        shadow-camera-far={50}
-        shadow-camera-left={-15}
-        shadow-camera-right={15}
-        shadow-camera-top={15}
-        shadow-camera-bottom={-15}
+        shadow-camera-far={60}
+        shadow-camera-left={-20}
+        shadow-camera-right={20}
+        shadow-camera-top={20}
+        shadow-camera-bottom={-20}
+        shadow-bias={-0.0001}
         color="#ffffff"
       />
       
-      {/* Fill light with accent color */}
+      {/* Secondary fill light - violet accent */}
       <directionalLight
-        position={[-5, 8, -8]}
-        intensity={0.2}
+        position={[-8, 10, -10]}
+        intensity={0.15}
         color="#6366f1"
       />
       
-      {/* Rim light */}
-      <pointLight
-        position={[0, 6, -15]}
+      {/* Backlight for rim effect */}
+      <spotLight
+        position={[0, 12, -25]}
+        angle={0.4}
+        penumbra={0.8}
         intensity={0.4}
         color="#8b5cf6"
-        distance={25}
+        distance={50}
       />
       
-      {/* Bottom glow */}
+      {/* Ground reflection light */}
       <pointLight
-        position={[0, -5, -8]}
-        intensity={0.15}
+        position={[0, -8, -10]}
+        intensity={0.1}
         color="#4f46e5"
-        distance={20}
+        distance={30}
       />
+      
+      {/* Accent lights on sides */}
+      <pointLight position={[-12, 3, -8]} intensity={0.12} color="#6366f1" distance={20} />
+      <pointLight position={[12, 3, -8]} intensity={0.12} color="#8b5cf6" distance={20} />
       
       <CameraController mousePosition={mousePosition} />
-      <ChessGrid mousePosition={mousePosition} />
-      <FloatingParticles />
+      <ChessGrid mousePosition={mousePosition} time={time} />
+      <LightRays time={time} />
+      <AmbientParticles time={time} />
       
-      {/* Ground shadow plane */}
+      {/* Shadow ground plane */}
       <mesh 
         rotation={[-Math.PI / 2, 0, 0]} 
-        position={[0, -3, -8]}
+        position={[0, -4, -12]}
         receiveShadow
       >
-        <planeGeometry args={[60, 60]} />
-        <shadowMaterial opacity={0.4} />
+        <planeGeometry args={[80, 80]} />
+        <shadowMaterial opacity={0.5} />
       </mesh>
     </>
   );
 };
 
-// Main component
+// Main exported component
 export const ChessBoard3D = () => {
   const mousePosition = useRef({ x: 0, y: 0 });
+  const time = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>();
+
+  // Smooth time accumulator
+  useEffect(() => {
+    const animate = () => {
+      time.current += 0.016; // ~60fps
+      rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!containerRef.current) return;
     
     const rect = containerRef.current.getBoundingClientRect();
-    mousePosition.current = {
-      x: ((e.clientX - rect.left) / rect.width) * 2 - 1,
-      y: ((e.clientY - rect.top) / rect.height) * 2 - 1
-    };
+    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    
+    // Smooth interpolation
+    mousePosition.current.x += (x - mousePosition.current.x) * 0.1;
+    mousePosition.current.y += (y - mousePosition.current.y) * 0.1;
   }, []);
 
   return (
@@ -299,35 +406,42 @@ export const ChessBoard3D = () => {
       className="fixed inset-0 -z-10"
       onMouseMove={handleMouseMove}
     >
-      {/* Premium dark gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#06060a] via-[#0a0a12] to-[#0d0815]" />
+      {/* Deep space gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#04040a] via-[#08081a] to-[#0c0c1a]" />
+      
+      {/* Radial depth gradient */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(99,102,241,0.08),transparent)]" />
       
       {/* 3D Canvas */}
       <Canvas
         shadows
-        camera={{ position: [0, 4, 10], fov: 55 }}
-        dpr={[1, 2]}
+        camera={{ position: [0, 5, 12], fov: 50 }}
+        dpr={[1, 1.5]}
         gl={{ 
           antialias: true,
           alpha: true,
           powerPreference: 'high-performance',
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.2
+          toneMappingExposure: 1.1
         }}
         style={{ background: 'transparent' }}
       >
-        <fog attach="fog" args={['#06060a', 15, 35]} />
-        <Scene mousePosition={mousePosition} />
+        <fog attach="fog" args={['#04040a', 18, 45]} />
+        <Scene mousePosition={mousePosition} time={time} />
       </Canvas>
       
-      {/* Vignette overlay */}
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.5)_100%)]" />
+      {/* Atmospheric vignette */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(4,4,10,0.6)_100%)]" />
       
-      {/* Top gradient for content */}
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#06060a]/90 via-[#06060a]/50 to-transparent pointer-events-none" />
+      {/* Top fade for navigation */}
+      <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#04040a] via-[#04040a]/70 to-transparent pointer-events-none" />
       
-      {/* Bottom gradient */}
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#06060a]/80 to-transparent pointer-events-none" />
+      {/* Bottom fade for grounding */}
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#04040a] via-[#04040a]/50 to-transparent pointer-events-none" />
+      
+      {/* Side vignettes for depth */}
+      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#04040a]/80 to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#04040a]/80 to-transparent pointer-events-none" />
     </div>
   );
 };
