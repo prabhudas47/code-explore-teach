@@ -6,13 +6,13 @@ import { Skills } from "@/components/Skills";
 import { Philosophy } from "@/components/Philosophy";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
-import { ChessBoard3D } from "@/components/ChessBoard3D";
+import { ChessShaderBackground } from "@/components/ChessShaderBackground";
 
 const Index = () => {
   return (
     <div className="min-h-screen relative">
-      {/* 3D Chess Board Background */}
-      <ChessBoard3D />
+      {/* Cinematic Chess Shader Background */}
+      <ChessShaderBackground />
       
       <Navigation />
       
