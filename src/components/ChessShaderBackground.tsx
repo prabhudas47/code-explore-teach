@@ -126,6 +126,11 @@ export const ChessShaderBackground = () => {
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top = '0';
+    renderer.domElement.style.left = '0';
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
     containerRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -203,17 +208,52 @@ export const ChessShaderBackground = () => {
   return (
     <div 
       ref={containerRef} 
-      className="fixed inset-0 -z-10"
-      style={{ background: '#000' }}
+      style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: -1,
+        background: '#000',
+        overflow: 'hidden'
+      }}
     >
       {/* Vignette overlay for content readability */}
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,hsl(var(--background)/0.5)_70%,hsl(var(--background)/0.85)_100%)]" />
+      <div 
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          background: 'radial-gradient(ellipse at center, transparent 0%, rgba(10,10,20,0.5) 70%, rgba(10,10,20,0.85) 100%)'
+        }} 
+      />
       
       {/* Top fade for navigation */}
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background/90 via-background/50 to-transparent pointer-events-none" />
+      <div 
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '160px',
+          pointerEvents: 'none',
+          background: 'linear-gradient(to bottom, rgba(10,10,20,0.9), rgba(10,10,20,0.5), transparent)'
+        }}
+      />
       
       {/* Bottom fade */}
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background/80 to-transparent pointer-events-none" />
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '128px',
+          pointerEvents: 'none',
+          background: 'linear-gradient(to top, rgba(10,10,20,0.8), transparent)'
+        }}
+      />
     </div>
   );
 };
