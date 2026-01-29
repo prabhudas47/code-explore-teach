@@ -71,7 +71,7 @@ void main()
         vec3 p=ro+rd*d;
         vec3 n=norm(p);
 
-        vec3 white=vec3(0.95);
+        vec3 white=vec3(1.95);
         vec3 black=vec3(0.01);
         vec3 base=mix(white,black,chess(p));
 
@@ -79,7 +79,7 @@ void main()
         float diff=max(dot(n,light),0.);
         float fres=pow(1.-max(dot(n,-rd),0.),3.);
 
-        col=base*diff + fres*0.4;
+        col=base*diff + fres*1.4;
 
         // Depth fog for realism
         col*=exp(-d*.035);
@@ -219,41 +219,6 @@ export const ChessShaderBackground = () => {
         overflow: 'hidden'
       }}
     >
-      {/* Vignette overlay for content readability */}
-      <div 
-        style={{
-          position: 'absolute',
-          inset: 0,
-          pointerEvents: 'none',
-          background: 'radial-gradient(ellipse at center, transparent 0%, rgba(10,10,20,0.5) 70%, rgba(10,10,20,0.85) 100%)'
-        }} 
-      />
-      
-      {/* Top fade for navigation */}
-      <div 
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '160px',
-          pointerEvents: 'none',
-          background: 'linear-gradient(to bottom, rgba(10,10,20,0.9), rgba(10,10,20,0.5), transparent)'
-        }}
-      />
-      
-      {/* Bottom fade */}
-      <div 
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '128px',
-          pointerEvents: 'none',
-          background: 'linear-gradient(to top, rgba(10,10,20,0.8), transparent)'
-        }}
-      />
     </div>
   );
 };
