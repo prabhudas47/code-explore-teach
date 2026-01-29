@@ -21,9 +21,10 @@ float terrain(vec3 p, vec2 mouse, float scroll){
     p.y += sin(p.z*0.45-iTime*0.6)*0.35;
     p.y += sin((p.x+p.z)*0.2+iTime*0.4)*0.25;
     
-    // Mouse-driven wave ripples (centered around cursor influence)
-    float mouseInfluence = sin(p.x*0.3 + mouse.x*3.0)*0.2 + sin(p.z*0.3 + mouse.y*3.0)*0.2;
-    p.y += mouseInfluence * 0.5;
+    // Mouse-driven wave ripples (stronger dramatic effect)
+    float mouseInfluence = sin(p.x*0.4 + mouse.x*5.0)*0.4 + sin(p.z*0.4 + mouse.y*5.0)*0.4;
+    mouseInfluence += sin((p.x-p.z)*0.25 + mouse.x*4.0 + mouse.y*4.0)*0.3;
+    p.y += mouseInfluence * 1.2;
     
     // Scroll-driven forward wave pulse
     p.y += sin(p.z*0.2 - scroll*0.003)*0.3;
