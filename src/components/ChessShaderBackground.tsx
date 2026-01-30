@@ -90,13 +90,22 @@ void main()
 
         vec3 white=vec3(1.95);
         vec3 black=vec3(0.01);
-        vec3 base=mix(white,black,chess(p));
+        float chessPattern = chess(p);
+        vec3 base=mix(white,black,chessPattern);
 
         vec3 light=normalize(vec3(.6,.9,.7));
         float diff=max(dot(n,light),0.);
         float fres=pow(1.-max(dot(n,-rd),0.),3.);
 
-        col=base*diff + fres*1.4;
+        // Subtle pulsing glow effect
+        float pulse = sin(iTime * 2.0) * 0.5 + 0.5; // 0 to 1 oscillation
+        float glowIntensity = 0.15 * pulse;
+        
+        // Add cyan-ish glow to white squares, warm glow to dark squares
+        vec3 whiteGlow = vec3(0.7, 0.9, 1.0) * glowIntensity * (1.0 - chessPattern);
+        vec3 blackGlow = vec3(0.4, 0.3, 0.5) * glowIntensity * chessPattern * 0.5;
+        
+        col=base*diff + fres*1.4 + whiteGlow + blackGlow;
 
         // Depth fog for realism
         col*=exp(-d*.035);
