@@ -180,6 +180,23 @@ export const ChessShaderBackground = () => {
       targetMouseRef.current.y = window.innerHeight - e.clientY; // Flip Y for shader
     };
 
+    // Touch tracking for mobile
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        targetMouseRef.current.x = touch.clientX;
+        targetMouseRef.current.y = window.innerHeight - touch.clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        targetMouseRef.current.x = touch.clientX;
+        targetMouseRef.current.y = window.innerHeight - touch.clientY;
+      }
+    };
+
     // Scroll tracking
     const handleScroll = () => {
       targetScrollRef.current = window.scrollY;
@@ -191,6 +208,8 @@ export const ChessShaderBackground = () => {
     };
 
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('wheel', handleWheel);
 
@@ -247,6 +266,8 @@ export const ChessShaderBackground = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('wheel', handleWheel);
       cancelAnimationFrame(animationRef.current);
