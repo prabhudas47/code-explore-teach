@@ -4,6 +4,7 @@ import * as THREE from 'three';
 const fragmentShader = `
 uniform float iTime;
 uniform vec2 iResolution;
+uniform vec2 iMouse;
 
 mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
 
@@ -60,22 +61,26 @@ void main()
     vec2 uv=(fragCoord-0.5*iResolution.xy)/iResolution.y;
     float t=iTime;
 
+    // Normalized mouse (-0.5 to 0.5)
+    vec2 mouse = iMouse / iResolution - 0.5;
+
     float speed = 1.0;
-    float camZ = 28.0 - t*speed;
+    // Mouse Y (moving cursor down) pushes camera forward
+    float camZ = 28.0 - t*speed - mouse.y * 8.0;
 
     float wNow  = waveHeight(vec3(0.,0.,camZ));
     float wPrev = waveHeight(vec3(0.,0.,camZ+1.2));
     float camY = 2.3 + wNow*0.75;
 
     vec3 ro = vec3(
-        sin(t*0.15)*1.0,
-        camY,
+        sin(t*0.15)*1.0 + mouse.x * 3.0,
+        camY + mouse.y * 1.0,
         camZ
     );
 
     vec3 ta = vec3(
-        0.0,
-        2.0 + wPrev*0.6,
+        mouse.x * 2.0,
+        2.0 + wPrev*0.6 + mouse.y * 0.5,
         camZ-6.0
     );
 
@@ -135,6 +140,8 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
   const animationRef = useRef<number>(0);
   const startTimeRef = useRef<number>(Date.now());
   const fadeCalledRef = useRef(false);
+  const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const targetMouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -165,6 +172,7 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       uniforms: {
         iTime: { value: 0 },
         iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+        iMouse: { value: new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2) },
       },
       vertexShader,
       fragmentShader,
@@ -175,6 +183,21 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
 
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
+
+    // Mouse tracking
+    const handleMouseMove = (e: MouseEvent) => {
+      targetMouseRef.current.x = e.clientX;
+      targetMouseRef.current.y = window.innerHeight - e.clientY;
+    };
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        targetMouseRef.current.x = e.touches[0].clientX;
+        targetMouseRef.current.y = window.innerHeight - e.touches[0].clientY;
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     let isVisible = true;
 
@@ -193,6 +216,11 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
 
       const elapsed = (Date.now() - startTimeRef.current) / 1000;
       material.uniforms.iTime.value = elapsed;
+
+      // Smooth mouse lerp
+      mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * 0.08;
+      mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * 0.08;
+      material.uniforms.iMouse.value.set(mouseRef.current.x, mouseRef.current.y);
 
       // Notify when fade to black is complete (~35s)
       if (elapsed > 35 && !fadeCalledRef.current) {
@@ -221,6 +249,8 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
       cancelAnimationFrame(animationRef.current);
       
       if (rendererRef.current && containerRef.current) {
