@@ -217,9 +217,9 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       const elapsed = (Date.now() - startTimeRef.current) / 1000;
       material.uniforms.iTime.value = elapsed;
 
-      // Smooth mouse lerp
-      mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * 0.08;
-      mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * 0.08;
+      // Fast mouse lerp - nearly instant reaction
+      mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * 0.3;
+      mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * 0.3;
       material.uniforms.iMouse.value.set(mouseRef.current.x, mouseRef.current.y);
 
       // Notify when fade to black is complete (~35s)
