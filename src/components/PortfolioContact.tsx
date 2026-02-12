@@ -15,17 +15,17 @@ export const PortfolioContact = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="contact" className="py-32 px-6 relative content-layer">
+    <section ref={sectionRef} id="contact" className="py-16 sm:py-32 px-4 sm:px-6 relative content-layer">
       <div className="max-w-2xl mx-auto text-center">
         <div className={`mb-16 transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <p className="text-[11px] tracking-[0.4em] uppercase text-muted-foreground mb-3">Get In Touch</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
             Contact
           </h2>
         </div>
 
         <div
-          className={`glass-panel rounded-2xl p-10 md:p-14 transition-all duration-1000 ${
+          className={`glass-panel rounded-2xl p-6 sm:p-10 md:p-14 transition-all duration-1000 ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
           style={{ transitionDelay: '300ms' }}
@@ -59,7 +59,7 @@ export const PortfolioContact = () => {
           <div className="w-16 h-[1px] bg-border mx-auto mb-10" />
 
           <p
-            className="text-xl md:text-2xl font-light text-muted-foreground italic"
+            className="text-lg sm:text-xl md:text-2xl font-light text-muted-foreground italic"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
             "Let's build something meaningful."

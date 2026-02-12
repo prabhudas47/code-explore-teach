@@ -30,11 +30,11 @@ export const PortfolioProjects = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="projects" className="py-32 px-6 relative content-layer">
+    <section ref={sectionRef} id="projects" className="py-16 sm:py-32 px-4 sm:px-6 relative content-layer">
       <div className="max-w-3xl mx-auto">
         <div className={`mb-16 transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <p className="text-[11px] tracking-[0.4em] uppercase text-muted-foreground mb-3">Work</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground" style={{ fontFamily: "'Outfit', sans-serif" }}>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground" style={{ fontFamily: "'Outfit', sans-serif" }}>
             Projects
           </h2>
         </div>
@@ -43,7 +43,7 @@ export const PortfolioProjects = () => {
           {projects.map((project, i) => (
             <div
               key={i}
-              className={`group glass-card rounded-xl p-8 transition-all duration-700 hover:border-foreground/15 hover:-translate-y-1 hover:shadow-[0_8px_40px_hsl(0_0%_100%/0.04)] cursor-pointer ${
+              className={`group glass-card rounded-xl p-5 sm:p-8 transition-all duration-700 hover:border-foreground/15 hover:-translate-y-1 hover:shadow-[0_8px_40px_hsl(0_0%_100%/0.04)] cursor-pointer ${
                 visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
               style={{ transitionDelay: `${300 + i * 200}ms` }}
