@@ -4,8 +4,6 @@ import * as THREE from 'three';
 const fragmentShader = `
 uniform float iTime;
 uniform vec2 iResolution;
-uniform vec2 iMouse;
-uniform float iScroll;
 
 mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
 
@@ -14,45 +12,45 @@ float chess(vec3 p){
     return mod(g.x+g.y+g.z,2.0);
 }
 
-// More organic living terrain with mouse influence
-float terrain(vec3 p, vec2 mouse, float scroll){
-    // Base wave motion
-    p.y += sin(p.x*0.35+iTime*0.5)*0.4;
-    p.y += sin(p.z*0.45-iTime*0.6)*0.35;
-    p.y += sin((p.x+p.z)*0.2+iTime*0.4)*0.25;
-    
-    // Mouse-driven wave ripples (stronger dramatic effect)
-    float mouseInfluence = sin(p.x*0.4 + mouse.x*5.0)*0.4 + sin(p.z*0.4 + mouse.y*5.0)*0.4;
-    mouseInfluence += sin((p.x-p.z)*0.25 + mouse.x*4.0 + mouse.y*4.0)*0.3;
-    p.y += mouseInfluence * 1.2;
-    
-    // Scroll-driven forward wave pulse
-    p.y += sin(p.z*0.2 - scroll*0.003)*0.3;
-    
+// TRUE OCEAN MOTION (directional swell)
+float waveHeight(vec3 p){
+    float t = iTime;
+    float swell =
+        sin(p.z*0.12 - t*0.35)*1.8 +
+        sin(p.z*0.08 - t*0.22)*1.4;
+    float cross =
+        sin(p.x*0.18 + t*0.2)*0.9;
+    float mid =
+        sin((p.x+p.z)*0.35 + t*0.9)*0.45;
+    float small =
+        sin(p.x*1.4 + t*2.5)*0.07;
+    return swell + cross + mid + small;
+}
+
+float terrain(vec3 p){
+    p.y += waveHeight(p);
     return p.y + 3.0;
 }
 
-float map(vec3 p, vec2 mouse, float scroll){
-    return terrain(p, mouse, scroll);
-}
+float map(vec3 p){ return terrain(p); }
 
-float trace(vec3 ro, vec3 rd, vec2 mouse, float scroll){
+float trace(vec3 ro,vec3 rd){
     float d=0.;
-    for(int i=0;i<150;i++){
+    for(int i=0;i<160;i++){
         vec3 p=ro+rd*d;
-        float h=map(p, mouse, scroll);
-        if(h<.001||d>250.)break;
-        d+=h*.8;
+        float h=map(p);
+        if(h<.001||d>320.)break;
+        d+=h*.75;
     }
     return d;
 }
 
-vec3 norm(vec3 p, vec2 mouse, float scroll){
+vec3 norm(vec3 p){
     vec2 e=vec2(.001,0);
     return normalize(vec3(
-        map(p+e.xyy, mouse, scroll)-map(p-e.xyy, mouse, scroll),
-        map(p+e.yxy, mouse, scroll)-map(p-e.yxy, mouse, scroll),
-        map(p+e.yyx, mouse, scroll)-map(p-e.yyx, mouse, scroll)
+        map(p+e.xyy)-map(p-e.xyy),
+        map(p+e.yxy)-map(p-e.yxy),
+        map(p+e.yyx)-map(p-e.yyx)
     ));
 }
 
@@ -61,59 +59,57 @@ void main()
     vec2 fragCoord = gl_FragCoord.xy;
     vec2 uv=(fragCoord-0.5*iResolution.xy)/iResolution.y;
     float t=iTime;
-    
-    // Normalized mouse position (-1 to 1)
-    vec2 mouse = iMouse / iResolution - 0.5;
-    float scroll = iScroll;
 
-    // 🎥 CINEMATIC TRAVEL with mouse parallax
-    float speed = 1.2;
+    float speed = 1.0;
+    float camZ = 28.0 - t*speed;
+
+    float wNow  = waveHeight(vec3(0.,0.,camZ));
+    float wPrev = waveHeight(vec3(0.,0.,camZ+1.2));
+    float camY = 2.3 + wNow*0.75;
+
     vec3 ro = vec3(
-        sin(t*0.2)*1.5 + mouse.x * 2.0,     // side sway + mouse X parallax
-        2.5 + sin(t*0.6)*0.3 + mouse.y * 1.0, // vertical float + mouse Y parallax
-        18.0 - t*speed - scroll*0.01          // forward motion + scroll influence
+        sin(t*0.15)*1.0,
+        camY,
+        camZ
     );
 
-    // Look target follows mouse subtly
-    vec3 ta = vec3(mouse.x * 1.5, mouse.y * 0.5, ro.z - 6.0);
+    vec3 ta = vec3(
+        0.0,
+        2.0 + wPrev*0.6,
+        camZ-6.0
+    );
+
     vec3 f=normalize(ta-ro);
     vec3 r=normalize(cross(vec3(0,1,0),f));
     vec3 u=cross(f,r);
+
+    float roll = sin(t*0.4)*0.12 + sin(t*0.9)*0.06;
+    vec2 rr = rot(roll)*vec2(r.x, r.y);
+    r.x = rr.x; r.y = rr.y;
+
     vec3 rd=normalize(f+uv.x*r+uv.y*u);
 
-    float d=trace(ro, rd, mouse, scroll);
+    float d=trace(ro,rd);
     vec3 col=vec3(0);
 
-    if(d<250.){
+    if(d<320.){
         vec3 p=ro+rd*d;
-        vec3 n=norm(p, mouse, scroll);
+        vec3 n=norm(p);
 
-        vec3 white=vec3(1.95);
+        vec3 white=vec3(2.2);
         vec3 black=vec3(0.01);
-        float chessPattern = chess(p);
-        vec3 base=mix(white,black,chessPattern);
+        vec3 base=mix(white,black,chess(p));
 
-        vec3 light=normalize(vec3(.6,.9,.7));
+        vec3 light=normalize(vec3(.3,.85,.4));
         float diff=max(dot(n,light),0.);
-        float fres=pow(1.-max(dot(n,-rd),0.),3.);
+        float fres=pow(1.-max(dot(n,-rd),0.),4.0);
 
-        // Subtle pulsing glow effect
-        float pulse = sin(iTime * 2.0) * 0.5 + 0.5; // 0 to 1 oscillation
-        float glowIntensity = 0.15 * pulse;
-        
-        // Add cyan-ish glow to white squares, warm glow to dark squares
-        vec3 whiteGlow = vec3(0.7, 0.9, 1.0) * glowIntensity * (1.0 - chessPattern);
-        vec3 blackGlow = vec3(0.4, 0.3, 0.5) * glowIntensity * chessPattern * 0.5;
-        
-        col=base*diff + fres*1.4 + whiteGlow + blackGlow;
-
-        // Depth fog for realism
-        col*=exp(-d*.035);
+        col=base*diff + fres*2.2;
+        col*=exp(-d*.038);
     }
 
-    // 🎬 VERY LATE FADE (gives long visual experience)
-    float fadeStart = 18.0;
-    float fade = clamp((t-fadeStart)/4.0,0.0,1.0);
+    // Long descent into void
+    float fade = smoothstep(26.0, 34.0, t);
     col = mix(col, vec3(0), fade);
 
     gl_FragColor=vec4(col,1.);
@@ -126,7 +122,11 @@ void main() {
 }
 `;
 
-export const ChessShaderBackground = () => {
+interface Props {
+  onFadeComplete?: () => void;
+}
+
+export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -134,15 +134,11 @@ export const ChessShaderBackground = () => {
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
   const animationRef = useRef<number>(0);
   const startTimeRef = useRef<number>(Date.now());
-  const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const targetMouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const scrollRef = useRef<number>(0);
-  const targetScrollRef = useRef<number>(0);
+  const fadeCalledRef = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
@@ -164,14 +160,11 @@ export const ChessShaderBackground = () => {
     containerRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // Create fullscreen quad
     const geometry = new THREE.PlaneGeometry(2, 2);
     const material = new THREE.ShaderMaterial({
       uniforms: {
         iTime: { value: 0 },
         iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-        iMouse: { value: new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2) },
-        iScroll: { value: 0 }
       },
       vertexShader,
       fragmentShader,
@@ -183,46 +176,6 @@ export const ChessShaderBackground = () => {
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
-    // Mouse tracking with smooth interpolation
-    const handleMouseMove = (e: MouseEvent) => {
-      targetMouseRef.current.x = e.clientX;
-      targetMouseRef.current.y = window.innerHeight - e.clientY; // Flip Y for shader
-    };
-
-    // Touch tracking for mobile
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        targetMouseRef.current.x = touch.clientX;
-        targetMouseRef.current.y = window.innerHeight - touch.clientY;
-      }
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        targetMouseRef.current.x = touch.clientX;
-        targetMouseRef.current.y = window.innerHeight - touch.clientY;
-      }
-    };
-
-    // Scroll tracking
-    const handleScroll = () => {
-      targetScrollRef.current = window.scrollY;
-    };
-
-    // Wheel event for scroll-like motion even on single-page
-    const handleWheel = (e: WheelEvent) => {
-      targetScrollRef.current += e.deltaY;
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('wheel', handleWheel);
-
-    // Animation loop with visibility check
     let isVisible = true;
 
     const handleVisibilityChange = () => {
@@ -241,14 +194,11 @@ export const ChessShaderBackground = () => {
       const elapsed = (Date.now() - startTimeRef.current) / 1000;
       material.uniforms.iTime.value = elapsed;
 
-      // Smooth mouse interpolation (lerp factor 0.08 for natural feel)
-      mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * 0.08;
-      mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * 0.08;
-      material.uniforms.iMouse.value.set(mouseRef.current.x, mouseRef.current.y);
-
-      // Smooth scroll interpolation
-      scrollRef.current += (targetScrollRef.current - scrollRef.current) * 0.1;
-      material.uniforms.iScroll.value = scrollRef.current;
+      // Notify when fade to black is complete (~35s)
+      if (elapsed > 35 && !fadeCalledRef.current) {
+        fadeCalledRef.current = true;
+        onFadeComplete?.();
+      }
 
       renderer.render(scene, camera);
       animationRef.current = requestAnimationFrame(animate);
@@ -256,11 +206,9 @@ export const ChessShaderBackground = () => {
 
     animate();
 
-    // Handle resize
     const handleResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      
       renderer.setSize(width, height);
       material.uniforms.iResolution.value.set(
         width * renderer.getPixelRatio(),
@@ -270,15 +218,9 @@ export const ChessShaderBackground = () => {
 
     window.addEventListener('resize', handleResize);
 
-    // Cleanup
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('wheel', handleWheel);
       cancelAnimationFrame(animationRef.current);
       
       if (rendererRef.current && containerRef.current) {
@@ -288,7 +230,7 @@ export const ChessShaderBackground = () => {
       geometry.dispose();
       material.dispose();
     };
-  }, []);
+  }, [onFadeComplete]);
 
   return (
     <div 
@@ -299,11 +241,10 @@ export const ChessShaderBackground = () => {
         left: 0,
         width: '100vw',
         height: '100vh',
-        zIndex: -1,
+        zIndex: 0,
         background: '#000',
         overflow: 'hidden'
       }}
-    >
-    </div>
+    />
   );
 };
