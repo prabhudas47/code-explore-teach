@@ -140,8 +140,8 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
   const animationRef = useRef<number>(0);
   const startTimeRef = useRef<number>(Date.now());
   const fadeCalledRef = useRef(false);
-  const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const targetMouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const mouseRef = useRef<{ x: number; y: number }>({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+  const targetMouseRef = useRef<{ x: number; y: number }>({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -158,7 +158,8 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       powerPreference: 'high-performance'
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    const dpr = Math.min(window.devicePixelRatio, 1.5);
+    renderer.setPixelRatio(dpr);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = '0';
     renderer.domElement.style.left = '0';
@@ -171,8 +172,8 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     const material = new THREE.ShaderMaterial({
       uniforms: {
         iTime: { value: 0 },
-        iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-        iMouse: { value: new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2) },
+        iResolution: { value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr) },
+        iMouse: { value: new THREE.Vector2(window.innerWidth * dpr / 2, window.innerHeight * dpr / 2) },
       },
       vertexShader,
       fragmentShader,
@@ -220,7 +221,8 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       // Fast mouse lerp - nearly instant reaction
       mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * 0.3;
       mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * 0.3;
-      material.uniforms.iMouse.value.set(mouseRef.current.x, mouseRef.current.y);
+      const pr = renderer.getPixelRatio();
+      material.uniforms.iMouse.value.set(mouseRef.current.x * pr, mouseRef.current.y * pr);
 
       // Notify when fade to black is complete (~35s)
       if (elapsed > 35 && !fadeCalledRef.current) {
