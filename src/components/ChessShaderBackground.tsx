@@ -130,13 +130,15 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     cameraRef.current = camera;
 
+    const isMobile = window.innerWidth < 768;
     const renderer = new THREE.WebGLRenderer({ 
       antialias: false,
       alpha: true,
-      powerPreference: 'high-performance'
+      powerPreference: isMobile ? 'default' : 'high-performance'
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    const dpr = Math.min(window.devicePixelRatio, 1.5);
+    // Lower pixel ratio on mobile for smooth performance
+    const dpr = isMobile ? Math.min(window.devicePixelRatio, 1.0) : Math.min(window.devicePixelRatio, 1.5);
     renderer.setPixelRatio(dpr);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.top = '0';
@@ -174,8 +176,17 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
         targetMouseRef.current.y = window.innerHeight - e.touches[0].clientY;
       }
     };
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        targetMouseRef.current.x = e.touches[0].clientX;
+        targetMouseRef.current.y = window.innerHeight - e.touches[0].clientY;
+        mouseRef.current.x = e.touches[0].clientX;
+        mouseRef.current.y = window.innerHeight - e.touches[0].clientY;
+      }
+    };
 
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     let isVisible = true;
@@ -218,18 +229,23 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       const width = window.innerWidth;
       const height = window.innerHeight;
       renderer.setSize(width, height);
-      material.uniforms.iResolution.value.set(
-        width * renderer.getPixelRatio(),
-        height * renderer.getPixelRatio()
-      );
+      const currentDpr = renderer.getPixelRatio();
+      material.uniforms.iResolution.value.set(width * currentDpr, height * currentDpr);
+      // Reset mouse to center on resize/orientation change
+      mouseRef.current.x = width / 2;
+      mouseRef.current.y = height / 2;
+      targetMouseRef.current.x = width / 2;
+      targetMouseRef.current.y = height / 2;
     };
 
     window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', () => setTimeout(handleResize, 100));
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       cancelAnimationFrame(animationRef.current);
       
