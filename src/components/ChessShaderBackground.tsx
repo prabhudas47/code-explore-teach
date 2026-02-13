@@ -13,35 +13,25 @@ float chess(vec3 p){
     return mod(g.x+g.y+g.z,2.0);
 }
 
-// TRUE OCEAN MOTION (directional swell)
-float waveHeight(vec3 p){
-    float t = iTime;
-    float swell =
-        sin(p.z*0.12 - t*0.35)*1.8 +
-        sin(p.z*0.08 - t*0.22)*1.4;
-    float cross =
-        sin(p.x*0.18 + t*0.2)*0.9;
-    float mid =
-        sin((p.x+p.z)*0.35 + t*0.9)*0.45;
-    float small =
-        sin(p.x*1.4 + t*2.5)*0.07;
-    return swell + cross + mid + small;
-}
-
+// More organic living terrain
 float terrain(vec3 p){
-    p.y += waveHeight(p);
+    p.y += sin(p.x*0.35+iTime*0.5)*0.4;
+    p.y += sin(p.z*0.45-iTime*0.6)*0.35;
+    p.y += sin((p.x+p.z)*0.2+iTime*0.4)*0.25;
     return p.y + 3.0;
 }
 
-float map(vec3 p){ return terrain(p); }
+float map(vec3 p){
+    return terrain(p);
+}
 
 float trace(vec3 ro,vec3 rd){
     float d=0.;
-    for(int i=0;i<160;i++){
+    for(int i=0;i<150;i++){
         vec3 p=ro+rd*d;
         float h=map(p);
-        if(h<.001||d>320.)break;
-        d+=h*.75;
+        if(h<.001||d>250.)break;
+        d+=h*.8;
     }
     return d;
 }
@@ -64,57 +54,45 @@ void main()
     // Normalized mouse (-0.5 to 0.5)
     vec2 mouse = iMouse / iResolution - 0.5;
 
-    float speed = 1.0;
-    // Mouse Y (moving cursor down) pushes camera forward
-    float camZ = 28.0 - t*speed - mouse.y * 8.0;
-
-    float wNow  = waveHeight(vec3(0.,0.,camZ));
-    float wPrev = waveHeight(vec3(0.,0.,camZ+1.2));
-    float camY = 2.3 + wNow*0.75;
-
+    float speed = 1.2;
     vec3 ro = vec3(
-        sin(t*0.15)*1.0 + mouse.x * 3.0,
-        camY + mouse.y * 1.0,
-        camZ
+        sin(t*0.2)*1.5 + mouse.x * 3.0,
+        2.5 + sin(t*0.6)*0.3 + mouse.y * 1.0,
+        18.0 - t*speed - mouse.y * 6.0
     );
 
     vec3 ta = vec3(
         mouse.x * 2.0,
-        2.0 + wPrev*0.6 + mouse.y * 0.5,
-        camZ-6.0
+        0.0 + mouse.y * 0.5,
+        ro.z-6.0
     );
 
     vec3 f=normalize(ta-ro);
     vec3 r=normalize(cross(vec3(0,1,0),f));
     vec3 u=cross(f,r);
-
-    float roll = sin(t*0.4)*0.12 + sin(t*0.9)*0.06;
-    vec2 rr = rot(roll)*vec2(r.x, r.y);
-    r.x = rr.x; r.y = rr.y;
-
     vec3 rd=normalize(f+uv.x*r+uv.y*u);
 
     float d=trace(ro,rd);
     vec3 col=vec3(0);
 
-    if(d<320.){
+    if(d<250.){
         vec3 p=ro+rd*d;
         vec3 n=norm(p);
 
-        vec3 white=vec3(2.2);
+        vec3 white=vec3(1.95);
         vec3 black=vec3(0.01);
         vec3 base=mix(white,black,chess(p));
 
-        vec3 light=normalize(vec3(.3,.85,.4));
+        vec3 light=normalize(vec3(.6,.9,.7));
         float diff=max(dot(n,light),0.);
-        float fres=pow(1.-max(dot(n,-rd),0.),4.0);
+        float fres=pow(1.-max(dot(n,-rd),0.),3.);
 
-        col=base*diff + fres*2.2;
-        col*=exp(-d*.038);
+        col=base*diff + fres*1.4;
+        col*=exp(-d*.035);
     }
 
-    // Long descent into void
-    float fade = smoothstep(26.0, 34.0, t);
+    float fadeStart = 18.0;
+    float fade = clamp((t-fadeStart)/4.0,0.0,1.0);
     col = mix(col, vec3(0), fade);
 
     gl_FragColor=vec4(col,1.);
@@ -224,8 +202,8 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       const pr = renderer.getPixelRatio();
       material.uniforms.iMouse.value.set(mouseRef.current.x * pr, mouseRef.current.y * pr);
 
-      // Notify when fade to black is complete (~35s)
-      if (elapsed > 35 && !fadeCalledRef.current) {
+      // Notify when fade to black is complete (~23s)
+      if (elapsed > 23 && !fadeCalledRef.current) {
         fadeCalledRef.current = true;
         onFadeComplete?.();
       }
