@@ -1,82 +1,169 @@
-/* Puzzle piece rising from water */
-@keyframes puzzleRise {
+/* ========== PUZZLE PIECE EMERGENCE ========== */
+
+.puzzle-piece-wrapper {
+  width: 220px;
+  height: 260px;
+}
+
+@media (min-width: 768px) {
+  .puzzle-piece-wrapper {
+    width: 280px;
+    height: 320px;
+  }
+}
+
+.puzzle-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.04))
+          drop-shadow(0 20px 60px rgba(0, 0, 0, 0.8));
+}
+
+/* Piece starts fully below screen, rises up through the "water surface" */
+.puzzle-piece-container {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+@keyframes emerge {
   0% {
-    transform: translateY(120vh) rotate(8deg);
+    transform: translateY(100%);
     opacity: 0;
   }
-  30% {
-    opacity: 0.6;
-    transform: translateY(20vh) rotate(3deg);
+  15% {
+    opacity: 0.4;
   }
-  60% {
-    transform: translateY(-2vh) rotate(-1deg);
+  40% {
+    transform: translateY(15%) rotate(1.5deg);
+    opacity: 0.85;
+  }
+  65% {
+    transform: translateY(-8%) rotate(-0.8deg);
+    opacity: 1;
   }
   80% {
-    transform: translateY(1vh) rotate(0.5deg);
+    transform: translateY(2%) rotate(0.3deg);
   }
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(-25%) rotate(0deg);
     opacity: 1;
   }
 }
 
-.puzzle-rise {
-  animation: puzzleRise 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.puzzle-emerge {
+  animation: emerge 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-@keyframes puzzleFadeOut {
-  to {
-    opacity: 0;
-    transform: scale(0.92) translateY(-10px);
-  }
-}
-
-.puzzle-fade-out {
-  animation: puzzleFadeOut 2s ease-in forwards;
-}
-
-/* Water drops falling from puzzle */
-@keyframes waterDrop {
+@keyframes sink {
   0% {
-    transform: translateY(0);
-    opacity: 0.5;
+    transform: translateY(-25%) rotate(0deg);
+    opacity: 1;
   }
   100% {
-    transform: translateY(80px);
+    transform: translateY(-25%) rotate(0deg);
     opacity: 0;
   }
 }
 
-.water-drop {
-  animation: waterDrop 1.5s ease-in forwards;
+.puzzle-sink {
+  animation: sink 2s ease-in forwards;
 }
-.drop-1 { animation-delay: 0.3s; }
-.drop-2 { animation-delay: 0.6s; }
-.drop-3 { animation-delay: 0.9s; }
-.drop-4 { animation-delay: 1.2s; }
-.drop-5 { animation-delay: 1.5s; }
 
-/* Ripple rings when puzzle emerges */
-@keyframes rippleExpand {
+/* ========== WATER SURFACE ========== */
+
+@keyframes surfaceShimmer {
+  0%, 100% { opacity: 0; }
+  30% { opacity: 0.06; }
+  70% { opacity: 0.03; }
+}
+
+.water-surface-line {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.04) 20%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 80%,
+    transparent 100%
+  );
+  animation: surfaceShimmer 3s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+/* ========== SPLASH PARTICLES ========== */
+
+@keyframes splash {
   0% {
-    width: 20px;
-    height: 6px;
-    opacity: 0.4;
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-40px) scale(0.7);
+    opacity: 0.3;
   }
   100% {
-    width: 300px;
-    height: 20px;
+    transform: translateY(20px) scale(0.2);
     opacity: 0;
   }
 }
 
-.ripple-ring {
+.splash-particle {
   position: absolute;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  width: 3px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  animation: splash ease-out forwards;
+}
+
+/* ========== WATER RIPPLES ========== */
+
+@keyframes rippleOut {
+  0% {
+    width: 30px;
+    height: 8px;
+    opacity: 0.15;
+    border-width: 1px;
+  }
+  100% {
+    width: 500px;
+    height: 24px;
+    opacity: 0;
+    border-width: 0.5px;
+  }
+}
+
+.water-ripple {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  animation: rippleExpand 2s ease-out forwards;
+  animation: rippleOut 2.5s ease-out forwards;
 }
-.ring-1 { animation-delay: 0s; }
-.ring-2 { animation-delay: 0.4s; }
-.ring-3 { animation-delay: 0.8s; }
+
+.ripple-1 { animation-delay: 0.2s; }
+.ripple-2 { animation-delay: 0.6s; }
+.ripple-3 { animation-delay: 1.0s; }
+.ripple-4 { animation-delay: 1.5s; }
+
+/* ========== WATER DRIPS DOWN THE PIECE ========== */
+
+@keyframes dripDown {
+  0% {
+    transform: translateY(0);
+    opacity: 0.1;
+  }
+  100% {
+    transform: translateY(280px);
+    opacity: 0;
+  }
+}
+
+.water-drip {
+  animation: dripDown ease-in forwards;
+}
+
+.drip-1 { animation-duration: 2.5s; animation-delay: 0.8s; }
+.drip-2 { animation-duration: 3s;   animation-delay: 1.2s; }
+.drip-3 { animation-duration: 2.2s; animation-delay: 0.5s; }
+.drip-4 { animation-duration: 2.8s; animation-delay: 1.5s; }
+.drip-5 { animation-duration: 2.6s; animation-delay: 1.0s; }
