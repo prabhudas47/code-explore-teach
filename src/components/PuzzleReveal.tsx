@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 interface Props {
-  triggerAt?: number; // seconds after mount to show
+  triggerAt?: number;
 }
 
 export const PuzzleReveal = ({ triggerAt = 12 }: Props) => {
@@ -9,137 +9,188 @@ export const PuzzleReveal = ({ triggerAt = 12 }: Props) => {
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase('rising'), triggerAt * 1000);
-    const t2 = setTimeout(() => setPhase('text'), (triggerAt + 2.5) * 1000);
-    const t3 = setTimeout(() => setPhase('fading'), (triggerAt + 5.5) * 1000);
+    const t2 = setTimeout(() => setPhase('text'), (triggerAt + 3) * 1000);
+    const t3 = setTimeout(() => setPhase('fading'), (triggerAt + 6) * 1000);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [triggerAt]);
 
   if (phase === 'hidden') return null;
 
   return (
-    <div className="fixed inset-0 z-[5] pointer-events-none flex items-center justify-center">
-      {/* Puzzle piece container */}
-      <div
-        className={`
-          relative transition-all ease-out
-          ${phase === 'rising' ? 'duration-[2500ms] translate-y-0 opacity-100 scale-100' : ''}
-          ${phase === 'text' ? 'duration-1000 translate-y-0 opacity-100 scale-100' : ''}
-          ${phase === 'fading' ? 'duration-[2000ms] translate-y-0 opacity-0 scale-95' : ''}
-          ${phase === 'rising' && 'animate-none'}
-        `}
-        style={{
-          transform: phase === 'rising' ? undefined : undefined,
-          // initial position handled by CSS animation
-        }}
-      >
-        <svg
-          width="320"
-          height="360"
-          viewBox="0 0 320 360"
-          className={`
-            drop-shadow-[0_0_60px_rgba(255,255,255,0.15)]
-            ${phase === 'rising' ? 'puzzle-rise' : ''}
-            ${phase === 'fading' ? 'puzzle-fade-out' : ''}
-          `}
-        >
-          <defs>
-            <clipPath id="puzzleClip">
-              <path d={puzzlePath} />
-            </clipPath>
-            <linearGradient id="puzzleGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#1a1a1a" />
-              <stop offset="100%" stopColor="#0a0a0a" />
-            </linearGradient>
-            <filter id="puzzleGlow">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
+    <div className="fixed inset-0 z-[5] pointer-events-none overflow-hidden">
+      {/* Water surface line - the "ocean surface" the piece rises through */}
+      <div className="absolute bottom-[38%] left-0 right-0 h-[2px] water-surface-line" />
 
-          {/* Puzzle piece body */}
-          <path
-            d={puzzlePath}
-            fill="url(#puzzleGrad)"
-            stroke="rgba(255,255,255,0.12)"
-            strokeWidth="1.5"
-            filter="url(#puzzleGlow)"
-          />
-
-          {/* Water drip effects */}
-          {phase === 'rising' && (
-            <>
-              <circle className="water-drop drop-1" cx="80" cy="340" r="3" fill="rgba(255,255,255,0.2)" />
-              <circle className="water-drop drop-2" cx="160" cy="350" r="2.5" fill="rgba(255,255,255,0.15)" />
-              <circle className="water-drop drop-3" cx="240" cy="345" r="2" fill="rgba(255,255,255,0.18)" />
-              <circle className="water-drop drop-4" cx="120" cy="355" r="1.8" fill="rgba(255,255,255,0.12)" />
-              <circle className="water-drop drop-5" cx="200" cy="348" r="2.2" fill="rgba(255,255,255,0.14)" />
-            </>
-          )}
-
-          {/* Text inside puzzle */}
-          <foreignObject
-            x="30" y="60" width="260" height="240"
-            clipPath="url(#puzzleClip)"
-          >
+      {/* Splash particles at surface level when piece breaks through */}
+      {(phase === 'rising') && (
+        <div className="absolute bottom-[38%] left-1/2 -translate-x-1/2 w-[400px] h-[100px]">
+          {Array.from({ length: 14 }).map((_, i) => (
             <div
-              className={`
-                flex flex-col items-center justify-center h-full text-center px-4
-                transition-opacity duration-[1500ms] ease-in-out
-                ${phase === 'text' || phase === 'fading' ? 'opacity-100' : 'opacity-0'}
-              `}
-            >
-              <p className="text-white/60 text-[10px] tracking-[0.4em] uppercase mb-3 font-light">
-                Prepare yourself
-              </p>
-              <p className="text-white text-lg font-light leading-relaxed tracking-wide">
-                You're about to enter
-              </p>
-              <p className="text-white text-lg font-light leading-relaxed tracking-wide">
-                another world
-              </p>
-              <div className="w-8 h-[1px] bg-white/20 my-3" />
-              <p className="text-white/40 text-[11px] tracking-[0.2em] uppercase font-light">
-                Portfolio awaits
-              </p>
-            </div>
-          </foreignObject>
-        </svg>
-      </div>
-
-      {/* Ripple effect at bottom when puzzle emerges */}
-      {phase === 'rising' && (
-        <div className="absolute bottom-[20%] left-1/2 -translate-x-1/2">
-          <div className="ripple-ring ring-1" />
-          <div className="ripple-ring ring-2" />
-          <div className="ripple-ring ring-3" />
+              key={i}
+              className="splash-particle"
+              style={{
+                left: `${20 + Math.random() * 60}%`,
+                animationDelay: `${0.1 + Math.random() * 0.8}s`,
+                animationDuration: `${0.8 + Math.random() * 0.6}s`,
+              }}
+            />
+          ))}
         </div>
       )}
+
+      {/* Ripples on the water surface */}
+      {(phase === 'rising') && (
+        <div className="absolute bottom-[38%] left-1/2 -translate-x-1/2">
+          <div className="water-ripple ripple-1" />
+          <div className="water-ripple ripple-2" />
+          <div className="water-ripple ripple-3" />
+          <div className="water-ripple ripple-4" />
+        </div>
+      )}
+
+      {/* The puzzle piece — starts fully below, rises up through the surface */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 puzzle-piece-wrapper">
+        <div className={`puzzle-piece-container ${phase === 'rising' || phase === 'text' ? 'puzzle-emerge' : ''} ${phase === 'fading' ? 'puzzle-sink' : ''}`}>
+          <svg
+            viewBox="0 0 260 300"
+            className="puzzle-svg"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              {/* Realistic matte dark surface */}
+              <linearGradient id="matteSurface" x1="0" y1="0" x2="0.2" y2="1">
+                <stop offset="0%" stopColor="#1c1c1c" />
+                <stop offset="40%" stopColor="#111111" />
+                <stop offset="100%" stopColor="#0a0a0a" />
+              </linearGradient>
+
+              {/* Subtle edge light */}
+              <linearGradient id="edgeLight" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.08)" />
+                <stop offset="50%" stopColor="rgba(255,255,255,0.02)" />
+                <stop offset="100%" stopColor="rgba(255,255,255,0.06)" />
+              </linearGradient>
+
+              {/* Inner shadow for depth */}
+              <filter id="innerDepth">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur" />
+                <feOffset dx="2" dy="3" result="offsetBlur" />
+                <feFlood floodColor="rgba(0,0,0,0.6)" result="color" />
+                <feComposite in="color" in2="offsetBlur" operator="in" result="shadow" />
+                <feComposite in="SourceGraphic" in2="shadow" operator="over" />
+              </filter>
+
+              {/* Ambient glow */}
+              <filter id="ambientGlow">
+                <feGaussianBlur stdDeviation="15" result="glow" />
+                <feMerge>
+                  <feMergeNode in="glow" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+
+              <clipPath id="puzzleShape">
+                <path d={PUZZLE_PATH} />
+              </clipPath>
+            </defs>
+
+            {/* Outer glow/ambient */}
+            <path
+              d={PUZZLE_PATH}
+              fill="rgba(255,255,255,0.03)"
+              filter="url(#ambientGlow)"
+            />
+
+            {/* Main puzzle body */}
+            <path
+              d={PUZZLE_PATH}
+              fill="url(#matteSurface)"
+              filter="url(#innerDepth)"
+            />
+
+            {/* Edge highlight */}
+            <path
+              d={PUZZLE_PATH}
+              fill="none"
+              stroke="url(#edgeLight)"
+              strokeWidth="1"
+            />
+
+            {/* Subtle surface texture lines */}
+            <g clipPath="url(#puzzleShape)" opacity="0.03">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <line
+                  key={i}
+                  x1={0} y1={i * 26} x2={260} y2={i * 26 + 8}
+                  stroke="white" strokeWidth="0.5"
+                />
+              ))}
+            </g>
+
+            {/* Water drips running down the piece */}
+            {(phase === 'rising' || phase === 'text') && (
+              <g clipPath="url(#puzzleShape)">
+                <rect className="water-drip drip-1" x="60" y="-20" width="2" height="30" rx="1" fill="rgba(255,255,255,0.08)" />
+                <rect className="water-drip drip-2" x="130" y="-10" width="1.5" height="25" rx="1" fill="rgba(255,255,255,0.06)" />
+                <rect className="water-drip drip-3" x="190" y="-30" width="2" height="35" rx="1" fill="rgba(255,255,255,0.07)" />
+                <rect className="water-drip drip-4" x="95" y="-15" width="1" height="20" rx="1" fill="rgba(255,255,255,0.05)" />
+                <rect className="water-drip drip-5" x="165" y="-25" width="1.5" height="28" rx="1" fill="rgba(255,255,255,0.06)" />
+              </g>
+            )}
+
+            {/* Text content */}
+            <foreignObject x="25" y="50" width="210" height="200" clipPath="url(#puzzleShape)">
+              <div
+                className={`
+                  flex flex-col items-center justify-center h-full text-center
+                  transition-opacity ease-in-out
+                  ${phase === 'text' || phase === 'fading' ? 'opacity-100 duration-[2000ms]' : 'opacity-0 duration-500'}
+                `}
+              >
+                <p className="text-white/40 text-[9px] tracking-[0.5em] uppercase mb-2 font-extralight">
+                  Brace yourself
+                </p>
+                <div className="w-5 h-[0.5px] bg-white/10 mb-3" />
+                <p className="text-white/90 text-base font-extralight leading-relaxed tracking-wider">
+                  Another world
+                </p>
+                <p className="text-white/90 text-base font-extralight leading-relaxed tracking-wider">
+                  awaits you
+                </p>
+                <div className="w-5 h-[0.5px] bg-white/10 mt-3 mb-2" />
+                <p className="text-white/25 text-[8px] tracking-[0.3em] uppercase font-light">
+                  Portfolio
+                </p>
+              </div>
+            </foreignObject>
+          </svg>
+        </div>
+      </div>
     </div>
   );
 };
 
-// Puzzle piece SVG path with knobs
-const puzzlePath = `
-  M 40,20
-  L 130,20
-  C 130,20 135,0 160,0
-  C 185,0 190,20 190,20
-  L 280,20
-  Q 300,20 300,40
-  L 300,120
-  C 300,120 320,125 320,150
-  C 320,175 300,180 300,180
-  L 300,260
-  Q 300,280 280,280
-  L 190,280
-  C 190,280 185,300 160,300
-  C 135,300 130,280 130,280
-  L 40,280
-  Q 20,280 20,260
-  L 20,180
-  C 20,180 0,175 0,150
-  C 0,125 20,120 20,120
-  L 20,40
-  Q 20,20 40,20
+// Natural puzzle piece path — smoother curves, organic knobs
+const PUZZLE_PATH = `
+  M 35,15
+  C 35,8 42,2 50,2
+  L 100,2
+  C 104,2 108,-8 120,-8
+  C 132,-8 136,2 140,2
+  L 210,2
+  C 218,2 225,8 225,15
+  L 225,85
+  C 225,89 235,93 235,105
+  C 235,117 225,121 225,125
+  L 225,210
+  C 225,218 218,225 210,225
+  L 140,225
+  C 136,225 132,235 120,235
+  C 108,235 104,225 100,225
+  L 50,225
+  C 42,225 35,218 35,210
+  L 35,125
+  C 35,121 25,117 25,105
+  C 25,93 35,89 35,85
   Z
 `;
