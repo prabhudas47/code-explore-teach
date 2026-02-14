@@ -1,66 +1,61 @@
 /* ========== PUZZLE PIECE EMERGENCE ========== */
 
-.puzzle-piece-wrapper {
-  width: 220px;
-  height: 260px;
+.puzzle-svg {
+  width: 200px;
+  height: 220px;
+  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.08))
+          drop-shadow(0 0 80px rgba(255, 255, 255, 0.04));
 }
 
 @media (min-width: 768px) {
-  .puzzle-piece-wrapper {
-    width: 280px;
-    height: 320px;
+  .puzzle-svg {
+    width: 260px;
+    height: 280px;
   }
 }
 
-.puzzle-svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.04))
-          drop-shadow(0 20px 60px rgba(0, 0, 0, 0.8));
-}
-
-/* Piece starts fully below screen, rises up through the "water surface" */
+/* Piece starts below center, rises up into view */
 .puzzle-piece-container {
-  transform: translateY(100%);
+  transform: translateY(60vh);
   opacity: 0;
 }
 
 @keyframes emerge {
   0% {
-    transform: translateY(100%);
+    transform: translateY(60vh) rotate(5deg);
     opacity: 0;
   }
-  15% {
-    opacity: 0.4;
+  20% {
+    opacity: 0.6;
+    transform: translateY(10vh) rotate(2deg);
   }
-  40% {
-    transform: translateY(15%) rotate(1.5deg);
-    opacity: 0.85;
-  }
-  65% {
-    transform: translateY(-8%) rotate(-0.8deg);
+  50% {
+    transform: translateY(-3vh) rotate(-1deg);
     opacity: 1;
   }
-  80% {
-    transform: translateY(2%) rotate(0.3deg);
+  70% {
+    transform: translateY(1vh) rotate(0.3deg);
+  }
+  85% {
+    transform: translateY(-0.5vh) rotate(-0.1deg);
   }
   100% {
-    transform: translateY(-25%) rotate(0deg);
+    transform: translateY(0) rotate(0deg);
     opacity: 1;
   }
 }
 
 .puzzle-emerge {
-  animation: emerge 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: emerge 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes sink {
   0% {
-    transform: translateY(-25%) rotate(0deg);
+    transform: translateY(0) rotate(0deg);
     opacity: 1;
   }
   100% {
-    transform: translateY(-25%) rotate(0deg);
+    transform: translateY(0) rotate(0deg);
     opacity: 0;
   }
 }
@@ -69,39 +64,19 @@
   animation: sink 2s ease-in forwards;
 }
 
-/* ========== WATER SURFACE ========== */
-
-@keyframes surfaceShimmer {
-  0%, 100% { opacity: 0; }
-  30% { opacity: 0.06; }
-  70% { opacity: 0.03; }
-}
-
-.water-surface-line {
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255,255,255,0.04) 20%,
-    rgba(255,255,255,0.08) 50%,
-    rgba(255,255,255,0.04) 80%,
-    transparent 100%
-  );
-  animation: surfaceShimmer 3s ease-in-out;
-  animation-fill-mode: forwards;
-}
-
 /* ========== SPLASH PARTICLES ========== */
 
 @keyframes splash {
   0% {
     transform: translateY(0) scale(1);
-    opacity: 0.6;
+    opacity: 0.7;
   }
-  50% {
-    transform: translateY(-40px) scale(0.7);
-    opacity: 0.3;
+  40% {
+    transform: translateY(-50px) scale(0.8);
+    opacity: 0.4;
   }
   100% {
-    transform: translateY(20px) scale(0.2);
+    transform: translateY(30px) scale(0.1);
     opacity: 0;
   }
 }
@@ -110,7 +85,7 @@
   position: absolute;
   width: 3px;
   height: 3px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   animation: splash ease-out forwards;
 }
@@ -119,14 +94,14 @@
 
 @keyframes rippleOut {
   0% {
-    width: 30px;
-    height: 8px;
-    opacity: 0.15;
+    width: 20px;
+    height: 6px;
+    opacity: 0.2;
     border-width: 1px;
   }
   100% {
-    width: 500px;
-    height: 24px;
+    width: 450px;
+    height: 20px;
     opacity: 0;
     border-width: 0.5px;
   }
@@ -134,26 +109,26 @@
 
 .water-ripple {
   position: absolute;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   animation: rippleOut 2.5s ease-out forwards;
 }
 
-.ripple-1 { animation-delay: 0.2s; }
-.ripple-2 { animation-delay: 0.6s; }
+.ripple-1 { animation-delay: 0s; }
+.ripple-2 { animation-delay: 0.5s; }
 .ripple-3 { animation-delay: 1.0s; }
-.ripple-4 { animation-delay: 1.5s; }
+.ripple-4 { animation-delay: 1.6s; }
 
-/* ========== WATER DRIPS DOWN THE PIECE ========== */
+/* ========== WATER DRIPS ========== */
 
 @keyframes dripDown {
   0% {
     transform: translateY(0);
-    opacity: 0.1;
+    opacity: 0.15;
   }
   100% {
-    transform: translateY(280px);
+    transform: translateY(260px);
     opacity: 0;
   }
 }
