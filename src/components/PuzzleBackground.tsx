@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import './PuzzleBackgroundStyles.css';
 
 // Generate jigsaw puzzle piece SVG path with tabs/blanks
 const generatePuzzlePiecePath = (
@@ -201,28 +202,45 @@ export const PuzzleBackground = () => {
 
         {/* Puzzle pieces */}
         <g filter="url(#surfaceTexture)">
-          {pieces.map((piece) => (
-            <g key={piece.id}>
-              {/* Piece fill */}
-              <path
-                d={piece.path}
-                fill="#050505"
-                stroke="rgba(255,255,255,0.35)"
-                strokeWidth="1.2"
-                strokeLinejoin="round"
-              />
-              {/* Key light overlay */}
-              <path
-                d={piece.path}
-                fill="url(#keyLight)"
-              />
-              {/* Rim light overlay */}
-              <path
-                d={piece.path}
-                fill="url(#rimLight)"
-              />
-            </g>
-          ))}
+          {pieces.map((piece, i) => {
+            const delay = ((i * 0.37) % 4).toFixed(2);
+            const delayAlt = (((i * 0.53) + 1.5) % 5).toFixed(2);
+            return (
+              <g key={piece.id}>
+                {/* Piece fill */}
+                <path
+                  d={piece.path}
+                  fill="#050505"
+                  stroke="rgba(255,255,255,0.12)"
+                  strokeWidth="0.8"
+                  strokeLinejoin="round"
+                />
+                {/* Animated traveling white border */}
+                <path
+                  d={piece.path}
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                  className="wall-border-anim"
+                  style={{ animationDelay: `${delay}s` }}
+                />
+                <path
+                  d={piece.path}
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="1.2"
+                  strokeLinejoin="round"
+                  className="wall-border-anim-reverse"
+                  style={{ animationDelay: `${delayAlt}s` }}
+                />
+                {/* Key light overlay */}
+                <path d={piece.path} fill="url(#keyLight)" />
+                {/* Rim light overlay */}
+                <path d={piece.path} fill="url(#rimLight)" />
+              </g>
+            );
+          })}
         </g>
 
         {/* Vignette overlay */}

@@ -1,0 +1,33 @@
+/* ========== WALL PUZZLE BORDER ANIMATIONS ========== */
+
+@keyframes wallBorderTravel {
+  0% {
+    stroke-dashoffset: 1400;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes wallBorderTravelReverse {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 1400;
+  }
+}
+
+.wall-border-anim {
+  stroke-dasharray: 60 1340;
+  stroke-dashoffset: 1400;
+  animation: wallBorderTravel 5s linear infinite;
+  opacity: 0.7;
+}
+
+.wall-border-anim-reverse {
+  stroke-dasharray: 40 1360;
+  stroke-dashoffset: 0;
+  animation: wallBorderTravelReverse 7s linear infinite;
+  opacity: 0.4;
+}
