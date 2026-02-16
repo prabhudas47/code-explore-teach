@@ -142,3 +142,37 @@
 .drip-3 { animation-duration: 2.2s; animation-delay: 0.5s; }
 .drip-4 { animation-duration: 2.8s; animation-delay: 1.5s; }
 .drip-5 { animation-duration: 2.6s; animation-delay: 1.0s; }
+
+/* ========== ANIMATED WHITE BORDER ========== */
+
+@keyframes borderTravel {
+  0% {
+    stroke-dashoffset: 1200;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes borderTravelReverse {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 1200;
+  }
+}
+
+.puzzle-border-anim {
+  stroke-dasharray: 80 1120;
+  stroke-dashoffset: 1200;
+  animation: borderTravel 3s linear infinite;
+  opacity: 0.9;
+}
+
+.puzzle-border-anim-reverse {
+  stroke-dasharray: 50 1150;
+  stroke-dashoffset: 0;
+  animation: borderTravelReverse 4s linear infinite;
+  opacity: 0.6;
+}
