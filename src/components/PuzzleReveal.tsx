@@ -60,24 +60,16 @@ export const PuzzleReveal = ({ triggerAt = 12 }: Props) => {
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              {/* Glass-like translucent fill so chess terrain shows through */}
               <linearGradient id="puzzleFill" x1="0" y1="0" x2="0.3" y2="1">
-                <stop offset="0%" stopColor="rgba(30,30,30,0.85)" />
-                <stop offset="50%" stopColor="rgba(15,15,15,0.9)" />
-                <stop offset="100%" stopColor="rgba(8,8,8,0.88)" />
-              </linearGradient>
-
-              {/* Bright edge glow */}
-              <linearGradient id="edgeGlow" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
-                <stop offset="50%" stopColor="rgba(255,255,255,0.12)" />
-                <stop offset="100%" stopColor="rgba(255,255,255,0.3)" />
+                <stop offset="0%" stopColor="rgba(20,20,22,0.88)" />
+                <stop offset="50%" stopColor="rgba(10,10,12,0.92)" />
+                <stop offset="100%" stopColor="rgba(5,5,8,0.9)" />
               </linearGradient>
 
               {/* Outer glow filter */}
               <filter id="outerGlow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-                <feFlood floodColor="rgba(255,255,255,0.15)" result="color" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feFlood floodColor="rgba(255,255,255,0.12)" result="color" />
                 <feComposite in="color" in2="blur" operator="in" result="glow" />
                 <feMerge>
                   <feMergeNode in="glow" />
@@ -91,36 +83,48 @@ export const PuzzleReveal = ({ triggerAt = 12 }: Props) => {
               </clipPath>
             </defs>
 
-            {/* Outer ambient glow */}
+            {/* Soft outer glow */}
             <path
               d={PUZZLE_PATH}
               fill="none"
-              stroke="rgba(255,255,255,0.1)"
-              strokeWidth="6"
+              stroke="rgba(255,255,255,0.08)"
+              strokeWidth="8"
               filter="url(#outerGlow)"
             />
 
-            {/* Main puzzle body — semi-translucent dark */}
+            {/* Main puzzle body */}
             <path
               d={PUZZLE_PATH}
               fill="url(#puzzleFill)"
             />
 
-            {/* Bright visible edge */}
+            {/* Static white border */}
             <path
               d={PUZZLE_PATH}
               fill="none"
-              stroke="url(#edgeGlow)"
-              strokeWidth="1.5"
+              stroke="white"
+              strokeWidth="1.2"
+              strokeOpacity="0.7"
             />
 
-            {/* Inner highlight line for 3D depth */}
+            {/* Animated traveling light along border */}
             <path
               d={PUZZLE_PATH}
               fill="none"
-              stroke="rgba(255,255,255,0.06)"
-              strokeWidth="0.5"
-              transform="translate(1.5, 1.5) scale(0.988)"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              className="puzzle-border-anim"
+            />
+
+            {/* Second traveling light (opposite direction) */}
+            <path
+              d={PUZZLE_PATH}
+              fill="none"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              className="puzzle-border-anim-reverse"
             />
 
             {/* Water drips */}
@@ -166,27 +170,31 @@ export const PuzzleReveal = ({ triggerAt = 12 }: Props) => {
   );
 };
 
-// Natural puzzle piece path with organic knobs
+// Refined natural puzzle piece with smooth organic knobs
 const PUZZLE_PATH = `
-  M 35,12
-  C 35,5 42,0 50,0
-  L 100,0
-  C 105,0 110,-12 130,-12
-  C 150,-12 155,0 160,0
-  L 210,0
-  C 218,0 225,5 225,12
-  L 225,80
-  C 225,85 238,90 238,105
-  C 238,120 225,125 225,130
-  L 225,210
-  C 225,218 218,225 210,225
-  L 160,225
-  C 155,225 150,237 130,237
-  C 110,237 105,225 100,225
-  L 50,225
-  C 42,225 35,218 35,210
-  L 35,130
-  C 35,125 22,120 22,105
-  C 22,90 35,85 35,80
+  M 40,8
+  Q 40,0 48,0
+  L 95,0
+  C 98,0 102,-6 110,-10
+  C 118,-14 126,-14 134,-10
+  C 142,-6 146,0 149,0
+  L 208,0
+  Q 216,0 216,8
+  L 216,78
+  C 216,81 222,85 226,93
+  C 230,101 230,109 226,117
+  C 222,125 216,129 216,132
+  L 216,208
+  Q 216,216 208,216
+  L 149,216
+  C 146,216 142,222 134,226
+  C 126,230 118,230 110,226
+  C 102,222 98,216 95,216
+  L 48,216
+  Q 40,216 40,208
+  L 40,132
+  C 40,129 34,125 30,117
+  C 26,109 26,101 30,93
+  C 34,85 40,81 40,78
   Z
 `;
