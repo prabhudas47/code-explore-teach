@@ -220,7 +220,7 @@ export const PuzzleBackground = () => {
                   d={piece.path}
                   fill="none"
                   stroke="white"
-                  strokeWidth="2"
+                  strokeWidth="3.5"
                   strokeLinejoin="round"
                   className="wall-border-anim"
                   style={{ animationDelay: `${delay}s` }}
@@ -229,7 +229,7 @@ export const PuzzleBackground = () => {
                   d={piece.path}
                   fill="none"
                   stroke="white"
-                  strokeWidth="1.2"
+                  strokeWidth="2.5"
                   strokeLinejoin="round"
                   className="wall-border-anim-reverse"
                   style={{ animationDelay: `${delayAlt}s` }}
