@@ -19,15 +19,15 @@
 }
 
 .wall-border-anim {
-  stroke-dasharray: 60 1340;
+  stroke-dasharray: 40 1360;
   stroke-dashoffset: 1400;
-  animation: wallBorderTravel 5s linear infinite;
-  opacity: 0.7;
+  animation: wallBorderTravel 7s linear infinite;
+  opacity: 0.25;
 }
 
 .wall-border-anim-reverse {
-  stroke-dasharray: 40 1360;
+  stroke-dasharray: 30 1370;
   stroke-dashoffset: 0;
-  animation: wallBorderTravelReverse 7s linear infinite;
-  opacity: 0.4;
+  animation: wallBorderTravelReverse 9s linear infinite;
+  opacity: 0.15;
 }
