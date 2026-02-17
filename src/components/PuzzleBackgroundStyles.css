@@ -22,12 +22,14 @@
   stroke-dasharray: 40 1360;
   stroke-dashoffset: 1400;
   animation: wallBorderTravel 7s linear infinite;
-  opacity: 0.25;
+  opacity: 0.55;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.6));
 }
 
 .wall-border-anim-reverse {
   stroke-dasharray: 30 1370;
   stroke-dashoffset: 0;
   animation: wallBorderTravelReverse 9s linear infinite;
-  opacity: 0.15;
+  opacity: 0.4;
+  filter: drop-shadow(0 0 2px rgba(255,255,255,0.4));
 }
