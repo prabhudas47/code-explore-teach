@@ -207,13 +207,22 @@ export const PuzzleBackground = () => {
             const delayAlt = (((i * 0.53) + 1.5) % 5).toFixed(2);
             return (
               <g key={piece.id}>
-                {/* Piece fill */}
+                {/* Piece fill with breathing glow */}
                 <path
                   d={piece.path}
                   fill="#050505"
                   stroke="rgba(255,255,255,0.12)"
                   strokeWidth="0.8"
                   strokeLinejoin="round"
+                  className="piece-border-pulse"
+                  style={{ animationDelay: `${(i * 0.6 % 5).toFixed(2)}s` }}
+                />
+                {/* Breathing ambient glow overlay */}
+                <path
+                  d={piece.path}
+                  fill="rgba(255,255,255,1)"
+                  className="piece-breathe"
+                  style={{ animationDelay: `${(i * 0.8 % 6).toFixed(2)}s` }}
                 />
                 {/* Animated traveling white border */}
                 <path
