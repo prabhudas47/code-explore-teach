@@ -18,6 +18,22 @@
   }
 }
 
+/* Slow color shift across the wall */
+@keyframes wallColorShift {
+  0%, 100% {
+    filter: hue-rotate(0deg) saturate(1);
+  }
+  25% {
+    filter: hue-rotate(200deg) saturate(1.4);
+  }
+  50% {
+    filter: hue-rotate(30deg) saturate(1.6);
+  }
+  75% {
+    filter: hue-rotate(180deg) saturate(1.2);
+  }
+}
+
 /* Subtle breathing glow on each piece */
 @keyframes pieceBreathe {
   0%, 100% {

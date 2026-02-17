@@ -201,7 +201,7 @@ export const PuzzleBackground = () => {
         </g>
 
         {/* Puzzle pieces */}
-        <g filter="url(#surfaceTexture)">
+        <g filter="url(#surfaceTexture)" style={{ animation: 'wallColorShift 20s ease-in-out infinite' }}>
           {pieces.map((piece, i) => {
             const delay = ((i * 0.37) % 4).toFixed(2);
             const delayAlt = (((i * 0.53) + 1.5) % 5).toFixed(2);
