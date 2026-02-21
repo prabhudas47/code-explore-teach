@@ -210,9 +210,9 @@ export const PuzzleBackground = () => {
                 {/* Piece fill with breathing glow */}
                 <path
                   d={piece.path}
-                  fill="#050505"
-                  stroke="rgba(255,255,255,0.12)"
-                  strokeWidth="0.8"
+                  fill="#0a0a0a"
+                  stroke="rgba(255,255,255,0.3)"
+                  strokeWidth="1.4"
                   strokeLinejoin="round"
                   className="piece-border-pulse"
                   style={{ animationDelay: `${(i * 0.6 % 5).toFixed(2)}s` }}
