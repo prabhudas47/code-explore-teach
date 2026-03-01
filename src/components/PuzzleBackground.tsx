@@ -183,6 +183,15 @@ export const PuzzleBackground = () => {
             <feColorMatrix type="saturate" values="0" in="tex" result="grayTex" />
             <feBlend in="SourceGraphic" in2="grayTex" mode="multiply" />
           </filter>
+
+          {/* Colored glow filter for borders */}
+          <filter id="borderGlow" x="-10%" y="-10%" width="120%" height="120%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
 
         {/* Piece shadows layer (rendered behind pieces) */}
@@ -211,11 +220,22 @@ export const PuzzleBackground = () => {
                 <path
                   d={piece.path}
                   fill="#0a0a0a"
-                  stroke="rgba(255,255,255,0.3)"
-                  strokeWidth="1.4"
+                  stroke="rgba(255,255,255,0.35)"
+                  strokeWidth="1.6"
                   strokeLinejoin="round"
                   className="piece-border-pulse"
                   style={{ animationDelay: `${(i * 0.6 % 5).toFixed(2)}s` }}
+                />
+                {/* Colored glow border layer */}
+                <path
+                  d={piece.path}
+                  fill="none"
+                  stroke="rgba(100,180,255,0.2)"
+                  strokeWidth="3"
+                  strokeLinejoin="round"
+                  filter="url(#borderGlow)"
+                  className="piece-border-pulse"
+                  style={{ animationDelay: `${((i * 0.7 + 2) % 5).toFixed(2)}s` }}
                 />
                 {/* Breathing ambient glow overlay */}
                 <path
