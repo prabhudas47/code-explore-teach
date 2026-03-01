@@ -92,3 +92,13 @@
 .piece-border-pulse {
   animation: piecePulse 5s ease-in-out infinite;
 }
+
+/* Hover glow on individual puzzle pieces */
+.puzzle-piece-hover {
+  transition: filter 0.4s ease, opacity 0.4s ease;
+  cursor: pointer;
+}
+
+.puzzle-piece-hover:hover {
+  filter: brightness(1.8) drop-shadow(0 0 8px rgba(100, 180, 255, 0.5));
+}
