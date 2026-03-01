@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback, useRef } from 'react';
 import './PuzzleBackgroundStyles.css';
 
 // Generate jigsaw puzzle piece SVG path with tabs/blanks
@@ -80,6 +80,35 @@ interface PieceData {
 export const PuzzleBackground = () => {
   const cols = 7;
   const rows = 10;
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  const handlePieceClick = useCallback((e: React.MouseEvent<SVGGElement>, cx: number, cy: number) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    // Create ripple circle at piece center
+    const ripple = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    ripple.setAttribute('cx', String(cx));
+    ripple.setAttribute('cy', String(cy));
+    ripple.setAttribute('r', '0');
+    ripple.setAttribute('fill', 'none');
+    ripple.setAttribute('stroke', 'rgba(100,180,255,0.7)');
+    ripple.setAttribute('stroke-width', '3');
+    ripple.classList.add('piece-ripple');
+    svg.appendChild(ripple);
+
+    // Pop the clicked group
+    const g = e.currentTarget;
+    g.classList.add('piece-pop');
+    
+    setTimeout(() => {
+      g.classList.remove('piece-pop');
+    }, 500);
+
+    setTimeout(() => {
+      ripple.remove();
+    }, 800);
+  }, []);
 
   const pieces = useMemo(() => {
     const svgW = 1000;
@@ -132,6 +161,7 @@ export const PuzzleBackground = () => {
       <svg
         viewBox="0 0 1000 1400"
         preserveAspectRatio="xMidYMid slice"
+        ref={svgRef}
         className="absolute inset-0 w-full h-full"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -215,7 +245,7 @@ export const PuzzleBackground = () => {
             const delay = ((i * 0.37) % 4).toFixed(2);
             const delayAlt = (((i * 0.53) + 1.5) % 5).toFixed(2);
             return (
-              <g key={piece.id} className="puzzle-piece-hover">
+              <g key={piece.id} className="puzzle-piece-hover" onClick={(e) => handlePieceClick(e, piece.cx, piece.cy)}>
                 {/* Piece fill with breathing glow */}
                 <path
                   d={piece.path}
