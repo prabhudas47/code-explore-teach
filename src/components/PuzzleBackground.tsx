@@ -215,7 +215,7 @@ export const PuzzleBackground = () => {
             const delay = ((i * 0.37) % 4).toFixed(2);
             const delayAlt = (((i * 0.53) + 1.5) % 5).toFixed(2);
             return (
-              <g key={piece.id}>
+              <g key={piece.id} className="puzzle-piece-hover">
                 {/* Piece fill with breathing glow */}
                 <path
                   d={piece.path}
