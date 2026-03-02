@@ -24,11 +24,7 @@ export const PortfolioNav = () => {
         scrolled ? 'bg-background/80 backdrop-blur-md border-b border-border py-4' : 'py-6'
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-        <a href="#hero" className="text-sm font-semibold tracking-wider text-foreground uppercase">
-          DPK
-        </a>
-
+      <div className="max-w-6xl mx-auto px-6 flex items-center justify-center">
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
             <a
