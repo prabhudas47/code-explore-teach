@@ -7,42 +7,47 @@ export const ContactSection = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Future: send form
     alert('Message sent! (Demo)');
     setForm({ name: '', email: '', message: '' });
   };
 
   return (
     <section id="contact" className="py-24 sm:py-32 relative">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6" ref={ref}>
-        <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-foreground" style={{ fontFamily: "'Outfit', sans-serif" }}>
-            Let's Build Something <span className="text-gradient">Intelligent</span>
+      <div className="max-w-4xl mx-auto px-6" ref={ref}>
+        <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4">
+            Let's Build Something
+            <br />
+            Intelligent.
           </h2>
-          <p className="text-muted-foreground text-sm mb-10">Ready to collaborate? Reach out.</p>
-
-          <div className="flex flex-wrap justify-center gap-4 mb-14">
-            <a href="mailto:prabhudasu47@gmail.com" className="glass-card rounded-lg px-5 py-3 text-sm text-muted-foreground hover:text-primary transition-colors">
-              prabhudasu47@gmail.com
-            </a>
-            <a href="tel:6281002028" className="glass-card rounded-lg px-5 py-3 text-sm text-muted-foreground hover:text-primary transition-colors">
-              6281002028
-            </a>
-            <a
-              href="https://www.linkedin.com/in/dasu-prabhukumar"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass-card rounded-lg px-5 py-3 text-sm text-primary hover:shadow-[0_0_20px_hsl(185_90%_55%/0.2)] transition-all"
-            >
-              LinkedIn →
-            </a>
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Open to collaborations, AI projects, and automation system development.
+          </p>
         </div>
 
+        {/* Contact links */}
+        <div className={`flex flex-wrap justify-center gap-6 mb-16 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+          <a href="mailto:prabhudasu47@gmail.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors border-b border-border pb-1 hover:border-foreground">
+            prabhudasu47@gmail.com
+          </a>
+          <a href="tel:6281002028" className="text-sm text-muted-foreground hover:text-foreground transition-colors border-b border-border pb-1 hover:border-foreground">
+            6281002028
+          </a>
+          <a
+            href="https://www.linkedin.com/in/dasu-prabhukumar"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-2.5 border border-foreground text-foreground text-xs tracking-wider uppercase hover:bg-foreground hover:text-background transition-all duration-300"
+          >
+            LinkedIn
+          </a>
+        </div>
+
+        {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className={`glass-card rounded-xl p-6 sm:p-8 space-y-5 transition-all duration-1000 delay-300 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          className={`space-y-5 transition-all duration-1000 delay-400 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -52,7 +57,7 @@ export const ContactSection = () => {
               required
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full bg-background/50 border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:shadow-[0_0_15px_hsl(185_90%_55%/0.1)] transition-all"
+              className="w-full bg-transparent border-b border-border px-0 py-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors"
             />
             <input
               type="email"
@@ -60,7 +65,7 @@ export const ContactSection = () => {
               required
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full bg-background/50 border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:shadow-[0_0_15px_hsl(185_90%_55%/0.1)] transition-all"
+              className="w-full bg-transparent border-b border-border px-0 py-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors"
             />
           </div>
           <textarea
@@ -69,14 +74,16 @@ export const ContactSection = () => {
             required
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
-            className="w-full bg-background/50 border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:shadow-[0_0_15px_hsl(185_90%_55%/0.1)] transition-all resize-none"
+            className="w-full bg-transparent border-b border-border px-0 py-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors resize-none"
           />
-          <button
-            type="submit"
-            className="w-full py-3 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:shadow-[0_0_30px_hsl(185_90%_55%/0.4)] transition-all duration-300"
-          >
-            Send Message
-          </button>
+          <div className="pt-4">
+            <button
+              type="submit"
+              className="px-10 py-3.5 bg-foreground text-background font-medium text-sm tracking-wider uppercase hover:scale-105 transition-transform duration-300"
+            >
+              Send Message
+            </button>
+          </div>
         </form>
       </div>
     </section>
