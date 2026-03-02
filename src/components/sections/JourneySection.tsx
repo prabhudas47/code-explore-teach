@@ -2,22 +2,14 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 const timeline = [
   {
-    period: '2023 – Present',
+    period: '2023 — 2027',
     title: 'B.Tech Computer Science (Data Science)',
     institution: 'NRI Institute of Technology',
-    focus: ['Artificial Intelligence', 'Data Science Fundamentals', 'Automation Systems'],
   },
   {
-    period: '2021 – 2023',
-    title: 'Intermediate (MPC)',
+    period: '2021 — 2023',
+    title: 'Intermediate',
     institution: 'Sri Chaitanya Junior College',
-    focus: ['Mathematics', 'Physics', 'Computer Science Foundations'],
-  },
-  {
-    period: '2010 – 2021',
-    title: 'Secondary Education',
-    institution: 'Vamsi High School',
-    focus: ['Academic Foundations', 'Early Tech Interest'],
   },
 ];
 
@@ -25,40 +17,33 @@ export const JourneySection = () => {
   const { ref, isVisible } = useScrollReveal();
 
   return (
-    <section id="journey" className="py-24 sm:py-32 relative">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6" ref={ref}>
-        <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-14 text-foreground" style={{ fontFamily: "'Outfit', sans-serif" }}>
-            Learning <span className="text-gradient">Journey</span>
-          </h2>
-        </div>
+    <section id="education" className="py-24 sm:py-32 relative">
+      <div className="max-w-6xl mx-auto px-6" ref={ref}>
+        <p
+          className={`text-xs tracking-[0.3em] uppercase text-muted-foreground mb-16 transition-all duration-800 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
+        >
+          Education
+        </p>
 
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute left-4 sm:left-6 top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-secondary/30 to-transparent" />
+          <div className="absolute left-0 top-0 bottom-0 w-px bg-border" />
 
-          <div className="space-y-12">
+          <div className="space-y-16">
             {timeline.map((item, i) => (
               <div
                 key={item.period}
-                className={`relative pl-12 sm:pl-16 transition-all duration-700 ${
-                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                className={`relative pl-10 transition-all duration-700 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}
                 style={{ transitionDelay: `${300 + i * 200}ms` }}
               >
-                {/* Dot */}
-                <div className="absolute left-2.5 sm:left-4.5 top-1 w-3 h-3 rounded-full bg-primary shadow-[0_0_12px_hsl(185_90%_55%/0.5)]" />
-
-                <span className="text-xs text-primary tracking-widest uppercase">{item.period}</span>
-                <h3 className="text-lg font-semibold text-foreground mt-1">{item.title}</h3>
-                <p className="text-sm text-muted-foreground mb-2">{item.institution}</p>
-                <div className="flex flex-wrap gap-2">
-                  {item.focus.map((f) => (
-                    <span key={f} className="px-3 py-1 text-xs rounded-full bg-primary/5 text-muted-foreground border border-border">
-                      {f}
-                    </span>
-                  ))}
-                </div>
+                <div className="absolute left-[-3px] top-2 w-[7px] h-[7px] rounded-full bg-foreground" />
+                <span className="text-xs text-muted-foreground tracking-widest font-mono">{item.period}</span>
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground mt-2 tracking-tight">{item.title}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{item.institution}</p>
               </div>
             ))}
           </div>

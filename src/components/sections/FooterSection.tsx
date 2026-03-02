@@ -1,8 +1,8 @@
 export const FooterSection = () => (
-  <footer className="py-8 border-t border-border/30">
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-      <p className="text-xs text-muted-foreground">
-        © 2026 DASU Prabhukumar — AI & Data Science Portfolio
+  <footer className="py-10 border-t border-border">
+    <div className="max-w-6xl mx-auto px-6 text-center">
+      <p className="text-xs text-muted-foreground tracking-wider">
+        © 2026 DASU Prabhukumar — Built with precision.
       </p>
     </div>
   </footer>
