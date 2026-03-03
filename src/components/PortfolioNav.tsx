@@ -6,7 +6,6 @@ const links = [
   { label: 'Skills', href: '#skills' },
   { label: 'Education', href: '#education' },
   { label: 'Contact', href: '#contact' },
-  { label: 'Resume', href: '/resume.pdf', download: true },
 ];
 
 export const PortfolioNav = () => {
@@ -31,7 +30,6 @@ export const PortfolioNav = () => {
             <a
               key={l.label}
               href={l.href}
-              {...(l.download ? { download: 'Resume.pdf', target: '_blank', rel: 'noopener noreferrer' } : {})}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-300 tracking-widest uppercase"
             >
               {l.label}
@@ -57,7 +55,6 @@ export const PortfolioNav = () => {
               key={l.label}
               href={l.href}
               onClick={() => setMobileOpen(false)}
-              {...(l.download ? { download: 'Resume.pdf', target: '_blank', rel: 'noopener noreferrer' } : {})}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors tracking-widest uppercase"
             >
               {l.label}

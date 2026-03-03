@@ -60,6 +60,13 @@ export const PortfolioHero = () => {
           >
             Contact
           </a>
+          <a
+            href="/resume.pdf"
+            download="Resume.pdf"
+            className="inline-flex items-center justify-center px-8 py-3.5 border border-border text-muted-foreground text-sm tracking-wider uppercase hover:border-foreground hover:text-foreground transition-all duration-300 hover:scale-105"
+          >
+            Resume
+          </a>
         </div>
       </div>
 
