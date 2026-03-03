@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChessShaderBackground } from "@/components/ChessShaderBackground";
+import { PuzzleReveal } from "@/components/PuzzleReveal";
 import { PortfolioNav } from "@/components/PortfolioNav";
 import { PortfolioHero } from "@/components/PortfolioHero";
 import { AboutSection } from "@/components/sections/AboutSection";
@@ -32,6 +33,7 @@ const Index = () => {
           style={{ opacity: introComplete ? 0 : 1, transition: 'opacity 1s ease-in-out' }}
         >
           <ChessShaderBackground onFadeComplete={handleFadeComplete} />
+          <PuzzleReveal triggerAt={8} />
         </div>
       )}
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import './PuzzleRevealStyles.css';
 
 interface Props {
   triggerAt?: number;
