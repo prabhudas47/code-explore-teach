@@ -6,6 +6,7 @@ const links = [
   { label: 'Skills', href: '#skills' },
   { label: 'Education', href: '#education' },
   { label: 'Contact', href: '#contact' },
+  { label: 'Resume', href: '/resume.pdf', download: true },
 ];
 
 export const PortfolioNav = () => {
@@ -28,8 +29,9 @@ export const PortfolioNav = () => {
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
             <a
-              key={l.href}
+              key={l.label}
               href={l.href}
+              {...(l.download ? { download: 'Resume.pdf', target: '_blank', rel: 'noopener noreferrer' } : {})}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-300 tracking-widest uppercase"
             >
               {l.label}
@@ -52,9 +54,10 @@ export const PortfolioNav = () => {
         <div className="md:hidden bg-background/95 backdrop-blur-md border-t border-border mt-2 px-6 py-6 flex flex-col gap-5 animate-fade-in">
           {links.map((l) => (
             <a
-              key={l.href}
+              key={l.label}
               href={l.href}
               onClick={() => setMobileOpen(false)}
+              {...(l.download ? { download: 'Resume.pdf', target: '_blank', rel: 'noopener noreferrer' } : {})}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors tracking-widest uppercase"
             >
               {l.label}
