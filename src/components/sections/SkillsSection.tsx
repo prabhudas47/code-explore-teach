@@ -14,7 +14,7 @@ export const SkillsSection = () => {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          Capabilities
+          <span className="font-display text-base">Capabilities</span>
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-0">

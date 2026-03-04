@@ -29,7 +29,7 @@ export const CoreFocusSection = () => {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          Core Focus
+          <span className="font-display text-base">Core Focus</span>
         </p>
 
         <div className="space-y-0">
