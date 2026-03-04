@@ -10,6 +10,7 @@ import { SkillsSection } from "@/components/sections/SkillsSection";
 import { JourneySection } from "@/components/sections/JourneySection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { FooterSection } from "@/components/sections/FooterSection";
+import { CinematicSection } from "@/components/sections/CinematicSection";
 
 const Index = () => {
   const [introComplete, setIntroComplete] = useState(false);
@@ -52,6 +53,7 @@ const Index = () => {
         <ProjectsSection />
         <SkillsSection />
         <ContactSection />
+        <CinematicSection />
         <FooterSection />
       </div>
     </div>
