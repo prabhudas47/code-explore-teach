@@ -4,6 +4,7 @@ export const CinematicSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const hasPlayedRef = useRef(false);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -12,10 +13,9 @@ export const CinematicSection = () => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !hasPlayedRef.current) {
+          hasPlayedRef.current = true;
           videoRef.current?.play().catch(() => {});
-        } else {
-          videoRef.current?.pause();
         }
       },
       { threshold: 0.4 }
@@ -43,9 +43,8 @@ export const CinematicSection = () => {
         <video
           ref={videoRef}
           muted
-          loop
           playsInline
-          preload="metadata"
+          preload="auto"
           className="w-full h-full object-cover"
           style={{ display: 'block' }}
         >
