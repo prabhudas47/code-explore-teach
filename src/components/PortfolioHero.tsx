@@ -22,7 +22,7 @@ export const PortfolioHero = () => {
 
         {/* Name */}
         <h1
-          className={`font-display text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-foreground leading-[0.9] mb-8 transition-all duration-1000 delay-200 ${
+          className={`text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-foreground leading-[0.9] mb-8 transition-all duration-1000 delay-200 ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
