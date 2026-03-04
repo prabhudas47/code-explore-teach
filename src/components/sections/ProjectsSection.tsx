@@ -32,7 +32,7 @@ export const ProjectsSection = () => {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          Selected Work
+          <span className="font-display text-base">Selected Work</span>
         </p>
 
         <div className="space-y-0">

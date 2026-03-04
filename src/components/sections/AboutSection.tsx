@@ -11,7 +11,7 @@ export const AboutSection = () => {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          Who I Am
+          <span className="font-display text-base">Who I Am</span>
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">

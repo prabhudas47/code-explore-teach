@@ -15,7 +15,7 @@ export const ContactSection = () => {
     <section id="contact" className="py-24 sm:py-32 relative">
       <div className="max-w-4xl mx-auto px-6" ref={ref}>
         <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-4">
             Let's Build Something
             <br />
             Intelligent.

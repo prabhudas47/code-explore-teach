@@ -24,7 +24,7 @@ export const JourneySection = () => {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          Education
+          <span className="font-display text-base">Education</span>
         </p>
 
         <div className="relative">
