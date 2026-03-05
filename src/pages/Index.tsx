@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChatBot } from "@/components/ChatBot";
 import { ChessShaderBackground } from "@/components/ChessShaderBackground";
 import { PuzzleReveal } from "@/components/PuzzleReveal";
 import { PortfolioNav } from "@/components/PortfolioNav";
@@ -56,6 +57,9 @@ const Index = () => {
         <CinematicSection />
         <FooterSection />
       </div>
+
+      {/* Chatbot */}
+      {introComplete && <ChatBot />}
     </div>
   );
 };
