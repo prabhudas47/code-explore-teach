@@ -60,14 +60,14 @@ export const CinematicSection = () => {
         }}
       />
 
-      {/* Text overlay */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      {/* Text overlay - positioned at bottom */}
+      <div className="absolute inset-x-0 bottom-0 flex items-end justify-center pb-12 sm:pb-16">
         <p
-          className="text-foreground text-lg sm:text-xl md:text-2xl tracking-wider text-center px-6 transition-all duration-1000 delay-300"
+          className="text-foreground text-lg sm:text-xl md:text-2xl tracking-wider text-center px-6"
           style={{
             opacity: isVisible ? 1 : 0,
             transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'opacity 1s ease-in-out 0.3s, transform 1s ease-in-out 0.3s',
+            transition: 'opacity 1.2s ease-in-out 0.5s, transform 1.2s ease-in-out 0.5s',
           }}
         >
           Driven by Vision. Powered by Intelligence.
