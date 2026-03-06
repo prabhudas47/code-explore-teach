@@ -12,23 +12,22 @@ import { JourneySection } from "@/components/sections/JourneySection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { CinematicSection } from "@/components/sections/CinematicSection";
+import { AdminPortal } from "@/components/AdminPortal";
 
 const Index = () => {
   const [introComplete, setIntroComplete] = useState(false);
   const [shaderVisible, setShaderVisible] = useState(true);
+  const [adminOpen, setAdminOpen] = useState(false);
 
   const handleFadeComplete = () => {
-    // Small delay after shader fades to black, then reveal portfolio
     setTimeout(() => {
       setIntroComplete(true);
-      // Remove shader from DOM after portfolio fade-in
       setTimeout(() => setShaderVisible(false), 1000);
     }, 500);
   };
 
   return (
     <div className="min-h-screen relative bg-background">
-      {/* Shader Intro */}
       {shaderVisible && (
         <div
           className="fixed inset-0 z-50"
@@ -39,11 +38,8 @@ const Index = () => {
         </div>
       )}
 
-      {/* Portfolio Content */}
       <div
-        className={`grain-overlay transition-opacity duration-1000 ${
-          introComplete ? 'opacity-100' : 'opacity-0'
-        }`}
+        className={`grain-overlay transition-opacity duration-1000 ${introComplete ? 'opacity-100' : 'opacity-0'}`}
         style={{ pointerEvents: introComplete ? 'auto' : 'none' }}
       >
         <PortfolioNav />
@@ -54,12 +50,12 @@ const Index = () => {
         <ProjectsSection />
         <SkillsSection />
         <ContactSection />
-        <CinematicSection />
+        <CinematicSection onDoubleTab={() => setAdminOpen(true)} />
         <FooterSection />
       </div>
 
-      {/* Chatbot */}
       {introComplete && <ChatBot />}
+      <AdminPortal open={adminOpen} onClose={() => setAdminOpen(false)} />
     </div>
   );
 };
