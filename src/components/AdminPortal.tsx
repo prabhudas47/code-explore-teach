@@ -194,9 +194,9 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
               {activeSection === 'internships' && allData.internships && (
                 <ArrayEditor
                   data={allData.internships}
-                  fields={['role', 'organization', 'duration', 'problem', 'outcome']}
+                  fields={['role', 'organization', 'duration', 'location', 'problem', 'outcome', 'contributions', 'learned', 'offerLetterImg', 'completionCertImg']}
                   onChange={(path, val) => updateField('internships', path, val)}
-                  onAdd={() => addArrayItem('internships', { role: '', organization: '', duration: '', responsibilities: [], tools: [], problem: '', outcome: '' })}
+                  onAdd={() => addArrayItem('internships', { role: '', organization: '', duration: '', location: '', responsibilities: [], tools: [], contributions: '', learned: '', problem: '', outcome: '', offerLetterImg: '', completionCertImg: '' })}
                   onRemove={(i) => removeArrayItem('internships', i)}
                 />
               )}
@@ -250,9 +250,9 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
               {activeSection === 'certifications' && allData.certifications && (
                 <ArrayEditor
                   data={allData.certifications}
-                  fields={['title', 'platform', 'date', 'link']}
+                  fields={['title', 'platform', 'date', 'link', 'description', 'skillsLearned', 'relevance', 'certificateImg']}
                   onChange={(path, val) => updateField('certifications', path, val)}
-                  onAdd={() => addArrayItem('certifications', { title: '', platform: '', date: '', link: '' })}
+                  onAdd={() => addArrayItem('certifications', { title: '', platform: '', date: '', link: '', description: '', skillsLearned: '', relevance: '', certificateImg: '' })}
                   onRemove={(i) => removeArrayItem('certifications', i)}
                 />
               )}
@@ -268,9 +268,9 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
               {activeSection === 'achievements' && allData.achievements && (
                 <ArrayEditor
                   data={allData.achievements}
-                  fields={['icon', 'title', 'description']}
+                  fields={['text']}
                   onChange={(path, val) => updateField('achievements', path, val)}
-                  onAdd={() => addArrayItem('achievements', { title: '', icon: '', description: '' })}
+                  onAdd={() => addArrayItem('achievements', { text: '' })}
                   onRemove={(i) => removeArrayItem('achievements', i)}
                 />
               )}
