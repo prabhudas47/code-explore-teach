@@ -250,9 +250,9 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
               {activeSection === 'certifications' && allData.certifications && (
                 <ArrayEditor
                   data={allData.certifications}
-                  fields={['title', 'platform', 'date', 'link']}
+                  fields={['title', 'platform', 'date', 'link', 'description', 'skillsLearned', 'relevance', 'certificateImg']}
                   onChange={(path, val) => updateField('certifications', path, val)}
-                  onAdd={() => addArrayItem('certifications', { title: '', platform: '', date: '', link: '' })}
+                  onAdd={() => addArrayItem('certifications', { title: '', platform: '', date: '', link: '', description: '', skillsLearned: '', relevance: '', certificateImg: '' })}
                   onRemove={(i) => removeArrayItem('certifications', i)}
                 />
               )}
