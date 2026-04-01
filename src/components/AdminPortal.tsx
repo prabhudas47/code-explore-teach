@@ -93,12 +93,19 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
   if (!open) return null;
 
   const sections = [
+    { key: 'professional_summary', label: 'Summary' },
     { key: 'about', label: 'About' },
+    { key: 'internships', label: 'Experience' },
     { key: 'education', label: 'Education' },
     { key: 'core_focus', label: 'Core Focus' },
+    { key: 'case_studies', label: 'Case Studies' },
     { key: 'projects', label: 'Projects' },
+    { key: 'tech_stack', label: 'Tech Stack' },
     { key: 'skills', label: 'Skills' },
     { key: 'certifications', label: 'Certifications' },
+    { key: 'learning_timeline', label: 'Learning' },
+    { key: 'achievements', label: 'Achievements' },
+    { key: 'currently_building', label: 'Building' },
     { key: 'contact', label: 'Contact' },
     { key: 'footer', label: 'Footer' },
   ];
