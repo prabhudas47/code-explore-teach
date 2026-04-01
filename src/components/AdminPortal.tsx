@@ -93,12 +93,19 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
   if (!open) return null;
 
   const sections = [
+    { key: 'professional_summary', label: 'Summary' },
     { key: 'about', label: 'About' },
+    { key: 'internships', label: 'Experience' },
     { key: 'education', label: 'Education' },
     { key: 'core_focus', label: 'Core Focus' },
+    { key: 'case_studies', label: 'Case Studies' },
     { key: 'projects', label: 'Projects' },
+    { key: 'tech_stack', label: 'Tech Stack' },
     { key: 'skills', label: 'Skills' },
     { key: 'certifications', label: 'Certifications' },
+    { key: 'learning_timeline', label: 'Learning' },
+    { key: 'achievements', label: 'Achievements' },
+    { key: 'currently_building', label: 'Building' },
     { key: 'contact', label: 'Contact' },
     { key: 'footer', label: 'Footer' },
   ];
@@ -178,8 +185,20 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {activeSection === 'professional_summary' && allData.professional_summary && (
+                <AboutEditor data={allData.professional_summary} onChange={(path, val) => updateField('professional_summary', path, val)} />
+              )}
               {activeSection === 'about' && allData.about && (
                 <AboutEditor data={allData.about} onChange={(path, val) => updateField('about', path, val)} />
+              )}
+              {activeSection === 'internships' && allData.internships && (
+                <ArrayEditor
+                  data={allData.internships}
+                  fields={['role', 'organization', 'duration', 'problem', 'outcome']}
+                  onChange={(path, val) => updateField('internships', path, val)}
+                  onAdd={() => addArrayItem('internships', { role: '', organization: '', duration: '', responsibilities: [], tools: [], problem: '', outcome: '' })}
+                  onRemove={(i) => removeArrayItem('internships', i)}
+                />
               )}
               {activeSection === 'education' && allData.education && (
                 <ArrayEditor
@@ -199,6 +218,15 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
                   onRemove={(i) => removeArrayItem('core_focus', i)}
                 />
               )}
+              {activeSection === 'case_studies' && allData.case_studies && (
+                <ArrayEditor
+                  data={allData.case_studies}
+                  fields={['name', 'problem', 'approach', 'outcome']}
+                  onChange={(path, val) => updateField('case_studies', path, val)}
+                  onAdd={() => addArrayItem('case_studies', { name: '', problem: '', approach: '', technologies: [], features: [], outcome: '' })}
+                  onRemove={(i) => removeArrayItem('case_studies', i)}
+                />
+              )}
               {activeSection === 'projects' && allData.projects && (
                 <ProjectsEditor
                   data={allData.projects}
@@ -207,16 +235,52 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
                   onRemove={(i) => removeArrayItem('projects', i)}
                 />
               )}
+              {activeSection === 'tech_stack' && allData.tech_stack && (
+                <ArrayEditor
+                  data={allData.tech_stack}
+                  fields={['category']}
+                  onChange={(path, val) => updateField('tech_stack', path, val)}
+                  onAdd={() => addArrayItem('tech_stack', { category: '', items: [] })}
+                  onRemove={(i) => removeArrayItem('tech_stack', i)}
+                />
+              )}
               {activeSection === 'skills' && allData.skills && (
                 <SkillsEditor data={allData.skills} onChange={(path, val) => updateField('skills', path, val)} />
               )}
               {activeSection === 'certifications' && allData.certifications && (
                 <ArrayEditor
                   data={allData.certifications}
-                  fields={['icon', 'title']}
+                  fields={['title', 'platform', 'date', 'link']}
                   onChange={(path, val) => updateField('certifications', path, val)}
-                  onAdd={() => addArrayItem('certifications', { title: '', icon: '' })}
+                  onAdd={() => addArrayItem('certifications', { title: '', platform: '', date: '', link: '' })}
                   onRemove={(i) => removeArrayItem('certifications', i)}
+                />
+              )}
+              {activeSection === 'learning_timeline' && allData.learning_timeline && (
+                <ArrayEditor
+                  data={allData.learning_timeline}
+                  fields={['year', 'milestone']}
+                  onChange={(path, val) => updateField('learning_timeline', path, val)}
+                  onAdd={() => addArrayItem('learning_timeline', { year: '', milestone: '' })}
+                  onRemove={(i) => removeArrayItem('learning_timeline', i)}
+                />
+              )}
+              {activeSection === 'achievements' && allData.achievements && (
+                <ArrayEditor
+                  data={allData.achievements}
+                  fields={['icon', 'title', 'description']}
+                  onChange={(path, val) => updateField('achievements', path, val)}
+                  onAdd={() => addArrayItem('achievements', { title: '', icon: '', description: '' })}
+                  onRemove={(i) => removeArrayItem('achievements', i)}
+                />
+              )}
+              {activeSection === 'currently_building' && allData.currently_building && (
+                <ArrayEditor
+                  data={allData.currently_building}
+                  fields={['title', 'description', 'progress']}
+                  onChange={(path, val) => updateField('currently_building', path, val)}
+                  onAdd={() => addArrayItem('currently_building', { title: '', description: '', progress: 0 })}
+                  onRemove={(i) => removeArrayItem('currently_building', i)}
                 />
               )}
               {activeSection === 'contact' && allData.contact && (

@@ -4,14 +4,22 @@ import { ChessShaderBackground } from "@/components/ChessShaderBackground";
 import { PuzzleReveal } from "@/components/PuzzleReveal";
 import { PortfolioNav } from "@/components/PortfolioNav";
 import { PortfolioHero } from "@/components/PortfolioHero";
+import { ProfessionalSummarySection } from "@/components/sections/ProfessionalSummarySection";
 import { AboutSection } from "@/components/sections/AboutSection";
-import { CoreFocusSection } from "@/components/sections/CoreFocusSection";
-import { ProjectsSection } from "@/components/sections/ProjectsSection";
-import { SkillsSection } from "@/components/sections/SkillsSection";
+import { InternshipsSection } from "@/components/sections/InternshipsSection";
 import { JourneySection } from "@/components/sections/JourneySection";
+import { CoreFocusSection } from "@/components/sections/CoreFocusSection";
+import { CaseStudiesSection } from "@/components/sections/CaseStudiesSection";
+import { ProjectsSection } from "@/components/sections/ProjectsSection";
+import { TechStackSection } from "@/components/sections/TechStackSection";
+import { SkillsSection } from "@/components/sections/SkillsSection";
+import { CertificationsSection } from "@/components/sections/CertificationsSection";
+import { LearningTimelineSection } from "@/components/sections/LearningTimelineSection";
+import { AchievementsSection } from "@/components/sections/AchievementsSection";
+import { CurrentlyBuildingSection } from "@/components/sections/CurrentlyBuildingSection";
 import { ContactSection } from "@/components/sections/ContactSection";
-import { FooterSection } from "@/components/sections/FooterSection";
 import { CinematicSection } from "@/components/sections/CinematicSection";
+import { FooterSection } from "@/components/sections/FooterSection";
 import { AdminPortal } from "@/components/AdminPortal";
 
 const Index = () => {
@@ -44,11 +52,19 @@ const Index = () => {
       >
         <PortfolioNav />
         <PortfolioHero />
+        <ProfessionalSummarySection />
         <AboutSection />
+        <InternshipsSection />
         <JourneySection />
         <CoreFocusSection />
+        <CaseStudiesSection />
         <ProjectsSection />
+        <TechStackSection />
         <SkillsSection />
+        <CertificationsSection />
+        <LearningTimelineSection />
+        <AchievementsSection />
+        <CurrentlyBuildingSection />
         <ContactSection />
         <CinematicSection onDoubleTab={() => setAdminOpen(true)} />
         <FooterSection />
