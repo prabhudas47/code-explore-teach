@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { fetchAllPortfolioData, updatePortfolioData } from '@/hooks/usePortfolioData';
 import { toast } from 'sonner';
 
-const ADMIN_NAME = 'Prabhu';
-const ADMIN_PASS = 'Prabhudasu42@';
+const ADMIN_NAME = 'dasu';
+const ADMIN_PASS = 'dasuprabhu42@';
 
 interface AdminPortalProps {
   open: boolean;
