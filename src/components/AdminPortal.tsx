@@ -119,7 +119,7 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <h2 className="text-lg font-bold text-foreground">
-            {authed ? '⚡ Admin Portal' : '🔐 Admin Login'}
+            {authed ? 'Admin Portal' : 'Admin Login'}
           </h2>
           <button onClick={handleClose} className="text-muted-foreground hover:text-foreground transition-colors">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
