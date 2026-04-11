@@ -15,6 +15,7 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [allData, setAllData] = useState<Record<string, any>>({});
   const [activeSection, setActiveSection] = useState('about');
   const [saving, setSaving] = useState(false);
