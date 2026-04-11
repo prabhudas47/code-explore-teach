@@ -2,11 +2,11 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { usePortfolioData } from '@/hooks/usePortfolioData';
 
 const defaultAchievements = [
-  { text: 'Presented technical paper on AI systems at university-level event' },
-  { text: 'Participated in inter-college technical fest competitions' },
-  { text: 'Completed multiple AI and automation learning programs' },
-  { text: 'Engaged in hackathons focused on building AI-powered solutions' },
-  { text: 'Attended workshops on Machine Learning, Python, and Data Analysis' },
+  { title: 'Technical Paper Presentation', description: 'Presented technical paper on AI systems at university-level event', year: '2024' },
+  { title: 'Inter-College Tech Fest', description: 'Participated in inter-college technical fest competitions', year: '2024' },
+  { title: 'AI Learning Programs', description: 'Completed multiple AI and automation learning programs', year: '2024' },
+  { title: 'Hackathon Participation', description: 'Engaged in hackathons focused on building AI-powered solutions', year: '2024' },
+  { title: 'ML & Data Analysis Workshops', description: 'Attended workshops on Machine Learning, Python, and Data Analysis', year: '2024' },
 ];
 
 export const AchievementsSection = () => {
@@ -21,15 +21,21 @@ export const AchievementsSection = () => {
         </p>
         <div className="space-y-0">
           {achievements.map((item: any, i: number) => {
-            const text = typeof item === 'string' ? item : (item.text || item.description || item.title || '');
+            const title = item.title || '';
+            const desc = item.description || item.text || '';
+            const year = item.year || '';
             return (
               <div
                 key={i}
-                className={`flex items-start gap-4 py-4 transition-all duration-600 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'}`}
+                className={`flex items-start gap-4 py-5 border-b border-border transition-all duration-600 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'}`}
                 style={{ transitionDelay: `${200 + i * 120}ms` }}
               >
                 <div className="w-px h-5 bg-foreground/30 shrink-0 mt-0.5" />
-                <p className="text-sm text-foreground/80 leading-relaxed">{text}</p>
+                <div className="flex-1 min-w-0">
+                  {title && <h3 className="text-sm font-semibold text-foreground mb-1">{title}</h3>}
+                  <p className="text-sm text-foreground/80 leading-relaxed">{desc}</p>
+                </div>
+                {year && <span className="text-xs text-muted-foreground font-mono shrink-0">{year}</span>}
               </div>
             );
           })}

@@ -6,6 +6,7 @@ const defaultContact = {
   email: 'prabhudasu47@gmail.com',
   phone: '6281002028',
   linkedin: 'https://www.linkedin.com/in/dasu-prabhukumar',
+  github: '',
   heading: "Let's Build Something\nIntelligent.",
   subtext: 'Open to collaborations, AI projects, and automation system development.',
 };
@@ -21,7 +22,7 @@ export const ContactSection = () => {
     setForm({ name: '', email: '', message: '' });
   };
 
-  const headingLines = contact.heading.split('\n');
+  const headingLines = (contact.heading || '').split('\n');
 
   return (
     <section id="contact" className="py-24 sm:py-32 relative">
@@ -36,9 +37,10 @@ export const ContactSection = () => {
         </div>
 
         <div className={`flex flex-wrap justify-center gap-6 mb-16 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-          <a href={`mailto:${contact.email}`} className="text-sm text-muted-foreground hover:text-foreground transition-colors border-b border-border pb-1 hover:border-foreground">{contact.email}</a>
-          <a href={`tel:${contact.phone}`} className="text-sm text-muted-foreground hover:text-foreground transition-colors border-b border-border pb-1 hover:border-foreground">{contact.phone}</a>
-          <a href={contact.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-2.5 border border-foreground text-foreground text-xs tracking-wider uppercase hover:bg-foreground hover:text-background transition-all duration-300">LinkedIn</a>
+          {contact.email && <a href={`mailto:${contact.email}`} className="text-sm text-muted-foreground hover:text-foreground transition-colors border-b border-border pb-1 hover:border-foreground">{contact.email}</a>}
+          {contact.phone && <a href={`tel:${contact.phone}`} className="text-sm text-muted-foreground hover:text-foreground transition-colors border-b border-border pb-1 hover:border-foreground">{contact.phone}</a>}
+          {contact.linkedin && <a href={contact.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-2.5 border border-foreground text-foreground text-xs tracking-wider uppercase hover:bg-foreground hover:text-background transition-all duration-300">LinkedIn</a>}
+          {contact.github && <a href={contact.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-2.5 border border-border text-muted-foreground text-xs tracking-wider uppercase hover:border-foreground hover:text-foreground transition-all duration-300">GitHub</a>}
         </div>
 
         <form onSubmit={handleSubmit} className={`space-y-5 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
