@@ -420,8 +420,8 @@ const ProjectsEditorFull = ({ data, onChange }: { data: any[]; onChange: (d: any
           <ArrayField label="Features" value={item.features ?? []} onChange={v => update(i, 'features', v)} />
           <Field label="GitHub Link" value={item.githubLink ?? ''} onChange={v => update(i, 'githubLink', v)} />
           <Field label="Live Demo Link" value={item.liveLink ?? ''} onChange={v => update(i, 'liveLink', v)} />
-          <ArrayField label="Image URLs (comma-separated)" value={item.images ?? []} onChange={v => update(i, 'images', v)} placeholder="Paste image URLs separated by commas" />
-          <Field label="Demo Video URL (optional)" value={item.demoVideo ?? ''} onChange={v => update(i, 'demoVideo', v)} />
+          <MultiMediaUpload label="Project Images" values={item.images ?? []} onChange={v => update(i, 'images', v)} accept="image/*" />
+          <MediaUpload label="Demo Video (optional)" value={item.demoVideo ?? ''} onChange={v => update(i, 'demoVideo', v)} accept="video/*" maxSizeMB={50} />
         </CardWrapper>
       ))}
       <AddButton onClick={add} label="Add Project" />
