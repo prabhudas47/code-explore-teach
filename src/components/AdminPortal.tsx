@@ -296,8 +296,8 @@ const HeroEditor = ({ data, onChange }: { data: any; onChange: (key: string, val
     <Field label="Name (use \n for line break)" value={data.name ?? ''} onChange={v => onChange('name', v)} multiline />
     <Field label="Tagline" value={data.tagline ?? ''} onChange={v => onChange('tagline', v)} />
     <Field label="Subtitle" value={data.subtitle ?? ''} onChange={v => onChange('subtitle', v)} multiline />
-    <ImageField label="Profile Image URL" value={data.profileImage ?? ''} onChange={v => onChange('profileImage', v)} />
-    <Field label="Background Video URL (optional)" value={data.backgroundVideo ?? ''} onChange={v => onChange('backgroundVideo', v)} />
+    <MediaUpload label="Profile Image" value={data.profileImage ?? ''} onChange={v => onChange('profileImage', v)} accept="image/*" />
+    <MediaUpload label="Background Video (optional)" value={data.backgroundVideo ?? ''} onChange={v => onChange('backgroundVideo', v)} accept="video/*" maxSizeMB={50} />
   </div>
 );
 
