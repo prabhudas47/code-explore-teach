@@ -126,6 +126,26 @@ export const InternshipsSection = () => {
                           <p className="text-sm text-foreground/80">{item.outcome}</p>
                         </div>
 
+                        {/* Work Screenshots */}
+                        {item.workScreenshots?.length > 0 && (
+                          <div>
+                            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Work Screenshots</p>
+                            <div className="flex gap-3 overflow-x-auto">
+                              {item.workScreenshots.map((img: string, si: number) => (
+                                <img key={si} src={img} alt={`Work screenshot ${si + 1}`} className="h-28 rounded border border-border object-cover cursor-pointer hover:opacity-80 transition-opacity" loading="lazy" onClick={(e) => { e.stopPropagation(); setDocModal({ src: img, title: `Work Screenshot ${si + 1}` }); }} />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Internship Video */}
+                        {item.internshipVideo && (
+                          <div>
+                            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Video</p>
+                            <video src={item.internshipVideo} controls muted className="w-full max-w-md rounded border border-border" onClick={e => e.stopPropagation()} />
+                          </div>
+                        )}
+
                         {/* Document buttons */}
                         <div className="flex flex-wrap gap-3 pt-2">
                           {item.offerLetterImg && (
