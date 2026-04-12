@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { usePortfolioData } from '@/hooks/usePortfolioData';
+import { DocumentModal } from '@/components/DocumentModal';
 
 const defaultProjects = [
   { num: '01', title: 'AI Certificate Distribution System', description: 'Automated certificate generation and distribution system with unique ID generation, QR verification, logging & error handling, admin failure notifications, and scalable participant processing.', tech: ['Python', 'Automation Framework', 'Email APIs'], problem: '', approach: '', features: [], githubLink: '', liveLink: '', images: [], demoVideo: '' },
