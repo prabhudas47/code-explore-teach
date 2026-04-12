@@ -74,7 +74,7 @@ export const ProjectsSection = () => {
                         {project.images?.length > 0 && (
                           <div className="flex gap-3 overflow-x-auto pt-2">
                             {project.images.map((img: string, ii: number) => (
-                              <img key={ii} src={img} alt={`${project.title} screenshot ${ii + 1}`} className="h-32 rounded border border-border object-cover" loading="lazy" onError={e => (e.currentTarget.style.display = 'none')} />
+                              <img key={ii} src={img} alt={`${project.title} screenshot ${ii + 1}`} className="h-32 rounded border border-border object-cover cursor-pointer hover:opacity-80 transition-opacity" loading="lazy" onClick={e => { e.stopPropagation(); setDocModal({ src: img, title: `${project.title} - Image ${ii + 1}` }); }} />
                             ))}
                           </div>
                         )}
