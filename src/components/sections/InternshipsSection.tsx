@@ -69,9 +69,14 @@ export const InternshipsSection = () => {
                   <div className="relative p-5 -m-1 rounded-lg border border-transparent transition-all duration-300 hover:border-border hover:bg-accent/30">
                     {/* Header: left company, right details */}
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-1">
-                      <div>
-                        <h3 className="text-lg sm:text-xl font-semibold text-foreground tracking-tight">{item.role}</h3>
-                        <p className="text-sm text-muted-foreground">{item.organization}</p>
+                      <div className="flex items-start gap-3">
+                        {item.companyLogo && (
+                          <img src={item.companyLogo} alt={item.organization} className="w-10 h-10 rounded object-contain shrink-0 border border-border bg-accent/20" loading="lazy" />
+                        )}
+                        <div>
+                          <h3 className="text-lg sm:text-xl font-semibold text-foreground tracking-tight">{item.role}</h3>
+                          <p className="text-sm text-muted-foreground">{item.organization}</p>
+                        </div>
                       </div>
                       <div className="text-right shrink-0">
                         <span className="text-xs text-muted-foreground tracking-widest font-mono block">{item.duration}</span>
