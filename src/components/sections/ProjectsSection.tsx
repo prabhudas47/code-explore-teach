@@ -102,6 +102,13 @@ export const ProjectsSection = () => {
           })}
         </div>
       </div>
+
+      <DocumentModal
+        open={!!docModal}
+        onClose={() => setDocModal(null)}
+        imageSrc={docModal?.src || ''}
+        title={docModal?.title || ''}
+      />
     </section>
   );
 };
