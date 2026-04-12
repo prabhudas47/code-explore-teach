@@ -79,7 +79,7 @@ export const ProjectsSection = () => {
                           </div>
                         )}
                         {project.demoVideo && (
-                          <video src={project.demoVideo} controls className="w-full max-w-md rounded border border-border mt-2" />
+                          <video src={project.demoVideo} controls muted className="w-full max-w-md rounded border border-border mt-2" onClick={e => e.stopPropagation()} />
                         )}
                         <div className="flex gap-3 pt-2">
                           {project.githubLink && (
