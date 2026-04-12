@@ -497,7 +497,7 @@ const CertificationsEditor = ({ data, onChange }: { data: any[]; onChange: (d: a
     copy[i] = { ...copy[i], [key]: val };
     onChange(copy);
   };
-  const add = () => onChange([...items, { title: '', platform: '', date: '', description: '', skillsLearned: '', relevance: '', link: '', certificateImg: '' }]);
+  const add = () => onChange([...items, { title: '', platform: '', date: '', description: '', skillsLearned: '', relevance: '', link: '', certificateImg: '', proofVideo: '' }]);
   const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
 
   return (
@@ -511,7 +511,8 @@ const CertificationsEditor = ({ data, onChange }: { data: any[]; onChange: (d: a
           <ArrayField label="Skills Learned" value={typeof item.skillsLearned === 'string' ? (item.skillsLearned ? item.skillsLearned.split(',').map((s: string) => s.trim()) : []) : (item.skillsLearned ?? [])} onChange={v => update(i, 'skillsLearned', v.join(', '))} />
           <Field label="Relevance" value={item.relevance ?? ''} onChange={v => update(i, 'relevance', v)} multiline />
           <Field label="Verification Link" value={item.link ?? ''} onChange={v => update(i, 'link', v)} />
-          <ImageField label="Certificate Image URL" value={item.certificateImg ?? ''} onChange={v => update(i, 'certificateImg', v)} />
+          <MediaUpload label="Certificate Image" value={item.certificateImg ?? ''} onChange={v => update(i, 'certificateImg', v)} accept="image/*,.pdf" />
+          <MediaUpload label="Proof Video (optional)" value={item.proofVideo ?? ''} onChange={v => update(i, 'proofVideo', v)} accept="video/*" maxSizeMB={50} />
         </CardWrapper>
       ))}
       <AddButton onClick={add} label="Add Certification" />
