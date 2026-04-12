@@ -264,15 +264,7 @@ const ArrayField = ({ label, value, onChange, placeholder }: { label: string; va
 );
 
 const ImageField = ({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) => (
-  <div className="mb-3">
-    <label className="text-[10px] text-muted-foreground uppercase tracking-wider block mb-1">{label}</label>
-    <input value={value ?? ''} onChange={e => onChange(e.target.value)} placeholder="Paste image/document URL" className="w-full bg-transparent border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-foreground transition-colors" />
-    {value && (
-      <div className="mt-2 rounded border border-border overflow-hidden w-24 h-16">
-        <img src={value} alt="Preview" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = 'none')} />
-      </div>
-    )}
-  </div>
+  <MediaUpload label={label} value={value ?? ''} onChange={onChange} accept="image/*,.pdf" />
 );
 
 const CardWrapper = ({ index, onRemove, children }: { index: number; onRemove: () => void; children: React.ReactNode }) => (
