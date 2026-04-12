@@ -13,6 +13,7 @@ export const ProjectsSection = () => {
   const { ref, isVisible } = useScrollReveal();
   const { data: projects } = usePortfolioData('projects', defaultProjects);
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [docModal, setDocModal] = useState<{ src: string; title: string } | null>(null);
 
   return (
     <section id="projects" className="py-24 sm:py-32 relative">
