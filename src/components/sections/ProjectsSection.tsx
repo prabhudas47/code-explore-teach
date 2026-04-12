@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { usePortfolioData } from '@/hooks/usePortfolioData';
+import { DocumentModal } from '@/components/DocumentModal';
 
 const defaultProjects = [
   { num: '01', title: 'AI Certificate Distribution System', description: 'Automated certificate generation and distribution system with unique ID generation, QR verification, logging & error handling, admin failure notifications, and scalable participant processing.', tech: ['Python', 'Automation Framework', 'Email APIs'], problem: '', approach: '', features: [], githubLink: '', liveLink: '', images: [], demoVideo: '' },
@@ -12,6 +13,7 @@ export const ProjectsSection = () => {
   const { ref, isVisible } = useScrollReveal();
   const { data: projects } = usePortfolioData('projects', defaultProjects);
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [docModal, setDocModal] = useState<{ src: string; title: string } | null>(null);
 
   return (
     <section id="projects" className="py-24 sm:py-32 relative">
@@ -72,12 +74,12 @@ export const ProjectsSection = () => {
                         {project.images?.length > 0 && (
                           <div className="flex gap-3 overflow-x-auto pt-2">
                             {project.images.map((img: string, ii: number) => (
-                              <img key={ii} src={img} alt={`${project.title} screenshot ${ii + 1}`} className="h-32 rounded border border-border object-cover" loading="lazy" onError={e => (e.currentTarget.style.display = 'none')} />
+                              <img key={ii} src={img} alt={`${project.title} screenshot ${ii + 1}`} className="h-32 rounded border border-border object-cover cursor-pointer hover:opacity-80 transition-opacity" loading="lazy" onClick={e => { e.stopPropagation(); setDocModal({ src: img, title: `${project.title} - Image ${ii + 1}` }); }} />
                             ))}
                           </div>
                         )}
                         {project.demoVideo && (
-                          <video src={project.demoVideo} controls className="w-full max-w-md rounded border border-border mt-2" />
+                          <video src={project.demoVideo} controls muted className="w-full max-w-md rounded border border-border mt-2" onClick={e => e.stopPropagation()} />
                         )}
                         <div className="flex gap-3 pt-2">
                           {project.githubLink && (
@@ -100,6 +102,13 @@ export const ProjectsSection = () => {
           })}
         </div>
       </div>
+
+      <DocumentModal
+        open={!!docModal}
+        onClose={() => setDocModal(null)}
+        imageSrc={docModal?.src || ''}
+        title={docModal?.title || ''}
+      />
     </section>
   );
 };

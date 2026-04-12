@@ -55,6 +55,11 @@ export const CertificationsSection = () => {
                     <div className="sm:hidden mb-2">
                       <span className="text-sm text-muted-foreground">{cert.platform}</span>
                     </div>
+                    {cert.certificateImg && (
+                      <div className="mb-3">
+                        <img src={cert.certificateImg} alt={cert.title} className="max-h-40 rounded border border-border object-contain cursor-pointer hover:opacity-80 transition-opacity" loading="lazy" onClick={(e) => { e.stopPropagation(); setDocModal({ src: cert.certificateImg, title: cert.title }); }} />
+                      </div>
+                    )}
                     {cert.description && (
                       <div>
                         <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Description</p>
@@ -71,6 +76,12 @@ export const CertificationsSection = () => {
                       <div>
                         <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Relevance to AI / Data Science</p>
                         <p className="text-sm text-foreground/80">{cert.relevance}</p>
+                      </div>
+                    )}
+                    {cert.proofVideo && (
+                      <div>
+                        <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Proof Video</p>
+                        <video src={cert.proofVideo} controls muted className="w-full max-w-sm rounded border border-border" onClick={e => e.stopPropagation()} />
                       </div>
                     )}
                     <div className="flex gap-3 pt-2">

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchAllPortfolioData, updatePortfolioData } from '@/hooks/usePortfolioData';
+import { MediaUpload, MultiMediaUpload } from '@/components/MediaUpload';
 import { toast } from 'sonner';
 
 const ADMIN_NAME = 'dasu';
@@ -263,15 +264,7 @@ const ArrayField = ({ label, value, onChange, placeholder }: { label: string; va
 );
 
 const ImageField = ({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) => (
-  <div className="mb-3">
-    <label className="text-[10px] text-muted-foreground uppercase tracking-wider block mb-1">{label}</label>
-    <input value={value ?? ''} onChange={e => onChange(e.target.value)} placeholder="Paste image/document URL" className="w-full bg-transparent border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-foreground transition-colors" />
-    {value && (
-      <div className="mt-2 rounded border border-border overflow-hidden w-24 h-16">
-        <img src={value} alt="Preview" className="w-full h-full object-cover" onError={e => (e.currentTarget.style.display = 'none')} />
-      </div>
-    )}
-  </div>
+  <MediaUpload label={label} value={value ?? ''} onChange={onChange} accept="image/*,.pdf" />
 );
 
 const CardWrapper = ({ index, onRemove, children }: { index: number; onRemove: () => void; children: React.ReactNode }) => (
@@ -303,8 +296,8 @@ const HeroEditor = ({ data, onChange }: { data: any; onChange: (key: string, val
     <Field label="Name (use \n for line break)" value={data.name ?? ''} onChange={v => onChange('name', v)} multiline />
     <Field label="Tagline" value={data.tagline ?? ''} onChange={v => onChange('tagline', v)} />
     <Field label="Subtitle" value={data.subtitle ?? ''} onChange={v => onChange('subtitle', v)} multiline />
-    <ImageField label="Profile Image URL" value={data.profileImage ?? ''} onChange={v => onChange('profileImage', v)} />
-    <Field label="Background Video URL (optional)" value={data.backgroundVideo ?? ''} onChange={v => onChange('backgroundVideo', v)} />
+    <MediaUpload label="Profile Image" value={data.profileImage ?? ''} onChange={v => onChange('profileImage', v)} accept="image/*" />
+    <MediaUpload label="Background Video (optional)" value={data.backgroundVideo ?? ''} onChange={v => onChange('backgroundVideo', v)} accept="video/*" maxSizeMB={50} />
   </div>
 );
 
@@ -348,7 +341,7 @@ const InternshipsEditor = ({ data, onChange }: { data: any[]; onChange: (d: any[
     copy[i] = { ...copy[i], [key]: val };
     onChange(copy);
   };
-  const add = () => onChange([...items, { role: '', organization: '', duration: '', location: '', responsibilities: [], tools: [], contributions: '', learned: '', problem: '', outcome: '', offerLetterImg: '', completionCertImg: '' }]);
+  const add = () => onChange([...items, { role: '', organization: '', duration: '', location: '', responsibilities: [], tools: [], contributions: '', learned: '', problem: '', outcome: '', offerLetterImg: '', completionCertImg: '', companyLogo: '', workScreenshots: [], internshipVideo: '' }]);
   const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
 
   return (
@@ -359,14 +352,17 @@ const InternshipsEditor = ({ data, onChange }: { data: any[]; onChange: (d: any[
           <Field label="Company / Organization" value={item.organization ?? ''} onChange={v => update(i, 'organization', v)} />
           <Field label="Duration" value={item.duration ?? ''} onChange={v => update(i, 'duration', v)} />
           <Field label="Location" value={item.location ?? ''} onChange={v => update(i, 'location', v)} />
+          <MediaUpload label="Company Logo" value={item.companyLogo ?? ''} onChange={v => update(i, 'companyLogo', v)} accept="image/*" />
           <ArrayField label="Responsibilities" value={item.responsibilities ?? []} onChange={v => update(i, 'responsibilities', v)} />
           <ArrayField label="Tools Used" value={item.tools ?? []} onChange={v => update(i, 'tools', v)} />
           <Field label="Problem Statement" value={item.problem ?? ''} onChange={v => update(i, 'problem', v)} multiline />
           <Field label="Key Contributions" value={item.contributions ?? ''} onChange={v => update(i, 'contributions', v)} multiline />
           <Field label="What I Learned" value={item.learned ?? ''} onChange={v => update(i, 'learned', v)} multiline />
           <Field label="Outcome" value={item.outcome ?? ''} onChange={v => update(i, 'outcome', v)} multiline />
-          <ImageField label="Offer Letter (Image/PDF URL)" value={item.offerLetterImg ?? ''} onChange={v => update(i, 'offerLetterImg', v)} />
-          <ImageField label="Completion Certificate (Image/PDF URL)" value={item.completionCertImg ?? ''} onChange={v => update(i, 'completionCertImg', v)} />
+          <MediaUpload label="Offer Letter (Image/PDF)" value={item.offerLetterImg ?? ''} onChange={v => update(i, 'offerLetterImg', v)} accept="image/*,.pdf" />
+          <MediaUpload label="Completion Certificate (Image/PDF)" value={item.completionCertImg ?? ''} onChange={v => update(i, 'completionCertImg', v)} accept="image/*,.pdf" />
+          <MultiMediaUpload label="Work Screenshots" values={item.workScreenshots ?? []} onChange={v => update(i, 'workScreenshots', v)} accept="image/*" />
+          <MediaUpload label="Internship Video (optional)" value={item.internshipVideo ?? ''} onChange={v => update(i, 'internshipVideo', v)} accept="video/*" maxSizeMB={50} />
         </CardWrapper>
       ))}
       <AddButton onClick={add} label="Add Internship" />
@@ -424,8 +420,8 @@ const ProjectsEditorFull = ({ data, onChange }: { data: any[]; onChange: (d: any
           <ArrayField label="Features" value={item.features ?? []} onChange={v => update(i, 'features', v)} />
           <Field label="GitHub Link" value={item.githubLink ?? ''} onChange={v => update(i, 'githubLink', v)} />
           <Field label="Live Demo Link" value={item.liveLink ?? ''} onChange={v => update(i, 'liveLink', v)} />
-          <ArrayField label="Image URLs (comma-separated)" value={item.images ?? []} onChange={v => update(i, 'images', v)} placeholder="Paste image URLs separated by commas" />
-          <Field label="Demo Video URL (optional)" value={item.demoVideo ?? ''} onChange={v => update(i, 'demoVideo', v)} />
+          <MultiMediaUpload label="Project Images" values={item.images ?? []} onChange={v => update(i, 'images', v)} accept="image/*" />
+          <MediaUpload label="Demo Video (optional)" value={item.demoVideo ?? ''} onChange={v => update(i, 'demoVideo', v)} accept="video/*" maxSizeMB={50} />
         </CardWrapper>
       ))}
       <AddButton onClick={add} label="Add Project" />
@@ -501,7 +497,7 @@ const CertificationsEditor = ({ data, onChange }: { data: any[]; onChange: (d: a
     copy[i] = { ...copy[i], [key]: val };
     onChange(copy);
   };
-  const add = () => onChange([...items, { title: '', platform: '', date: '', description: '', skillsLearned: '', relevance: '', link: '', certificateImg: '' }]);
+  const add = () => onChange([...items, { title: '', platform: '', date: '', description: '', skillsLearned: '', relevance: '', link: '', certificateImg: '', proofVideo: '' }]);
   const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
 
   return (
@@ -515,7 +511,8 @@ const CertificationsEditor = ({ data, onChange }: { data: any[]; onChange: (d: a
           <ArrayField label="Skills Learned" value={typeof item.skillsLearned === 'string' ? (item.skillsLearned ? item.skillsLearned.split(',').map((s: string) => s.trim()) : []) : (item.skillsLearned ?? [])} onChange={v => update(i, 'skillsLearned', v.join(', '))} />
           <Field label="Relevance" value={item.relevance ?? ''} onChange={v => update(i, 'relevance', v)} multiline />
           <Field label="Verification Link" value={item.link ?? ''} onChange={v => update(i, 'link', v)} />
-          <ImageField label="Certificate Image URL" value={item.certificateImg ?? ''} onChange={v => update(i, 'certificateImg', v)} />
+          <MediaUpload label="Certificate Image" value={item.certificateImg ?? ''} onChange={v => update(i, 'certificateImg', v)} accept="image/*,.pdf" />
+          <MediaUpload label="Proof Video (optional)" value={item.proofVideo ?? ''} onChange={v => update(i, 'proofVideo', v)} accept="video/*" maxSizeMB={50} />
         </CardWrapper>
       ))}
       <AddButton onClick={add} label="Add Certification" />
