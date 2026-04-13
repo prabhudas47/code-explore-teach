@@ -534,23 +534,35 @@ const MediaManagerPanel = () => {
   const [files, setFiles] = useState<{ name: string; id: string; metadata: any; created_at: string }[]>([]);
   const [loadingFiles, setLoadingFiles] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'image' | 'video' | 'pdf'>('all');
+  const [search, setSearch] = useState('');
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewType, setPreviewType] = useState<'image' | 'video' | 'pdf'>('image');
 
   const loadFiles = async () => {
     setLoadingFiles(true);
-    const { data, error } = await supabase.storage.from('portfolio-media').list('uploads', {
-      limit: 200,
-      sortBy: { column: 'created_at', order: 'desc' },
-    });
-    if (!error && data) setFiles(data);
+    try {
+      const { data, error } = await supabase.storage.from('portfolio-media').list('uploads', {
+        limit: 500,
+        sortBy: { column: 'created_at', order: 'desc' },
+      });
+      if (!error && data) {
+        // Filter out .emptyFolderPlaceholder
+        setFiles(data.filter(f => f.name !== '.emptyFolderPlaceholder'));
+      }
+    } catch {
+      toast.error('Failed to load media files');
+    }
     setLoadingFiles(false);
   };
 
   useEffect(() => { loadFiles(); }, []);
 
   const handleDelete = async (fileName: string) => {
+    if (!confirm(`Delete "${fileName}"? This cannot be undone.`)) return;
     setDeleting(fileName);
     const { error } = await supabase.storage.from('portfolio-media').remove([`uploads/${fileName}`]);
-    if (error) { toast.error('Delete failed'); }
+    if (error) { toast.error('Delete failed: ' + error.message); }
     else { toast.success('File deleted'); setFiles(prev => prev.filter(f => f.name !== fileName)); }
     setDeleting(null);
   };
@@ -566,31 +578,93 @@ const MediaManagerPanel = () => {
 
   const copyUrl = (fileName: string) => {
     navigator.clipboard.writeText(getPublicUrl(fileName));
-    toast.success('URL copied!');
+    toast.success('URL copied to clipboard!');
+  };
+
+  const openPreview = (fileName: string) => {
+    setPreviewUrl(getPublicUrl(fileName));
+    setPreviewType(isImage(fileName) ? 'image' : isVideo(fileName) ? 'video' : 'pdf');
+  };
+
+  const formatSize = (metadata: any) => {
+    const bytes = metadata?.size || metadata?.contentLength;
+    if (!bytes) return '—';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1048576).toFixed(1) + ' MB';
+  };
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '—';
+    try { return new Date(dateStr).toLocaleDateString(); } catch { return '—'; }
+  };
+
+  const filteredFiles = files.filter(f => {
+    if (filter === 'image' && !isImage(f.name)) return false;
+    if (filter === 'video' && !isVideo(f.name)) return false;
+    if (filter === 'pdf' && !isPdf(f.name)) return false;
+    if (search && !f.name.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  const handleUploadComplete = (url: string) => {
+    if (url) {
+      toast.success('Upload complete!');
+      // Delay reload slightly to ensure storage is consistent
+      setTimeout(() => loadFiles(), 500);
+    }
   };
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-foreground">Media Manager</h3>
-      <p className="text-[10px] text-muted-foreground">Upload new files or manage existing portfolio media.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Media Manager</h3>
+          <p className="text-[10px] text-muted-foreground">Upload, preview, and manage all portfolio assets.</p>
+        </div>
+        <button onClick={loadFiles} className="text-[10px] text-muted-foreground hover:text-foreground border border-border rounded px-2 py-1 transition-colors">
+          ↻ Refresh
+        </button>
+      </div>
 
-      <MediaUpload label="Upload New File" value="" onChange={() => loadFiles()} accept="image/*,video/*,.pdf" maxSizeMB={50} />
+      {/* Upload area */}
+      <MediaUpload label="Upload New File" value="" onChange={handleUploadComplete} accept="image/*,video/*,.pdf" maxSizeMB={50} />
 
+      {/* Filters & Search */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex gap-1">
+          {(['all', 'image', 'video', 'pdf'] as const).map(f => (
+            <button key={f} onClick={() => setFilter(f)} className={`px-2.5 py-1 text-[10px] rounded-full border transition-colors ${filter === f ? 'bg-foreground text-background border-foreground' : 'border-border text-muted-foreground hover:text-foreground'}`}>
+              {f === 'all' ? 'All' : f === 'image' ? 'Images' : f === 'video' ? 'Videos' : 'PDFs'}
+            </button>
+          ))}
+        </div>
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search files..." className="flex-1 min-w-[120px] bg-transparent border border-border rounded-lg px-3 py-1 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors" />
+      </div>
+
+      {/* File grid */}
       {loadingFiles ? (
-        <p className="text-xs text-muted-foreground py-4">Loading files...</p>
-      ) : files.length === 0 ? (
-        <p className="text-xs text-muted-foreground py-4">No files uploaded yet.</p>
+        <p className="text-xs text-muted-foreground py-8 text-center">Loading files...</p>
+      ) : filteredFiles.length === 0 ? (
+        <p className="text-xs text-muted-foreground py-8 text-center">{files.length === 0 ? 'No files uploaded yet.' : 'No files match your filter.'}</p>
       ) : (
-        <div className="space-y-1">
-          <p className="text-[10px] text-muted-foreground">{files.length} file(s)</p>
+        <div>
+          <p className="text-[10px] text-muted-foreground mb-2">{filteredFiles.length} file(s)</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {files.map(file => (
+            {filteredFiles.map(file => (
               <div key={file.name} className="border border-border rounded-lg overflow-hidden group relative">
-                <div className="aspect-square bg-accent/20 flex items-center justify-center overflow-hidden">
+                <div className="aspect-square bg-accent/20 flex items-center justify-center overflow-hidden cursor-pointer" onClick={() => openPreview(file.name)}>
                   {isImage(file.name) ? (
                     <img src={getPublicUrl(file.name)} alt={file.name} className="w-full h-full object-cover" loading="lazy" />
                   ) : isVideo(file.name) ? (
-                    <video src={getPublicUrl(file.name)} className="w-full h-full object-cover" muted />
+                    <div className="relative w-full h-full flex items-center justify-center bg-black/20">
+                      <video src={getPublicUrl(file.name)} className="w-full h-full object-cover" muted preload="metadata" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-8 h-8 bg-foreground/80 rounded-full flex items-center justify-center">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="hsl(var(--background))"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        </div>
+                      </div>
+                    </div>
                   ) : isPdf(file.name) ? (
                     <svg className="text-muted-foreground" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   ) : (
@@ -598,17 +672,40 @@ const MediaManagerPanel = () => {
                   )}
                 </div>
                 <div className="p-2">
-                  <p className="text-[9px] text-muted-foreground truncate">{file.name}</p>
+                  <p className="text-[9px] text-foreground truncate font-medium">{file.name}</p>
+                  <div className="flex items-center justify-between mt-0.5">
+                    <span className="text-[8px] text-muted-foreground">{formatSize(file.metadata)}</span>
+                    <span className="text-[8px] text-muted-foreground">{formatDate(file.created_at)}</span>
+                  </div>
                 </div>
                 {/* Overlay actions */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  <button onClick={() => copyUrl(file.name)} className="px-2 py-1 bg-foreground/90 text-background text-[9px] rounded hover:bg-foreground transition-colors">Copy URL</button>
-                  <button onClick={() => handleDelete(file.name)} disabled={deleting === file.name} className="px-2 py-1 bg-red-500/90 text-white text-[9px] rounded hover:bg-red-500 transition-colors disabled:opacity-50">
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 pointer-events-none group-hover:pointer-events-auto">
+                  <button onClick={(e) => { e.stopPropagation(); openPreview(file.name); }} className="px-2 py-1 bg-foreground/90 text-background text-[9px] rounded hover:bg-foreground transition-colors">Preview</button>
+                  <button onClick={(e) => { e.stopPropagation(); copyUrl(file.name); }} className="px-2 py-1 bg-foreground/90 text-background text-[9px] rounded hover:bg-foreground transition-colors">Copy URL</button>
+                  <button onClick={(e) => { e.stopPropagation(); handleDelete(file.name); }} disabled={deleting === file.name} className="px-2 py-1 bg-red-500/90 text-white text-[9px] rounded hover:bg-red-500 transition-colors disabled:opacity-50">
                     {deleting === file.name ? '...' : 'Delete'}
                   </button>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Preview Modal */}
+      {previewUrl && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm" onClick={() => setPreviewUrl(null)} onKeyDown={e => e.key === 'Escape' && setPreviewUrl(null)}>
+          <div className="relative max-w-3xl max-h-[80vh] mx-4" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setPreviewUrl(null)} className="absolute -top-8 right-0 text-white/80 hover:text-white text-sm transition-colors">✕ Close</button>
+            {previewType === 'image' && (
+              <img src={previewUrl} alt="Preview" className="max-w-full max-h-[80vh] rounded-lg object-contain" />
+            )}
+            {previewType === 'video' && (
+              <video src={previewUrl} className="max-w-full max-h-[80vh] rounded-lg" controls autoPlay muted />
+            )}
+            {previewType === 'pdf' && (
+              <iframe src={previewUrl} className="w-[80vw] max-w-2xl h-[75vh] rounded-lg bg-white" />
+            )}
           </div>
         </div>
       )}
