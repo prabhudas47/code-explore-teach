@@ -528,3 +528,89 @@ const SkillsEditor = ({ data, onChange }: { data: { left: string[]; right: strin
     <ArrayField label="Right Column Skills" value={data.right ?? []} onChange={v => onChange('right', v)} />
   </div>
 );
+
+const MediaManagerPanel = () => {
+  const [files, setFiles] = useState<{ name: string; id: string; metadata: any; created_at: string }[]>([]);
+  const [loadingFiles, setLoadingFiles] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  const loadFiles = async () => {
+    setLoadingFiles(true);
+    const { data, error } = await supabase.storage.from('portfolio-media').list('uploads', {
+      limit: 200,
+      sortBy: { column: 'created_at', order: 'desc' },
+    });
+    if (!error && data) setFiles(data);
+    setLoadingFiles(false);
+  };
+
+  useEffect(() => { loadFiles(); }, []);
+
+  const handleDelete = async (fileName: string) => {
+    setDeleting(fileName);
+    const { error } = await supabase.storage.from('portfolio-media').remove([`uploads/${fileName}`]);
+    if (error) { toast.error('Delete failed'); }
+    else { toast.success('File deleted'); setFiles(prev => prev.filter(f => f.name !== fileName)); }
+    setDeleting(null);
+  };
+
+  const getPublicUrl = (fileName: string) => {
+    const { data } = supabase.storage.from('portfolio-media').getPublicUrl(`uploads/${fileName}`);
+    return data.publicUrl;
+  };
+
+  const isImage = (name: string) => /\.(webp|jpg|jpeg|png|gif|svg|bmp)$/i.test(name);
+  const isVideo = (name: string) => /\.(mp4|webm|mov|avi)$/i.test(name);
+  const isPdf = (name: string) => /\.pdf$/i.test(name);
+
+  const copyUrl = (fileName: string) => {
+    navigator.clipboard.writeText(getPublicUrl(fileName));
+    toast.success('URL copied!');
+  };
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-sm font-semibold text-foreground">Media Manager</h3>
+      <p className="text-[10px] text-muted-foreground">Upload new files or manage existing portfolio media.</p>
+
+      <MediaUpload label="Upload New File" value="" onChange={() => loadFiles()} accept="image/*,video/*,.pdf" maxSizeMB={50} />
+
+      {loadingFiles ? (
+        <p className="text-xs text-muted-foreground py-4">Loading files...</p>
+      ) : files.length === 0 ? (
+        <p className="text-xs text-muted-foreground py-4">No files uploaded yet.</p>
+      ) : (
+        <div className="space-y-1">
+          <p className="text-[10px] text-muted-foreground">{files.length} file(s)</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {files.map(file => (
+              <div key={file.name} className="border border-border rounded-lg overflow-hidden group relative">
+                <div className="aspect-square bg-accent/20 flex items-center justify-center overflow-hidden">
+                  {isImage(file.name) ? (
+                    <img src={getPublicUrl(file.name)} alt={file.name} className="w-full h-full object-cover" loading="lazy" />
+                  ) : isVideo(file.name) ? (
+                    <video src={getPublicUrl(file.name)} className="w-full h-full object-cover" muted />
+                  ) : isPdf(file.name) ? (
+                    <svg className="text-muted-foreground" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  ) : (
+                    <svg className="text-muted-foreground" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/></svg>
+                  )}
+                </div>
+                <div className="p-2">
+                  <p className="text-[9px] text-muted-foreground truncate">{file.name}</p>
+                </div>
+                {/* Overlay actions */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <button onClick={() => copyUrl(file.name)} className="px-2 py-1 bg-foreground/90 text-background text-[9px] rounded hover:bg-foreground transition-colors">Copy URL</button>
+                  <button onClick={() => handleDelete(file.name)} disabled={deleting === file.name} className="px-2 py-1 bg-red-500/90 text-white text-[9px] rounded hover:bg-red-500 transition-colors disabled:opacity-50">
+                    {deleting === file.name ? '...' : 'Delete'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
