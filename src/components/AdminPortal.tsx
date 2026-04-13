@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { fetchAllPortfolioData, updatePortfolioData } from '@/hooks/usePortfolioData';
 import { MediaUpload, MultiMediaUpload } from '@/components/MediaUpload';
 import { toast } from 'sonner';
