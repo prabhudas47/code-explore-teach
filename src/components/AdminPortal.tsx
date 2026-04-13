@@ -97,6 +97,7 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
     { key: 'currently_building', label: 'Building' },
     { key: 'contact', label: 'Contact' },
     { key: 'footer', label: 'Footer' },
+    { key: 'media_manager', label: 'Media' },
   ];
 
   const initSectionIfEmpty = (key: string) => {
@@ -175,6 +176,7 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
       case 'footer': return <ObjectEditor data={d} fields={[
         { key: 'text', label: 'Footer Text' },
       ]} onChange={(k, v) => updateField('footer', k, v)} />;
+      case 'media_manager': return <MediaManagerPanel />;
       default: return null;
     }
   };
