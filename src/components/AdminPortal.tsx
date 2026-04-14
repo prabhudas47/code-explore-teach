@@ -321,6 +321,12 @@ const SummaryEditor = ({ data, onChange }: { data: any; onChange: (key: string, 
 
 interface ListFieldDef { key: string; label: string; multiline?: boolean }
 
+const swapItems = (arr: any[], a: number, b: number) => {
+  const copy = [...arr];
+  [copy[a], copy[b]] = [copy[b], copy[a]];
+  return copy;
+};
+
 const ListEditor = ({ data, fields, template, onChange }: { data: any[]; fields: ListFieldDef[]; template: any; onChange: (data: any[]) => void }) => {
   const items = Array.isArray(data) ? data : [];
   const update = (i: number, key: string, val: any) => {
@@ -334,7 +340,7 @@ const ListEditor = ({ data, fields, template, onChange }: { data: any[]; fields:
   return (
     <div>
       {items.map((item, i) => (
-        <CardWrapper key={i} index={i} onRemove={() => remove(i)}>
+        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
           {fields.map(f => (
             <Field key={f.key} label={f.label} value={String(item[f.key] ?? '')} onChange={v => update(i, f.key, f.key === 'progress' ? Number(v) || 0 : v)} multiline={f.multiline} />
           ))}
