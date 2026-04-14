@@ -270,9 +270,17 @@ const ImageField = ({ label, value, onChange }: { label: string; value: string; 
   <MediaUpload label={label} value={value ?? ''} onChange={onChange} accept="image/*,.pdf" />
 );
 
-const CardWrapper = ({ index, onRemove, children }: { index: number; onRemove: () => void; children: React.ReactNode }) => (
-  <div className="border border-border rounded-lg p-4 relative mb-4">
-    <button onClick={onRemove} className="absolute top-2 right-2 text-muted-foreground hover:text-red-400 text-xs transition-colors">Remove</button>
+const CardWrapper = ({ index, total, onRemove, onMoveUp, onMoveDown, children }: { index: number; total?: number; onRemove: () => void; onMoveUp?: () => void; onMoveDown?: () => void; children: React.ReactNode }) => (
+  <div className="border border-border rounded-lg p-4 relative mb-4 group/card">
+    <div className="absolute top-2 right-2 flex items-center gap-1.5">
+      {onMoveUp && index > 0 && (
+        <button onClick={onMoveUp} title="Move up" className="text-muted-foreground hover:text-foreground text-xs transition-colors px-1">▲</button>
+      )}
+      {onMoveDown && total !== undefined && index < total - 1 && (
+        <button onClick={onMoveDown} title="Move down" className="text-muted-foreground hover:text-foreground text-xs transition-colors px-1">▼</button>
+      )}
+      <button onClick={onRemove} className="text-muted-foreground hover:text-red-400 text-xs transition-colors ml-1">Remove</button>
+    </div>
     <span className="text-[10px] text-muted-foreground font-mono mb-2 block">#{index + 1}</span>
     {children}
   </div>
@@ -313,6 +321,12 @@ const SummaryEditor = ({ data, onChange }: { data: any; onChange: (key: string, 
 
 interface ListFieldDef { key: string; label: string; multiline?: boolean }
 
+const swapItems = (arr: any[], a: number, b: number) => {
+  const copy = [...arr];
+  [copy[a], copy[b]] = [copy[b], copy[a]];
+  return copy;
+};
+
 const ListEditor = ({ data, fields, template, onChange }: { data: any[]; fields: ListFieldDef[]; template: any; onChange: (data: any[]) => void }) => {
   const items = Array.isArray(data) ? data : [];
   const update = (i: number, key: string, val: any) => {
@@ -326,7 +340,7 @@ const ListEditor = ({ data, fields, template, onChange }: { data: any[]; fields:
   return (
     <div>
       {items.map((item, i) => (
-        <CardWrapper key={i} index={i} onRemove={() => remove(i)}>
+        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
           {fields.map(f => (
             <Field key={f.key} label={f.label} value={String(item[f.key] ?? '')} onChange={v => update(i, f.key, f.key === 'progress' ? Number(v) || 0 : v)} multiline={f.multiline} />
           ))}
@@ -350,7 +364,7 @@ const InternshipsEditor = ({ data, onChange }: { data: any[]; onChange: (d: any[
   return (
     <div>
       {items.map((item, i) => (
-        <CardWrapper key={i} index={i} onRemove={() => remove(i)}>
+        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
           <Field label="Role / Title" value={item.role ?? ''} onChange={v => update(i, 'role', v)} />
           <Field label="Company / Organization" value={item.organization ?? ''} onChange={v => update(i, 'organization', v)} />
           <Field label="Duration" value={item.duration ?? ''} onChange={v => update(i, 'duration', v)} />
@@ -386,7 +400,7 @@ const CaseStudiesEditor = ({ data, onChange }: { data: any[]; onChange: (d: any[
   return (
     <div>
       {items.map((item, i) => (
-        <CardWrapper key={i} index={i} onRemove={() => remove(i)}>
+        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
           <Field label="Project Name" value={item.name ?? ''} onChange={v => update(i, 'name', v)} />
           <Field label="Problem" value={item.problem ?? ''} onChange={v => update(i, 'problem', v)} multiline />
           <Field label="Approach" value={item.approach ?? ''} onChange={v => update(i, 'approach', v)} multiline />
@@ -413,7 +427,7 @@ const ProjectsEditorFull = ({ data, onChange }: { data: any[]; onChange: (d: any
   return (
     <div>
       {items.map((item, i) => (
-        <CardWrapper key={i} index={i} onRemove={() => remove(i)}>
+        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
           <Field label="Number" value={item.num ?? ''} onChange={v => update(i, 'num', v)} />
           <Field label="Project Title" value={item.title ?? ''} onChange={v => update(i, 'title', v)} />
           <Field label="Description" value={item.description ?? ''} onChange={v => update(i, 'description', v)} multiline />
@@ -468,7 +482,7 @@ const TechStackEditor = ({ data, onChange }: { data: any[]; onChange: (d: any[])
   return (
     <div>
       {items.map((group, gi) => (
-        <CardWrapper key={gi} index={gi} onRemove={() => removeCategory(gi)}>
+        <CardWrapper key={gi} index={gi} total={items.length} onRemove={() => removeCategory(gi)} onMoveUp={() => onChange(swapItems(items, gi, gi - 1))} onMoveDown={() => onChange(swapItems(items, gi, gi + 1))}>
           <Field label="Category Name" value={group.category ?? ''} onChange={v => updateCategory(gi, 'category', v)} />
           <div className="mt-3 ml-4 space-y-3">
             <label className="text-[10px] text-muted-foreground uppercase tracking-wider block">Skills in this category</label>
@@ -506,7 +520,7 @@ const CertificationsEditor = ({ data, onChange }: { data: any[]; onChange: (d: a
   return (
     <div>
       {items.map((item, i) => (
-        <CardWrapper key={i} index={i} onRemove={() => remove(i)}>
+        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
           <Field label="Certificate Title" value={item.title ?? ''} onChange={v => update(i, 'title', v)} />
           <Field label="Platform" value={item.platform ?? ''} onChange={v => update(i, 'platform', v)} />
           <Field label="Year / Date" value={item.date ?? ''} onChange={v => update(i, 'date', v)} />
