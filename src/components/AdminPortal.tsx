@@ -270,9 +270,17 @@ const ImageField = ({ label, value, onChange }: { label: string; value: string; 
   <MediaUpload label={label} value={value ?? ''} onChange={onChange} accept="image/*,.pdf" />
 );
 
-const CardWrapper = ({ index, onRemove, children }: { index: number; onRemove: () => void; children: React.ReactNode }) => (
-  <div className="border border-border rounded-lg p-4 relative mb-4">
-    <button onClick={onRemove} className="absolute top-2 right-2 text-muted-foreground hover:text-red-400 text-xs transition-colors">Remove</button>
+const CardWrapper = ({ index, total, onRemove, onMoveUp, onMoveDown, children }: { index: number; total?: number; onRemove: () => void; onMoveUp?: () => void; onMoveDown?: () => void; children: React.ReactNode }) => (
+  <div className="border border-border rounded-lg p-4 relative mb-4 group/card">
+    <div className="absolute top-2 right-2 flex items-center gap-1.5">
+      {onMoveUp && index > 0 && (
+        <button onClick={onMoveUp} title="Move up" className="text-muted-foreground hover:text-foreground text-xs transition-colors px-1">▲</button>
+      )}
+      {onMoveDown && total !== undefined && index < total - 1 && (
+        <button onClick={onMoveDown} title="Move down" className="text-muted-foreground hover:text-foreground text-xs transition-colors px-1">▼</button>
+      )}
+      <button onClick={onRemove} className="text-muted-foreground hover:text-red-400 text-xs transition-colors ml-1">Remove</button>
+    </div>
     <span className="text-[10px] text-muted-foreground font-mono mb-2 block">#{index + 1}</span>
     {children}
   </div>
