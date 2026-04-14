@@ -364,7 +364,7 @@ const InternshipsEditor = ({ data, onChange }: { data: any[]; onChange: (d: any[
   return (
     <div>
       {items.map((item, i) => (
-        <CardWrapper key={i} index={i} onRemove={() => remove(i)}>
+        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
           <Field label="Role / Title" value={item.role ?? ''} onChange={v => update(i, 'role', v)} />
           <Field label="Company / Organization" value={item.organization ?? ''} onChange={v => update(i, 'organization', v)} />
           <Field label="Duration" value={item.duration ?? ''} onChange={v => update(i, 'duration', v)} />
