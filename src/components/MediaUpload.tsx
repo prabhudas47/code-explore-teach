@@ -1,11 +1,12 @@
 import { useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { MediaPickerModal } from './MediaPickerModal';
 
 interface MediaUploadProps {
   label: string;
   value: string;
   onChange: (url: string) => void;
-  accept?: string; // e.g. 'image/*' or 'video/*' or 'image/*,video/*,.pdf'
+  accept?: string;
   maxSizeMB?: number;
 }
 
@@ -38,6 +39,7 @@ export const MediaUpload = ({ label, value, onChange, accept = 'image/*,video/*,
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [dragOver, setDragOver] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isImage = (f: File) => f.type.startsWith('image/');
@@ -51,7 +53,6 @@ export const MediaUpload = ({ label, value, onChange, accept = 'image/*,video/*,
       return;
     }
 
-    // Preview
     if (isImage(file) || isVideo(file)) {
       setPreview(URL.createObjectURL(file));
     } else if (isPdf(file)) {
@@ -65,7 +66,6 @@ export const MediaUpload = ({ label, value, onChange, accept = 'image/*,video/*,
       let uploadBlob: Blob = file;
       let ext = file.name.split('.').pop() || 'bin';
 
-      // Compress images client-side
       if (isImage(file) && !file.type.includes('svg') && !file.type.includes('gif')) {
         setProgress(20);
         uploadBlob = await compressImage(file);
@@ -121,58 +121,72 @@ export const MediaUpload = ({ label, value, onChange, accept = 'image/*,video/*,
 
   return (
     <div className="mb-3">
-      <label className="text-[10px] text-muted-foreground uppercase tracking-wider block mb-1">{label}</label>
+      {label && <label className="text-[10px] text-muted-foreground uppercase tracking-wider block mb-1">{label}</label>}
 
-      <div
-        onDragOver={e => { e.preventDefault(); setDragOver(true); }}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
-        onClick={() => !uploading && inputRef.current?.click()}
-        className={`relative border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all duration-300 ${dragOver ? 'border-foreground bg-accent/30' : 'border-border hover:border-foreground/40'}`}
-      >
-        <input
-          ref={inputRef}
-          type="file"
-          accept={accept}
-          className="hidden"
-          onChange={e => {
-            const file = e.target.files?.[0];
-            if (file) handleFile(file);
-            e.target.value = '';
-          }}
-        />
+      <div className="flex gap-2">
+        {/* Upload area */}
+        <div
+          onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={handleDrop}
+          onClick={() => !uploading && inputRef.current?.click()}
+          className={`relative flex-1 border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all duration-300 ${dragOver ? 'border-foreground bg-accent/30' : 'border-border hover:border-foreground/40'}`}
+        >
+          <input
+            ref={inputRef}
+            type="file"
+            accept={accept}
+            className="hidden"
+            onChange={e => {
+              const file = e.target.files?.[0];
+              if (file) handleFile(file);
+              e.target.value = '';
+            }}
+          />
 
-        {uploading ? (
-          <div className="space-y-2">
-            <p className="text-xs text-muted-foreground">Compressing & uploading...</p>
-            <div className="w-full bg-border rounded-full h-1.5">
-              <div className="bg-foreground h-1.5 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
-            </div>
-            <p className="text-[10px] text-muted-foreground">{progress}%</p>
-          </div>
-        ) : displayUrl ? (
-          <div className="space-y-2">
-            {isCurrentImage && (
-              <img src={value || preview || ''} alt="Preview" className="max-h-32 mx-auto rounded object-contain" onError={e => (e.currentTarget.style.display = 'none')} />
-            )}
-            {isCurrentVideo && (
-              <video src={value || preview || ''} className="max-h-32 mx-auto rounded" muted controls={false} />
-            )}
-            {(displayUrl === 'pdf' || displayUrl?.endsWith('.pdf')) && (
-              <div className="flex items-center justify-center gap-2">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <span className="text-xs text-muted-foreground">PDF uploaded</span>
+          {uploading ? (
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">Compressing & uploading...</p>
+              <div className="w-full bg-border rounded-full h-1.5">
+                <div className="bg-foreground h-1.5 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
               </div>
-            )}
-            <p className="text-[10px] text-muted-foreground truncate max-w-xs mx-auto">{value}</p>
-          </div>
-        ) : (
-          <div className="py-3">
-            <svg className="mx-auto mb-2 text-muted-foreground" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <p className="text-xs text-muted-foreground">Drop file here or click to browse</p>
-            <p className="text-[10px] text-muted-foreground/60 mt-1">Images auto-compressed to WebP</p>
-          </div>
-        )}
+              <p className="text-[10px] text-muted-foreground">{progress}%</p>
+            </div>
+          ) : displayUrl ? (
+            <div className="space-y-2">
+              {isCurrentImage && (
+                <img src={value || preview || ''} alt="Preview" className="max-h-32 mx-auto rounded object-contain" onError={e => (e.currentTarget.style.display = 'none')} />
+              )}
+              {isCurrentVideo && (
+                <video src={value || preview || ''} className="max-h-32 mx-auto rounded" muted controls={false} />
+              )}
+              {(displayUrl === 'pdf' || displayUrl?.endsWith('.pdf')) && (
+                <div className="flex items-center justify-center gap-2">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span className="text-xs text-muted-foreground">PDF uploaded</span>
+                </div>
+              )}
+              <p className="text-[10px] text-muted-foreground truncate max-w-xs mx-auto">{value}</p>
+            </div>
+          ) : (
+            <div className="py-3">
+              <svg className="mx-auto mb-2 text-muted-foreground" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <p className="text-xs text-muted-foreground">Drop file or click to upload</p>
+              <p className="text-[10px] text-muted-foreground/60 mt-1">Images auto-compressed to WebP</p>
+            </div>
+          )}
+        </div>
+
+        {/* Library button */}
+        <button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          className="shrink-0 border-2 border-dashed border-border rounded-lg px-3 flex flex-col items-center justify-center gap-1.5 text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-all duration-300"
+          title="Choose from media library"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span className="text-[8px] uppercase tracking-wider leading-tight text-center">Library</span>
+        </button>
       </div>
 
       {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
@@ -182,6 +196,13 @@ export const MediaUpload = ({ label, value, onChange, accept = 'image/*,video/*,
           Remove file
         </button>
       )}
+
+      <MediaPickerModal
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={(url) => { onChange(url); setPickerOpen(false); }}
+        accept={accept}
+      />
     </div>
   );
 };
