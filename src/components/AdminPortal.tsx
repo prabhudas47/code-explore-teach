@@ -400,7 +400,7 @@ const CaseStudiesEditor = ({ data, onChange }: { data: any[]; onChange: (d: any[
   return (
     <div>
       {items.map((item, i) => (
-        <CardWrapper key={i} index={i} onRemove={() => remove(i)}>
+        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
           <Field label="Project Name" value={item.name ?? ''} onChange={v => update(i, 'name', v)} />
           <Field label="Problem" value={item.problem ?? ''} onChange={v => update(i, 'problem', v)} multiline />
           <Field label="Approach" value={item.approach ?? ''} onChange={v => update(i, 'approach', v)} multiline />
@@ -427,7 +427,7 @@ const ProjectsEditorFull = ({ data, onChange }: { data: any[]; onChange: (d: any
   return (
     <div>
       {items.map((item, i) => (
-        <CardWrapper key={i} index={i} onRemove={() => remove(i)}>
+        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
           <Field label="Number" value={item.num ?? ''} onChange={v => update(i, 'num', v)} />
           <Field label="Project Title" value={item.title ?? ''} onChange={v => update(i, 'title', v)} />
           <Field label="Description" value={item.description ?? ''} onChange={v => update(i, 'description', v)} multiline />
@@ -482,7 +482,7 @@ const TechStackEditor = ({ data, onChange }: { data: any[]; onChange: (d: any[])
   return (
     <div>
       {items.map((group, gi) => (
-        <CardWrapper key={gi} index={gi} onRemove={() => removeCategory(gi)}>
+        <CardWrapper key={gi} index={gi} total={items.length} onRemove={() => removeCategory(gi)} onMoveUp={() => onChange(swapItems(items, gi, gi - 1))} onMoveDown={() => onChange(swapItems(items, gi, gi + 1))}>
           <Field label="Category Name" value={group.category ?? ''} onChange={v => updateCategory(gi, 'category', v)} />
           <div className="mt-3 ml-4 space-y-3">
             <label className="text-[10px] text-muted-foreground uppercase tracking-wider block">Skills in this category</label>
@@ -520,7 +520,7 @@ const CertificationsEditor = ({ data, onChange }: { data: any[]; onChange: (d: a
   return (
     <div>
       {items.map((item, i) => (
-        <CardWrapper key={i} index={i} onRemove={() => remove(i)}>
+        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
           <Field label="Certificate Title" value={item.title ?? ''} onChange={v => update(i, 'title', v)} />
           <Field label="Platform" value={item.platform ?? ''} onChange={v => update(i, 'platform', v)} />
           <Field label="Year / Date" value={item.date ?? ''} onChange={v => update(i, 'date', v)} />
