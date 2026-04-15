@@ -26,11 +26,38 @@ Rules:
 - Use markdown for formatting when helpful
 - Keep responses short (2-4 sentences unless detail is requested)`;
 
+const MAX_MESSAGES = 20;
+const MAX_CONTENT_LENGTH = 2000;
+const ALLOWED_ROLES = new Set(["user", "assistant"]);
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
+    const { messages } = body;
+
+    // Input validation
+    if (!Array.isArray(messages) || messages.length === 0 || messages.length > MAX_MESSAGES) {
+      return new Response(JSON.stringify({ error: "Invalid messages: must be an array of 1-20 items." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Sanitize messages: only allow user/assistant roles, truncate content
+    const sanitizedMessages = messages
+      .filter((m: any) => m && typeof m.content === "string" && ALLOWED_ROLES.has(m.role))
+      .map((m: any) => ({
+        role: m.role,
+        content: m.content.slice(0, MAX_CONTENT_LENGTH),
+      }));
+
+    if (sanitizedMessages.length === 0) {
+      return new Response(JSON.stringify({ error: "No valid messages provided." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -44,7 +71,7 @@ serve(async (req) => {
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          ...messages,
+          ...sanitizedMessages,
         ],
         stream: true,
       }),
@@ -61,9 +88,8 @@ serve(async (req) => {
           status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
-      return new Response(JSON.stringify({ error: "AI gateway error" }), {
+      console.error("AI gateway error:", response.status);
+      return new Response(JSON.stringify({ error: "AI service temporarily unavailable." }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -73,7 +99,7 @@ serve(async (req) => {
     });
   } catch (e) {
     console.error("chat error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
+    return new Response(JSON.stringify({ error: "An unexpected error occurred." }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
