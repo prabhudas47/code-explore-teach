@@ -3,6 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { fetchAllPortfolioData, updatePortfolioData } from '@/hooks/usePortfolioData';
 import { MediaUpload, MultiMediaUpload } from '@/components/MediaUpload';
 import { toast } from 'sonner';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const ADMIN_NAME = 'dasu';
 const ADMIN_PASS = 'dasuprabhu42@';
