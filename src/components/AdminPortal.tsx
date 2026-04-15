@@ -214,8 +214,8 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
         {!authed ? (
           <form onSubmit={handleLogin} className="p-8 space-y-5">
             <div>
-              <label className="text-xs text-muted-foreground uppercase tracking-wider">Name</label>
-              <input value={name} onChange={e => setName(e.target.value)} className="w-full mt-2 bg-transparent border-b border-border px-0 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors" placeholder="Enter name" autoFocus />
+              <label className="text-xs text-muted-foreground uppercase tracking-wider">Email</label>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full mt-2 bg-transparent border-b border-border px-0 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors" placeholder="Enter admin email" autoFocus />
             </div>
             <div>
               <label className="text-xs text-muted-foreground uppercase tracking-wider">Password</label>
