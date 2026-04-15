@@ -7,8 +7,7 @@ import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEn
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const ADMIN_NAME = 'dasu';
-const ADMIN_PASS = 'dasuprabhu42@';
+// Admin auth via Supabase Auth - no hardcoded credentials
 
 interface AdminPortalProps {
   open: boolean;
@@ -17,7 +16,7 @@ interface AdminPortalProps {
 
 export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
   const [authed, setAuthed] = useState(false);
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -27,25 +26,41 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Check if already logged in
+    if (open) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          setAuthed(true);
+        }
+      });
+    }
+  }, [open]);
+
+  useEffect(() => {
     if (open && authed) {
       setLoading(true);
       fetchAllPortfolioData().then(d => { setAllData(d); setLoading(false); });
     }
   }, [open, authed]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name === ADMIN_NAME && password === ADMIN_PASS) {
-      setAuthed(true);
-      setLoginError('');
+    setLoginError('');
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      setLoginError(error.message);
     } else {
-      setLoginError('Invalid credentials');
+      setAuthed(true);
     }
   };
 
-  const handleClose = () => {
+  const handleClose = async () => {
+    await supabase.auth.signOut();
     setAuthed(false);
-    setName('');
+    setEmail('');
     setPassword('');
     onClose();
   };
