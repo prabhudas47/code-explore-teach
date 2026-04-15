@@ -143,6 +143,7 @@ export const AdminPortal = ({ open, onClose }: AdminPortalProps) => {
   };
 
   const renderEditor = () => {
+    if (activeSection === 'media_manager') return <MediaManagerPanel />;
     initSectionIfEmpty(activeSection);
     const d = allData[activeSection];
     if (!d) return <p className="text-sm text-muted-foreground">No data. Click Save to initialize.</p>;
