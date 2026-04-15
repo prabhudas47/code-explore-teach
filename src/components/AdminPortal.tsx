@@ -417,33 +417,110 @@ const CaseStudiesEditor = ({ data, onChange }: { data: any[]; onChange: (d: any[
   );
 };
 
+const SortableProjectCard = ({ item, index, total, onUpdate, onRemove, onMoveUp, onMoveDown, id }: any) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : 'auto' as any,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <div className={`border border-border rounded-lg p-4 relative mb-4 group/card ${isDragging ? 'shadow-[0_8px_30px_hsl(0_0%_100%/0.08)] ring-1 ring-foreground/20' : ''}`}>
+        <div className="absolute top-2 right-2 flex items-center gap-1.5">
+          {index > 0 && (
+            <button onClick={onMoveUp} title="Move up" className="text-muted-foreground hover:text-foreground text-xs transition-colors px-1">▲</button>
+          )}
+          {index < total - 1 && (
+            <button onClick={onMoveDown} title="Move down" className="text-muted-foreground hover:text-foreground text-xs transition-colors px-1">▼</button>
+          )}
+          <button onClick={onRemove} className="text-muted-foreground hover:text-red-400 text-xs transition-colors ml-1">Remove</button>
+        </div>
+        <div className="flex items-center gap-2 mb-2">
+          <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none" title="Drag to reorder">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+          </button>
+          <span className="text-[10px] text-muted-foreground font-mono">#{index + 1}</span>
+        </div>
+        <Field label="Number" value={item.num ?? ''} onChange={v => onUpdate('num', v)} />
+        <Field label="Project Title" value={item.title ?? ''} onChange={v => onUpdate('title', v)} />
+        <Field label="Description" value={item.description ?? ''} onChange={v => onUpdate('description', v)} multiline />
+        <Field label="Problem Statement" value={item.problem ?? ''} onChange={v => onUpdate('problem', v)} multiline />
+        <Field label="Approach" value={item.approach ?? ''} onChange={v => onUpdate('approach', v)} multiline />
+        <ArrayField label="Tech Stack" value={item.tech ?? []} onChange={v => onUpdate('tech', v)} />
+        <ArrayField label="Features" value={item.features ?? []} onChange={v => onUpdate('features', v)} />
+        <Field label="GitHub Link" value={item.githubLink ?? ''} onChange={v => onUpdate('githubLink', v)} />
+        <Field label="Live Demo Link" value={item.liveLink ?? ''} onChange={v => onUpdate('liveLink', v)} />
+        <MultiMediaUpload label="Project Images" values={item.images ?? []} onChange={v => onUpdate('images', v)} accept="image/*" />
+        <MediaUpload label="Demo Video (optional)" value={item.demoVideo ?? ''} onChange={v => onUpdate('demoVideo', v)} accept="video/*" maxSizeMB={50} />
+      </div>
+    </div>
+  );
+};
+
 const ProjectsEditorFull = ({ data, onChange }: { data: any[]; onChange: (d: any[]) => void }) => {
   const items = Array.isArray(data) ? data : [];
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+
+  // Ensure each item has a stable id
+  const itemsWithIds = items.map((item, i) => ({
+    ...item,
+    _dndId: item._dndId || `project-${i}-${item.title || i}`,
+  }));
+
   const update = (i: number, key: string, val: any) => {
-    const copy = [...items];
+    const copy = [...itemsWithIds];
     copy[i] = { ...copy[i], [key]: val };
     onChange(copy);
   };
-  const add = () => onChange([...items, { num: String(items.length + 1).padStart(2, '0'), title: '', description: '', problem: '', approach: '', tech: [], features: [], githubLink: '', liveLink: '', images: [], demoVideo: '' }]);
-  const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
+
+  const add = () => {
+    const newItem = { _dndId: `project-new-${Date.now()}`, num: String(items.length + 1).padStart(2, '0'), title: '', description: '', problem: '', approach: '', tech: [], features: [], githubLink: '', liveLink: '', images: [], demoVideo: '' };
+    onChange([...itemsWithIds, newItem]);
+  };
+
+  const remove = (i: number) => {
+    const filtered = itemsWithIds.filter((_, idx) => idx !== i);
+    // Re-number
+    const renumbered = filtered.map((item, idx) => ({ ...item, num: String(idx + 1).padStart(2, '0') }));
+    onChange(renumbered);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = itemsWithIds.findIndex(item => item._dndId === active.id);
+    const newIndex = itemsWithIds.findIndex(item => item._dndId === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+    const reordered = arrayMove(itemsWithIds, oldIndex, newIndex).map((item, idx) => ({
+      ...item,
+      num: String(idx + 1).padStart(2, '0'),
+    }));
+    onChange(reordered);
+    toast.success('Project order updated — click Save to persist');
+  };
 
   return (
     <div>
-      {items.map((item, i) => (
-        <CardWrapper key={i} index={i} total={items.length} onRemove={() => remove(i)} onMoveUp={() => onChange(swapItems(items, i, i - 1))} onMoveDown={() => onChange(swapItems(items, i, i + 1))}>
-          <Field label="Number" value={item.num ?? ''} onChange={v => update(i, 'num', v)} />
-          <Field label="Project Title" value={item.title ?? ''} onChange={v => update(i, 'title', v)} />
-          <Field label="Description" value={item.description ?? ''} onChange={v => update(i, 'description', v)} multiline />
-          <Field label="Problem Statement" value={item.problem ?? ''} onChange={v => update(i, 'problem', v)} multiline />
-          <Field label="Approach" value={item.approach ?? ''} onChange={v => update(i, 'approach', v)} multiline />
-          <ArrayField label="Tech Stack" value={item.tech ?? []} onChange={v => update(i, 'tech', v)} />
-          <ArrayField label="Features" value={item.features ?? []} onChange={v => update(i, 'features', v)} />
-          <Field label="GitHub Link" value={item.githubLink ?? ''} onChange={v => update(i, 'githubLink', v)} />
-          <Field label="Live Demo Link" value={item.liveLink ?? ''} onChange={v => update(i, 'liveLink', v)} />
-          <MultiMediaUpload label="Project Images" values={item.images ?? []} onChange={v => update(i, 'images', v)} accept="image/*" />
-          <MediaUpload label="Demo Video (optional)" value={item.demoVideo ?? ''} onChange={v => update(i, 'demoVideo', v)} accept="video/*" maxSizeMB={50} />
-        </CardWrapper>
-      ))}
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={itemsWithIds.map(item => item._dndId)} strategy={verticalListSortingStrategy}>
+          {itemsWithIds.map((item, i) => (
+            <SortableProjectCard
+              key={item._dndId}
+              id={item._dndId}
+              item={item}
+              index={i}
+              total={itemsWithIds.length}
+              onUpdate={(key: string, val: any) => update(i, key, val)}
+              onRemove={() => remove(i)}
+              onMoveUp={() => onChange(swapItems(itemsWithIds, i, i - 1).map((it, idx) => ({ ...it, num: String(idx + 1).padStart(2, '0') })))}
+              onMoveDown={() => onChange(swapItems(itemsWithIds, i, i + 1).map((it, idx) => ({ ...it, num: String(idx + 1).padStart(2, '0') })))}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
       <AddButton onClick={add} label="Add Project" />
     </div>
   );
