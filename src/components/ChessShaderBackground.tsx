@@ -131,6 +131,8 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     cameraRef.current = camera;
 
