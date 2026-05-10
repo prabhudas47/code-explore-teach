@@ -13,11 +13,15 @@ float chess(vec3 p){
     return mod(g.x+g.y+g.z,2.0);
 }
 
-// More organic living terrain
+// More organic living terrain - cinematic, faster, layered depth
 float terrain(vec3 p){
-    p.y += sin(p.x*0.35+iTime*0.5)*0.4;
-    p.y += sin(p.z*0.45-iTime*0.6)*0.35;
-    p.y += sin((p.x+p.z)*0.2+iTime*0.4)*0.25;
+    // Foreground (high-frequency, faster) - more active near camera
+    p.y += sin(p.x*0.45+iTime*0.85)*0.42;
+    p.y += sin(p.z*0.55-iTime*0.95)*0.36;
+    // Mid layer
+    p.y += sin((p.x+p.z)*0.25+iTime*0.65)*0.26;
+    // Background (low-frequency, slower) - parallax depth
+    p.y += sin(p.x*0.12 - iTime*0.35)*0.18;
     return p.y + 3.0;
 }
 
