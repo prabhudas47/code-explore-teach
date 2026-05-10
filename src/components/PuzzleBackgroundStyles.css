@@ -147,3 +147,32 @@
   transform-origin: center;
   transform-box: fill-box;
 }
+
+/* ========== ACCESSIBILITY: REDUCED MOTION ========== */
+@media (prefers-reduced-motion: reduce) {
+  .wall-border-anim,
+  .wall-border-anim-reverse,
+  .piece-breathe,
+  .piece-border-pulse,
+  .piece-ripple,
+  .piece-pop {
+    animation: none !important;
+  }
+
+  .wall-border-anim,
+  .wall-border-anim-reverse {
+    opacity: 0.25;
+  }
+
+  .piece-breathe {
+    fill-opacity: 0.04;
+  }
+
+  .puzzle-piece-hover {
+    transition: none !important;
+  }
+
+  .puzzle-piece-hover:hover {
+    filter: none;
+  }
+}
