@@ -72,25 +72,29 @@
 .wall-border-anim {
   stroke-dasharray: 40 1360;
   stroke-dashoffset: 1400;
-  animation: wallBorderTravel 7s linear infinite;
+  animation: wallBorderTravel 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   opacity: 0.55;
   filter: drop-shadow(0 0 3px rgba(255,255,255,0.6));
+  will-change: stroke-dashoffset;
 }
 
 .wall-border-anim-reverse {
   stroke-dasharray: 30 1370;
   stroke-dashoffset: 0;
-  animation: wallBorderTravelReverse 9s linear infinite;
+  animation: wallBorderTravelReverse 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   opacity: 0.4;
   filter: drop-shadow(0 0 2px rgba(255,255,255,0.4));
+  will-change: stroke-dashoffset;
 }
 
 .piece-breathe {
-  animation: pieceBreathe 6s ease-in-out infinite;
+  animation: pieceBreathe 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: fill-opacity;
 }
 
 .piece-border-pulse {
-  animation: piecePulse 5s ease-in-out infinite;
+  animation: piecePulse 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: stroke-opacity;
 }
 
 /* Hover glow on individual puzzle pieces */

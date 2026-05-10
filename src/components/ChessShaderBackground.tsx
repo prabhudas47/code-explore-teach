@@ -13,11 +13,15 @@ float chess(vec3 p){
     return mod(g.x+g.y+g.z,2.0);
 }
 
-// More organic living terrain
+// More organic living terrain - cinematic, faster, layered depth
 float terrain(vec3 p){
-    p.y += sin(p.x*0.35+iTime*0.5)*0.4;
-    p.y += sin(p.z*0.45-iTime*0.6)*0.35;
-    p.y += sin((p.x+p.z)*0.2+iTime*0.4)*0.25;
+    // Foreground (high-frequency, faster) - more active near camera
+    p.y += sin(p.x*0.45+iTime*0.85)*0.42;
+    p.y += sin(p.z*0.55-iTime*0.95)*0.36;
+    // Mid layer
+    p.y += sin((p.x+p.z)*0.25+iTime*0.65)*0.26;
+    // Background (low-frequency, slower) - parallax depth
+    p.y += sin(p.x*0.12 - iTime*0.35)*0.18;
     return p.y + 3.0;
 }
 
@@ -54,16 +58,16 @@ void main()
     // Normalized mouse (-0.5 to 0.5)
     vec2 mouse = iMouse / iResolution - 0.5;
 
-    float speed = 1.2;
+    float speed = 1.75;
     vec3 ro = vec3(
-        sin(t*0.2)*1.5 + mouse.x * 3.0,
-        2.5 + sin(t*0.6)*0.3 + mouse.y * 1.0,
-        18.0 - t*speed - mouse.y * 6.0
+        sin(t*0.28)*1.7 + mouse.x * 4.0,
+        2.5 + sin(t*0.85)*0.35 + mouse.y * 1.4,
+        18.0 - t*speed - mouse.y * 7.5
     );
 
     vec3 ta = vec3(
-        mouse.x * 2.0,
-        0.0 + mouse.y * 0.5,
+        mouse.x * 2.6,
+        0.0 + mouse.y * 0.7,
         ro.z-6.0
     );
 
