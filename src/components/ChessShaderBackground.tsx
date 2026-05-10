@@ -131,6 +131,8 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     cameraRef.current = camera;
 
@@ -208,17 +210,26 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     const animate = () => {
       if (!isVisible) return;
 
-      const elapsed = (Date.now() - startTimeRef.current) / 1000;
+      const rawElapsed = (Date.now() - startTimeRef.current) / 1000;
+      // Reduced motion: slow time to a near-still drift, lock mouse to center
+      const elapsed = reducedMotion ? rawElapsed * 0.08 : rawElapsed;
       material.uniforms.iTime.value = elapsed;
 
-      // Fast mouse lerp - nearly instant reaction
-      mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * 0.3;
-      mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * 0.3;
+      if (reducedMotion) {
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        mouseRef.current.x = cx;
+        mouseRef.current.y = cy;
+      } else {
+        // Fast mouse lerp - nearly instant reaction
+        mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * 0.3;
+        mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * 0.3;
+      }
       const pr = renderer.getPixelRatio();
       material.uniforms.iMouse.value.set(mouseRef.current.x * pr, mouseRef.current.y * pr);
 
-      // Notify when fade to black is complete (~23s)
-      if (elapsed > 23 && !fadeCalledRef.current) {
+      // Notify when fade to black is complete (~23s of real time)
+      if (rawElapsed > 23 && !fadeCalledRef.current) {
         fadeCalledRef.current = true;
         onFadeComplete?.();
       }
