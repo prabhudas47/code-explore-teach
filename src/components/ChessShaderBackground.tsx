@@ -234,6 +234,15 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       }
     }
 
+    // Live-react to user toggling reduce-motion via the visible toggle
+    const motionObserver = new MutationObserver(() => {
+      const next = isReducedMotion();
+      if (next === reducedMotion) return;
+      reducedMotion = next;
+      material.uniforms.iParallax.value = next ? 0.0 : 1.0;
+    });
+    motionObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-reduced-motion'] });
+
     let isVisible = true;
 
     const handleVisibilityChange = () => {
