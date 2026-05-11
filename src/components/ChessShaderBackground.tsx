@@ -56,8 +56,8 @@ void main()
     vec2 uv=(fragCoord-0.5*iResolution.xy)/iResolution.y;
     float t=iTime;
 
-    // Normalized mouse (-0.5 to 0.5)
-    vec2 mouse = iMouse / iResolution - 0.5;
+    // Normalized mouse (-0.5 to 0.5), scaled by adaptive parallax intensity
+    vec2 mouse = (iMouse / iResolution - 0.5) * iParallax;
 
     float speed = 1.75;
     vec3 ro = vec3(
