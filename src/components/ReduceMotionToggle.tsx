@@ -43,36 +43,27 @@ export const ReduceMotionToggle = () => {
   };
 
   return (
-    <div ref={ref} className="fixed bottom-4 left-4 z-40">
+    <div ref={ref} className="fixed bottom-4 left-4 z-40 flex items-center gap-1">
       <button
         type="button"
-        onClick={() => (open ? setOpen(false) : (setReduced(!reduced)))}
-        onContextMenu={(e) => {
-          e.preventDefault();
-          setOpen(true);
-        }}
-        onDoubleClick={(e) => {
-          e.preventDefault();
-          setOpen(true);
-        }}
+        onClick={() => setReduced(!reduced)}
         aria-pressed={reduced}
         aria-label={reduced ? 'Enable background animations' : 'Reduce background animations'}
-        title="Click: toggle reduce motion · Double-click / right-click: settings"
+        title="Toggle reduce motion"
         className="flex items-center gap-2 rounded-full border border-white/15 bg-black/60 px-3 py-2 text-xs text-white/80 backdrop-blur-md transition hover:bg-black/80 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40"
       >
         {reduced ? <Zap className="h-3.5 w-3.5" /> : <Sparkles className="h-3.5 w-3.5" />}
         <span className="hidden sm:inline">{reduced ? 'Motion: Reduced' : 'Reduce motion'}</span>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setOpen((o) => !o);
-          }}
-          aria-label="Background settings"
-          className="ml-1 grid h-5 w-5 place-items-center rounded-full hover:bg-white/10"
-        >
-          <Settings className="h-3 w-3" />
-        </button>
+      </button>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-label="Background settings"
+        aria-expanded={open}
+        title="Background settings"
+        className="grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-black/60 text-white/80 backdrop-blur-md transition hover:bg-black/80 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40"
+      >
+        <Settings className="h-3.5 w-3.5" />
       </button>
 
       {open && (
