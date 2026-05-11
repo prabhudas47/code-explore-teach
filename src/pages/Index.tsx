@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChatBot } from "@/components/ChatBot";
 import { ChessShaderBackground } from "@/components/ChessShaderBackground";
 import { PuzzleReveal } from "@/components/PuzzleReveal";
@@ -22,11 +22,18 @@ import { CinematicSection } from "@/components/sections/CinematicSection";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AdminPortal } from "@/components/AdminPortal";
 import { ReduceMotionToggle } from "@/components/ReduceMotionToggle";
+import { BackgroundDebugOverlay } from "@/components/BackgroundDebugOverlay";
+import { LowPowerBackground } from "@/components/LowPowerBackground";
+import { useIdleBgPause } from "@/hooks/useIdleBgPause";
+import { isLowPowerForced } from "@/lib/bgPerf";
 
 const Index = () => {
-  const [introComplete, setIntroComplete] = useState(false);
-  const [shaderVisible, setShaderVisible] = useState(true);
+  const lowPower = isLowPowerForced();
+  const [introComplete, setIntroComplete] = useState(lowPower);
+  const [shaderVisible, setShaderVisible] = useState(!lowPower);
   const [adminOpen, setAdminOpen] = useState(false);
+
+  useIdleBgPause();
 
   const handleFadeComplete = () => {
     setTimeout(() => {
@@ -37,7 +44,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative bg-background">
-      {shaderVisible && (
+      {lowPower && <LowPowerBackground />}
+      {shaderVisible && !lowPower && (
         <div
           className="fixed inset-0 z-50"
           style={{ opacity: introComplete ? 0 : 1, transition: 'opacity 1s ease-in-out' }}
@@ -73,6 +81,7 @@ const Index = () => {
 
       {introComplete && <ChatBot />}
       {introComplete && <ReduceMotionToggle />}
+      <BackgroundDebugOverlay />
       <AdminPortal open={adminOpen} onClose={() => setAdminOpen(false)} />
     </div>
   );

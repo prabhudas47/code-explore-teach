@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { bgPerf, isLowPowerForced, setLowPowerForced } from '@/lib/bgPerf';
+import { getOrientationSensitivity, getPauseOnIdle } from '@/lib/bgSettings';
 
 const fragmentShader = `
 uniform float iTime;
@@ -129,6 +131,14 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // If user (or a previous session) forced low-power, skip WebGL entirely.
+    if (isLowPowerForced()) {
+      bgPerf.set({ active: false, lowPower: true, parallax: 0, dpr: 1, fps: 0 });
+      // Still notify the intro that fade is "complete" so the page can mount.
+      const t = setTimeout(() => onFadeComplete?.(), 50);
+      return () => clearTimeout(t);
+    }
+
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
@@ -207,14 +217,13 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     const handleOrientation = (e: DeviceOrientationEvent) => {
       if (e.gamma == null || e.beta == null) return;
       orientationActive = true;
-      // Clamp to subtle range, normalize to viewport coords
-      const gx = Math.max(-25, Math.min(25, e.gamma)) / 25; // -1..1
-      const gy = Math.max(-25, Math.min(25, (e.beta ?? 0) - 35)) / 25; // tilt around ~35deg hold
+      const sens = getOrientationSensitivity(); // user-tunable, 0..1
+      const gx = Math.max(-25, Math.min(25, e.gamma)) / 25;
+      const gy = Math.max(-25, Math.min(25, (e.beta ?? 0) - 35)) / 25;
       const cx = window.innerWidth / 2;
       const cy = window.innerHeight / 2;
-      // Subtle: only ~15% of half-viewport offset
-      targetMouseRef.current.x = cx + gx * cx * 0.15;
-      targetMouseRef.current.y = cy + gy * cy * 0.15;
+      targetMouseRef.current.x = cx + gx * cx * sens;
+      targetMouseRef.current.y = cy + gy * cy * sens;
     };
     const isTouchDevice = 'ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0;
     if (isTouchDevice && !reducedMotion) {
@@ -244,16 +253,45 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     motionObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-reduced-motion'] });
 
     let isVisible = true;
+    let isPausedForIdle = false;
 
     const handleVisibilityChange = () => {
       isVisible = !document.hidden;
-      if (isVisible) {
+      if (isVisible && !isPausedForIdle) {
         startTimeRef.current = Date.now() - (material.uniforms.iTime.value * 1000);
         animate();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Idle-pause: stop rendering after N seconds of no input (reading mode)
+    const IDLE_MS = 6000;
+    let idleTimer: ReturnType<typeof setTimeout> | null = null;
+    const resumeFromIdle = () => {
+      if (!isPausedForIdle) return;
+      isPausedForIdle = false;
+      bgPerf.set({ active: true });
+      startTimeRef.current = Date.now() - (material.uniforms.iTime.value * 1000);
+      animate();
+    };
+    const pauseForIdle = () => {
+      if (!getPauseOnIdle()) return;
+      // Don't pause during the cinematic intro fade window
+      const elapsed = (Date.now() - startTimeRef.current) / 1000;
+      if (elapsed < 24) return;
+      isPausedForIdle = true;
+      bgPerf.set({ active: false });
+    };
+    const resetIdleTimer = () => {
+      resumeFromIdle();
+      if (idleTimer) clearTimeout(idleTimer);
+      if (getPauseOnIdle()) idleTimer = setTimeout(pauseForIdle, IDLE_MS);
+    };
+    ['mousemove', 'touchstart', 'scroll', 'keydown'].forEach((ev) =>
+      window.addEventListener(ev, resetIdleTimer, { passive: true })
+    );
+    resetIdleTimer();
 
     // Adaptive quality state — scales pixel ratio + parallax intensity to hold ~60fps
     const maxDpr = isMobile ? Math.min(window.devicePixelRatio, 1.0) : Math.min(window.devicePixelRatio, 1.5);
@@ -264,9 +302,12 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     let frameAccum = 0;
     let frameCount = 0;
     let lastQualityAdjust = performance.now();
+    let lowFpsStreak = 0; // consecutive 1s windows below target while already at min quality
+
+    bgPerf.set({ active: true, dpr: currentDpr, parallax: targetParallax, lowPower: false });
 
     const animate = () => {
-      if (!isVisible) return;
+      if (!isVisible || isPausedForIdle) return;
 
       const now = performance.now();
       const dt = now - lastFrameTs;
@@ -275,31 +316,52 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       frameCount++;
 
       // Sample FPS every ~1s and adapt quality
-      if (!reducedMotion && now - lastQualityAdjust > 1000 && frameCount > 10) {
+      if (now - lastQualityAdjust > 1000 && frameCount > 10) {
         const avgMs = frameAccum / frameCount;
         const fps = 1000 / avgMs;
-        if (fps < 50 && (currentDpr > minDpr || targetParallax > 0.45)) {
-          // Drop quality
-          currentDpr = Math.max(minDpr, currentDpr - 0.15);
-          targetParallax = Math.max(0.45, targetParallax - 0.15);
-          renderer.setPixelRatio(currentDpr);
-          material.uniforms.iResolution.value.set(window.innerWidth * currentDpr, window.innerHeight * currentDpr);
-        } else if (fps > 58 && (currentDpr < maxDpr || targetParallax < 1.0)) {
-          // Restore quality gradually
-          currentDpr = Math.min(maxDpr, currentDpr + 0.1);
-          targetParallax = Math.min(1.0, targetParallax + 0.1);
-          renderer.setPixelRatio(currentDpr);
-          material.uniforms.iResolution.value.set(window.innerWidth * currentDpr, window.innerHeight * currentDpr);
+        if (!reducedMotion) {
+          if (fps < 50 && (currentDpr > minDpr || targetParallax > 0.45)) {
+            currentDpr = Math.max(minDpr, currentDpr - 0.15);
+            targetParallax = Math.max(0.45, targetParallax - 0.15);
+            renderer.setPixelRatio(currentDpr);
+            material.uniforms.iResolution.value.set(window.innerWidth * currentDpr, window.innerHeight * currentDpr);
+            lowFpsStreak = 0;
+          } else if (fps < 40 && currentDpr <= minDpr + 0.001) {
+            // Already at the floor and still struggling — escalate
+            lowFpsStreak++;
+            if (lowFpsStreak >= 3) {
+              setLowPowerForced(true);
+              bgPerf.set({ lowPower: true, active: false, fps, dpr: currentDpr, parallax: 0 });
+              cancelAnimationFrame(animationRef.current);
+              if (!fadeCalledRef.current) {
+                fadeCalledRef.current = true;
+                onFadeComplete?.();
+              }
+              return;
+            }
+          } else if (fps > 58 && (currentDpr < maxDpr || targetParallax < 1.0)) {
+            currentDpr = Math.min(maxDpr, currentDpr + 0.1);
+            targetParallax = Math.min(1.0, targetParallax + 0.1);
+            renderer.setPixelRatio(currentDpr);
+            material.uniforms.iResolution.value.set(window.innerWidth * currentDpr, window.innerHeight * currentDpr);
+            lowFpsStreak = 0;
+          } else {
+            lowFpsStreak = 0;
+          }
+          material.uniforms.iParallax.value += (targetParallax - material.uniforms.iParallax.value) * 0.5;
         }
-        // Smoothly ease parallax uniform toward target
-        material.uniforms.iParallax.value += (targetParallax - material.uniforms.iParallax.value) * 0.5;
+        bgPerf.set({
+          fps,
+          dpr: currentDpr,
+          parallax: material.uniforms.iParallax.value,
+          active: true,
+        });
         frameAccum = 0;
         frameCount = 0;
         lastQualityAdjust = now;
       }
 
       const rawElapsed = (Date.now() - startTimeRef.current) / 1000;
-      // Reduced motion: slow time to a near-still drift, lock mouse to center
       const elapsed = reducedMotion ? rawElapsed * 0.08 : rawElapsed;
       material.uniforms.iTime.value = elapsed;
 
@@ -309,7 +371,6 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
         mouseRef.current.x = cx;
         mouseRef.current.y = cy;
       } else {
-        // Slower lerp on touch/orientation devices for subtle, professional drift
         const lerp = orientationActive ? 0.08 : 0.3;
         mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * lerp;
         mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * lerp;
@@ -317,7 +378,6 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       const pr = renderer.getPixelRatio();
       material.uniforms.iMouse.value.set(mouseRef.current.x * pr, mouseRef.current.y * pr);
 
-      // Notify when fade to black is complete (~23s of real time)
       if (rawElapsed > 23 && !fadeCalledRef.current) {
         fadeCalledRef.current = true;
         onFadeComplete?.();
@@ -352,7 +412,12 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('deviceorientation', handleOrientation);
+      ['mousemove', 'touchstart', 'scroll', 'keydown'].forEach((ev) =>
+        window.removeEventListener(ev, resetIdleTimer)
+      );
+      if (idleTimer) clearTimeout(idleTimer);
       motionObserver.disconnect();
+      bgPerf.set({ active: false });
       cancelAnimationFrame(animationRef.current);
       
       if (rendererRef.current && containerRef.current) {
