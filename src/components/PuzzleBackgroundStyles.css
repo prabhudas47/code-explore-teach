@@ -179,3 +179,13 @@ html[data-reduced-motion="true"] .wall-border-anim-reverse { opacity: 0.25; }
 html[data-reduced-motion="true"] .piece-breathe { fill-opacity: 0.04; }
 html[data-reduced-motion="true"] .puzzle-piece-hover { transition: none !important; }
 html[data-reduced-motion="true"] .puzzle-piece-hover:hover { filter: none; }
+
+/* ========== IDLE PAUSE (reading mode) ========== */
+html[data-bg-paused="true"] .wall-border-anim,
+html[data-bg-paused="true"] .wall-border-anim-reverse,
+html[data-bg-paused="true"] .piece-breathe,
+html[data-bg-paused="true"] .piece-border-pulse,
+html[data-bg-paused="true"] .piece-ripple,
+html[data-bg-paused="true"] .piece-pop {
+  animation-play-state: paused !important;
+}
