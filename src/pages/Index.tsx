@@ -72,6 +72,7 @@ const Index = () => {
       </div>
 
       {introComplete && <ChatBot />}
+      {introComplete && <ReduceMotionToggle />}
       <AdminPortal open={adminOpen} onClose={() => setAdminOpen(false)} />
     </div>
   );
