@@ -412,7 +412,12 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('deviceorientation', handleOrientation);
+      ['mousemove', 'touchstart', 'scroll', 'keydown'].forEach((ev) =>
+        window.removeEventListener(ev, resetIdleTimer)
+      );
+      if (idleTimer) clearTimeout(idleTimer);
       motionObserver.disconnect();
+      bgPerf.set({ active: false });
       cancelAnimationFrame(animationRef.current);
       
       if (rendererRef.current && containerRef.current) {
