@@ -217,14 +217,13 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     const handleOrientation = (e: DeviceOrientationEvent) => {
       if (e.gamma == null || e.beta == null) return;
       orientationActive = true;
-      // Clamp to subtle range, normalize to viewport coords
-      const gx = Math.max(-25, Math.min(25, e.gamma)) / 25; // -1..1
-      const gy = Math.max(-25, Math.min(25, (e.beta ?? 0) - 35)) / 25; // tilt around ~35deg hold
+      const sens = getOrientationSensitivity(); // user-tunable, 0..1
+      const gx = Math.max(-25, Math.min(25, e.gamma)) / 25;
+      const gy = Math.max(-25, Math.min(25, (e.beta ?? 0) - 35)) / 25;
       const cx = window.innerWidth / 2;
       const cy = window.innerHeight / 2;
-      // Subtle: only ~15% of half-viewport offset
-      targetMouseRef.current.x = cx + gx * cx * 0.15;
-      targetMouseRef.current.y = cy + gy * cy * 0.15;
+      targetMouseRef.current.x = cx + gx * cx * sens;
+      targetMouseRef.current.y = cy + gy * cy * sens;
     };
     const isTouchDevice = 'ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0;
     if (isTouchDevice && !reducedMotion) {
