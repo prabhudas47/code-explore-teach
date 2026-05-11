@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChatBot } from "@/components/ChatBot";
 import { ChessShaderBackground } from "@/components/ChessShaderBackground";
 import { PuzzleReveal } from "@/components/PuzzleReveal";
@@ -22,6 +22,10 @@ import { CinematicSection } from "@/components/sections/CinematicSection";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AdminPortal } from "@/components/AdminPortal";
 import { ReduceMotionToggle } from "@/components/ReduceMotionToggle";
+import { BackgroundDebugOverlay } from "@/components/BackgroundDebugOverlay";
+import { LowPowerBackground } from "@/components/LowPowerBackground";
+import { useIdleBgPause } from "@/hooks/useIdleBgPause";
+import { isLowPowerForced } from "@/lib/bgPerf";
 
 const Index = () => {
   const [introComplete, setIntroComplete] = useState(false);
