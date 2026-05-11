@@ -132,7 +132,11 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isReducedMotion = () =>
+      document.documentElement.getAttribute('data-reduced-motion') === 'true' ||
+      (document.documentElement.getAttribute('data-reduced-motion') !== 'false' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    let reducedMotion = isReducedMotion();
 
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     cameraRef.current = camera;
