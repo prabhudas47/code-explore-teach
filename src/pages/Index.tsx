@@ -81,6 +81,7 @@ const Index = () => {
 
       {introComplete && <ChatBot />}
       {introComplete && <ReduceMotionToggle />}
+      <BackgroundDebugOverlay />
       <AdminPortal open={adminOpen} onClose={() => setAdminOpen(false)} />
     </div>
   );
