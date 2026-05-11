@@ -197,6 +197,39 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
+    // Device orientation -> subtle camera drift on mobile/tablet
+    // gamma: left-right tilt (-90..90), beta: front-back tilt (-180..180)
+    let orientationActive = false;
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      if (e.gamma == null || e.beta == null) return;
+      orientationActive = true;
+      // Clamp to subtle range, normalize to viewport coords
+      const gx = Math.max(-25, Math.min(25, e.gamma)) / 25; // -1..1
+      const gy = Math.max(-25, Math.min(25, (e.beta ?? 0) - 35)) / 25; // tilt around ~35deg hold
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      // Subtle: only ~15% of half-viewport offset
+      targetMouseRef.current.x = cx + gx * cx * 0.15;
+      targetMouseRef.current.y = cy + gy * cy * 0.15;
+    };
+    const isTouchDevice = 'ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0;
+    if (isTouchDevice && !reducedMotion) {
+      // iOS 13+ requires explicit permission; attempt silently and listen if granted
+      const DOE = (window as any).DeviceOrientationEvent;
+      if (DOE && typeof DOE.requestPermission === 'function') {
+        // Defer until first user gesture
+        const requestOnce = () => {
+          DOE.requestPermission().then((state: string) => {
+            if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation);
+          }).catch(() => {});
+          window.removeEventListener('touchend', requestOnce);
+        };
+        window.addEventListener('touchend', requestOnce, { once: true, passive: true });
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    }
+
     let isVisible = true;
 
     const handleVisibilityChange = () => {
