@@ -131,6 +131,14 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // If user (or a previous session) forced low-power, skip WebGL entirely.
+    if (isLowPowerForced()) {
+      bgPerf.set({ active: false, lowPower: true, parallax: 0, dpr: 1, fps: 0 });
+      // Still notify the intro that fade is "complete" so the page can mount.
+      const t = setTimeout(() => onFadeComplete?.(), 50);
+      return () => clearTimeout(t);
+    }
+
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
