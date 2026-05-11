@@ -5,6 +5,7 @@ const fragmentShader = `
 uniform float iTime;
 uniform vec2 iResolution;
 uniform vec2 iMouse;
+uniform float iParallax;
 
 mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
 
