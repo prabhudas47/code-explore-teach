@@ -242,8 +242,48 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
+    // Adaptive quality state — scales pixel ratio + parallax intensity to hold ~60fps
+    const maxDpr = isMobile ? Math.min(window.devicePixelRatio, 1.0) : Math.min(window.devicePixelRatio, 1.5);
+    const minDpr = isMobile ? 0.6 : 0.75;
+    let currentDpr = maxDpr;
+    let targetParallax = reducedMotion ? 0.0 : 1.0;
+    let lastFrameTs = performance.now();
+    let frameAccum = 0;
+    let frameCount = 0;
+    let lastQualityAdjust = performance.now();
+
     const animate = () => {
       if (!isVisible) return;
+
+      const now = performance.now();
+      const dt = now - lastFrameTs;
+      lastFrameTs = now;
+      frameAccum += dt;
+      frameCount++;
+
+      // Sample FPS every ~1s and adapt quality
+      if (!reducedMotion && now - lastQualityAdjust > 1000 && frameCount > 10) {
+        const avgMs = frameAccum / frameCount;
+        const fps = 1000 / avgMs;
+        if (fps < 50 && (currentDpr > minDpr || targetParallax > 0.45)) {
+          // Drop quality
+          currentDpr = Math.max(minDpr, currentDpr - 0.15);
+          targetParallax = Math.max(0.45, targetParallax - 0.15);
+          renderer.setPixelRatio(currentDpr);
+          material.uniforms.iResolution.value.set(window.innerWidth * currentDpr, window.innerHeight * currentDpr);
+        } else if (fps > 58 && (currentDpr < maxDpr || targetParallax < 1.0)) {
+          // Restore quality gradually
+          currentDpr = Math.min(maxDpr, currentDpr + 0.1);
+          targetParallax = Math.min(1.0, targetParallax + 0.1);
+          renderer.setPixelRatio(currentDpr);
+          material.uniforms.iResolution.value.set(window.innerWidth * currentDpr, window.innerHeight * currentDpr);
+        }
+        // Smoothly ease parallax uniform toward target
+        material.uniforms.iParallax.value += (targetParallax - material.uniforms.iParallax.value) * 0.5;
+        frameAccum = 0;
+        frameCount = 0;
+        lastQualityAdjust = now;
+      }
 
       const rawElapsed = (Date.now() - startTimeRef.current) / 1000;
       // Reduced motion: slow time to a near-still drift, lock mouse to center
@@ -256,9 +296,10 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
         mouseRef.current.x = cx;
         mouseRef.current.y = cy;
       } else {
-        // Fast mouse lerp - nearly instant reaction
-        mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * 0.3;
-        mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * 0.3;
+        // Slower lerp on touch/orientation devices for subtle, professional drift
+        const lerp = orientationActive ? 0.08 : 0.3;
+        mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * lerp;
+        mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * lerp;
       }
       const pr = renderer.getPixelRatio();
       material.uniforms.iMouse.value.set(mouseRef.current.x * pr, mouseRef.current.y * pr);
