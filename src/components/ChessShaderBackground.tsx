@@ -161,6 +161,7 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
         iTime: { value: 0 },
         iResolution: { value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr) },
         iMouse: { value: new THREE.Vector2(window.innerWidth * dpr / 2, window.innerHeight * dpr / 2) },
+        iParallax: { value: reducedMotion ? 0.0 : 1.0 },
       },
       vertexShader,
       fragmentShader,
