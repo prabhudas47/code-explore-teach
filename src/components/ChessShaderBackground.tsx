@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { bgPerf, isLowPowerForced, setLowPowerForced } from '@/lib/bgPerf';
+import { getOrientationSensitivity, getPauseOnIdle } from '@/lib/bgSettings';
 
 const fragmentShader = `
 uniform float iTime;
