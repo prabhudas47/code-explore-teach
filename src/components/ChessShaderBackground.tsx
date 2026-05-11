@@ -132,7 +132,11 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isReducedMotion = () =>
+      document.documentElement.getAttribute('data-reduced-motion') === 'true' ||
+      (document.documentElement.getAttribute('data-reduced-motion') !== 'false' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    let reducedMotion = isReducedMotion();
 
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     cameraRef.current = camera;
@@ -229,6 +233,15 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
         window.addEventListener('deviceorientation', handleOrientation);
       }
     }
+
+    // Live-react to user toggling reduce-motion via the visible toggle
+    const motionObserver = new MutationObserver(() => {
+      const next = isReducedMotion();
+      if (next === reducedMotion) return;
+      reducedMotion = next;
+      material.uniforms.iParallax.value = next ? 0.0 : 1.0;
+    });
+    motionObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-reduced-motion'] });
 
     let isVisible = true;
 
@@ -339,6 +352,7 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('deviceorientation', handleOrientation);
+      motionObserver.disconnect();
       cancelAnimationFrame(animationRef.current);
       
       if (rendererRef.current && containerRef.current) {

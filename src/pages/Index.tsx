@@ -21,6 +21,7 @@ import { ContactSection } from "@/components/sections/ContactSection";
 import { CinematicSection } from "@/components/sections/CinematicSection";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AdminPortal } from "@/components/AdminPortal";
+import { ReduceMotionToggle } from "@/components/ReduceMotionToggle";
 
 const Index = () => {
   const [introComplete, setIntroComplete] = useState(false);
@@ -71,6 +72,7 @@ const Index = () => {
       </div>
 
       {introComplete && <ChatBot />}
+      {introComplete && <ReduceMotionToggle />}
       <AdminPortal open={adminOpen} onClose={() => setAdminOpen(false)} />
     </div>
   );
