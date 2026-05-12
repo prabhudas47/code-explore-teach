@@ -37,7 +37,7 @@ export const ReduceMotionToggle = () => {
   const toggleLowPower = (v: boolean) => {
     setLowPowerForced(v);
     setLowPowerState(v);
-    if (v) window.location.reload(); // cleanest way to switch backgrounds
+    // No reload — Index.tsx crossfades between WebGL and the cheap fallback.
   };
 
   const toggleDebug = (v: boolean) => {
