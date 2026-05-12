@@ -58,19 +58,22 @@ export function useBgSettings() {
   }, []);
 
   const setPauseOnIdle = useCallback((v: boolean) => {
-    localStorage.setItem(KEY_PAUSE_ON_IDLE, v ? '1' : '0');
+    safeSet(KEY_PAUSE_ON_IDLE, v ? '1' : '0');
     window.dispatchEvent(new CustomEvent(EVT));
   }, []);
   const setOrientSens = useCallback((v: number) => {
-    localStorage.setItem(KEY_ORIENT_SENS, String(v));
+    const c = Math.max(0, Math.min(1, v));
+    safeSet(KEY_ORIENT_SENS, String(c));
     window.dispatchEvent(new CustomEvent(EVT));
   }, []);
   const setLpFps = useCallback((v: number) => {
-    localStorage.setItem(KEY_LP_FPS, String(v));
+    const c = Math.max(15, Math.min(58, Math.round(v)));
+    safeSet(KEY_LP_FPS, String(c));
     window.dispatchEvent(new CustomEvent(EVT));
   }, []);
   const setLpWindows = useCallback((v: number) => {
-    localStorage.setItem(KEY_LP_WINDOWS, String(Math.round(v)));
+    const c = Math.max(1, Math.min(10, Math.round(v)));
+    safeSet(KEY_LP_WINDOWS, String(c));
     window.dispatchEvent(new CustomEvent(EVT));
   }, []);
 
