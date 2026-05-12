@@ -6,7 +6,12 @@ import { isLowPowerForced, setLowPowerForced } from '@/lib/bgPerf';
 
 export const ReduceMotionToggle = () => {
   const [reduced, setReduced] = useReducedMotion();
-  const { pauseOnIdle, setPauseOnIdle, orientSens, setOrientSens } = useBgSettings();
+  const {
+    pauseOnIdle, setPauseOnIdle,
+    orientSens, setOrientSens,
+    lpFps, setLpFps,
+    lpWindows, setLpWindows,
+  } = useBgSettings();
   const [open, setOpen] = useState(false);
   const [lowPower, setLowPowerState] = useState<boolean>(isLowPowerForced);
   const [debug, setDebug] = useState<boolean>(
