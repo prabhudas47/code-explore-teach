@@ -6,9 +6,16 @@ const KEY_LP_FPS = 'bg-lowpower-fps';            // FPS threshold (e.g. 40)
 const KEY_LP_WINDOWS = 'bg-lowpower-windows';    // # of consecutive 1s windows (e.g. 3)
 const EVT = 'bg-settings-change';
 
+const safeGet = (k: string): string | null => {
+  try { return localStorage.getItem(k); } catch { return null; }
+};
+const safeSet = (k: string, v: string) => {
+  try { localStorage.setItem(k, v); } catch { /* quota / private mode */ }
+};
+
 const readBool = (k: string, dflt: boolean) => {
   if (typeof window === 'undefined') return dflt;
-  const v = localStorage.getItem(k);
+  const v = safeGet(k);
   if (v === '1') return true;
   if (v === '0') return false;
   return dflt;
@@ -16,7 +23,7 @@ const readBool = (k: string, dflt: boolean) => {
 
 const readNum = (k: string, dflt: number) => {
   if (typeof window === 'undefined') return dflt;
-  const v = localStorage.getItem(k);
+  const v = safeGet(k);
   if (v == null) return dflt;
   const n = parseFloat(v);
   return Number.isFinite(n) ? n : dflt;
