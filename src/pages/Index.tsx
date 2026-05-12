@@ -29,32 +29,67 @@ import { useIdleBgPause } from "@/hooks/useIdleBgPause";
 import { useTabVisibilityPause } from "@/hooks/useTabVisibilityPause";
 import { isLowPowerForced } from "@/lib/bgPerf";
 
+const CROSSFADE_MS = 700;
+
 const Index = () => {
-  const lowPower = isLowPowerForced();
-  const [introComplete, setIntroComplete] = useState(lowPower);
-  const [shaderVisible, setShaderVisible] = useState(!lowPower);
+  const initialLowPower = isLowPowerForced();
+  const [lowPower, setLowPower] = useState(initialLowPower);
+  const [shaderMounted, setShaderMounted] = useState(!initialLowPower);
+  const [introComplete, setIntroComplete] = useState(initialLowPower);
   const [adminOpen, setAdminOpen] = useState(false);
 
   useIdleBgPause();
   useTabVisibilityPause();
 
+  // React to low-power changes (auto-escalation or preset/toggle) with a crossfade
+  useEffect(() => {
+    const onLP = (e: Event) => {
+      const next = !!(e as CustomEvent).detail;
+      setLowPower(next);
+      if (next) {
+        // Fade shader out, then unmount
+        setTimeout(() => setShaderMounted(false), CROSSFADE_MS);
+      } else {
+        // Mount shader fresh; opacity transition handles the fade-in
+        setShaderMounted(true);
+        // If we're past intro, ensure content stays visible
+        setIntroComplete(true);
+      }
+    };
+    window.addEventListener('bg-low-power-change', onLP);
+    return () => window.removeEventListener('bg-low-power-change', onLP);
+  }, []);
+
   const handleFadeComplete = () => {
     setTimeout(() => {
       setIntroComplete(true);
-      setTimeout(() => setShaderVisible(false), 1000);
+      setTimeout(() => setShaderMounted(false), 1000);
     }, 500);
   };
 
   return (
     <div className="min-h-screen relative bg-background">
-      {lowPower && <LowPowerBackground />}
-      {shaderVisible && !lowPower && (
+      {/* Cheap fallback always present; opacity crossfades */}
+      <div
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{
+          opacity: lowPower ? 1 : 0,
+          transition: `opacity ${CROSSFADE_MS}ms ease-in-out`,
+        }}
+      >
+        <LowPowerBackground />
+      </div>
+
+      {shaderMounted && (
         <div
           className="fixed inset-0 z-50"
-          style={{ opacity: introComplete ? 0 : 1, transition: 'opacity 1s ease-in-out' }}
+          style={{
+            opacity: lowPower ? 0 : (introComplete ? 0 : 1),
+            transition: `opacity ${introComplete ? 1000 : CROSSFADE_MS}ms ease-in-out`,
+          }}
         >
           <ChessShaderBackground onFadeComplete={handleFadeComplete} />
-          <PuzzleReveal triggerAt={8} />
+          {!introComplete && <PuzzleReveal triggerAt={8} />}
         </div>
       )}
 
