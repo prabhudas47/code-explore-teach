@@ -133,6 +133,46 @@ export const ReduceMotionToggle = () => {
               Mobile only · controls how strongly device tilt drifts the camera.
             </p>
           </div>
+
+          <div className="mt-3 border-t border-white/10 pt-3">
+            <div className="mb-1 flex items-center justify-between">
+              <span>Low-power FPS threshold</span>
+              <span className="font-mono text-white/60">{lpFps} fps</span>
+            </div>
+            <input
+              type="range"
+              min={20}
+              max={55}
+              step={1}
+              value={lpFps}
+              onChange={(e) => setLpFps(parseFloat(e.target.value))}
+              className="w-full accent-white"
+              aria-label="Low-power FPS threshold"
+            />
+            <p className="mt-1 text-[10px] text-white/50">
+              Switch to cheap background when FPS stays below this value.
+            </p>
+          </div>
+
+          <div className="mt-3">
+            <div className="mb-1 flex items-center justify-between">
+              <span>Sampling windows</span>
+              <span className="font-mono text-white/60">{lpWindows} × 1s</span>
+            </div>
+            <input
+              type="range"
+              min={1}
+              max={10}
+              step={1}
+              value={lpWindows}
+              onChange={(e) => setLpWindows(parseFloat(e.target.value))}
+              className="w-full accent-white"
+              aria-label="Low-power sampling windows"
+            />
+            <p className="mt-1 text-[10px] text-white/50">
+              Consecutive 1-second windows below threshold before switching.
+            </p>
+          </div>
         </div>
       )}
     </div>
