@@ -111,6 +111,33 @@ export const ReduceMotionToggle = () => {
             </button>
           </div>
 
+          <div className="mb-3 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => applyPreset('normal')}
+              aria-pressed={activePreset === 'normal'}
+              className={`rounded-md border px-2 py-1.5 text-[11px] font-medium transition ${
+                activePreset === 'normal'
+                  ? 'border-emerald-400/60 bg-emerald-500/15 text-emerald-100'
+                  : 'border-white/15 bg-white/5 text-white/80 hover:bg-white/10'
+              }`}
+            >
+              Normal
+            </button>
+            <button
+              type="button"
+              onClick={() => applyPreset('lowpower')}
+              aria-pressed={activePreset === 'lowpower'}
+              className={`rounded-md border px-2 py-1.5 text-[11px] font-medium transition ${
+                activePreset === 'lowpower'
+                  ? 'border-amber-400/60 bg-amber-500/15 text-amber-100'
+                  : 'border-white/15 bg-white/5 text-white/80 hover:bg-white/10'
+              }`}
+            >
+              Low-power
+            </button>
+          </div>
+
           <Row
             label="Reduce motion"
             hint="Slow drift, freeze CSS animations"
