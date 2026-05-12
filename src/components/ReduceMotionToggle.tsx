@@ -47,6 +47,32 @@ export const ReduceMotionToggle = () => {
     window.dispatchEvent(new Event('bg-debug-change'));
   };
 
+  const applyPreset = (preset: 'normal' | 'lowpower') => {
+    if (preset === 'normal') {
+      setLpFps(40);
+      setLpWindows(3);
+      setOrientSens(0.15);
+      setPauseOnIdle(true);
+      setReduced(false);
+      if (lowPower) toggleLowPower(false);
+    } else {
+      // Conservative: trip the cheap fallback sooner + soften motion.
+      setLpFps(50);
+      setLpWindows(2);
+      setOrientSens(0.05);
+      setPauseOnIdle(true);
+      setReduced(true);
+    }
+  };
+
+  const activePreset: 'normal' | 'lowpower' | null =
+    !reduced && lpFps === 40 && lpWindows === 3 && !lowPower
+      ? 'normal'
+      : reduced && lpFps >= 50 && lpWindows <= 2
+      ? 'lowpower'
+      : null;
+
+
   return (
     <div ref={ref} className="fixed bottom-4 left-4 z-40 flex items-center gap-1">
       <button
