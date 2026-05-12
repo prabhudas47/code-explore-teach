@@ -23,6 +23,7 @@ import { FooterSection } from "@/components/sections/FooterSection";
 import { AdminPortal } from "@/components/AdminPortal";
 import { ReduceMotionToggle } from "@/components/ReduceMotionToggle";
 import { BackgroundDebugOverlay } from "@/components/BackgroundDebugOverlay";
+import { BackgroundModeIndicator } from "@/components/BackgroundModeIndicator";
 import { LowPowerBackground } from "@/components/LowPowerBackground";
 import { useIdleBgPause } from "@/hooks/useIdleBgPause";
 import { useTabVisibilityPause } from "@/hooks/useTabVisibilityPause";
