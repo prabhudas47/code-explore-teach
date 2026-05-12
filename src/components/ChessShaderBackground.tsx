@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { bgPerf, isLowPowerForced, setLowPowerForced } from '@/lib/bgPerf';
-import { getOrientationSensitivity, getPauseOnIdle } from '@/lib/bgSettings';
+import { getOrientationSensitivity, getPauseOnIdle, getLowPowerFpsThreshold, getLowPowerWindows } from '@/lib/bgSettings';
 
 const fragmentShader = `
 uniform float iTime;
@@ -320,16 +320,18 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
         const avgMs = frameAccum / frameCount;
         const fps = 1000 / avgMs;
         if (!reducedMotion) {
+          const lpFpsThreshold = getLowPowerFpsThreshold();
+          const lpWindowsRequired = getLowPowerWindows();
           if (fps < 50 && (currentDpr > minDpr || targetParallax > 0.45)) {
             currentDpr = Math.max(minDpr, currentDpr - 0.15);
             targetParallax = Math.max(0.45, targetParallax - 0.15);
             renderer.setPixelRatio(currentDpr);
             material.uniforms.iResolution.value.set(window.innerWidth * currentDpr, window.innerHeight * currentDpr);
             lowFpsStreak = 0;
-          } else if (fps < 40 && currentDpr <= minDpr + 0.001) {
+          } else if (fps < lpFpsThreshold && currentDpr <= minDpr + 0.001) {
             // Already at the floor and still struggling — escalate
             lowFpsStreak++;
-            if (lowFpsStreak >= 3) {
+            if (lowFpsStreak >= lpWindowsRequired) {
               setLowPowerForced(true);
               bgPerf.set({ lowPower: true, active: false, fps, dpr: currentDpr, parallax: 0 });
               cancelAnimationFrame(animationRef.current);

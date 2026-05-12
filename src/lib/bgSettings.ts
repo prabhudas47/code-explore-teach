@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 const KEY_PAUSE_ON_IDLE = 'bg-pause-on-idle';
 const KEY_ORIENT_SENS = 'bg-orient-sensitivity'; // 0..1
+const KEY_LP_FPS = 'bg-lowpower-fps';            // FPS threshold (e.g. 40)
+const KEY_LP_WINDOWS = 'bg-lowpower-windows';    // # of consecutive 1s windows (e.g. 3)
 const EVT = 'bg-settings-change';
 
 const readBool = (k: string, dflt: boolean) => {
@@ -25,14 +27,24 @@ export const getOrientationSensitivity = () =>
 
 export const getPauseOnIdle = () => readBool(KEY_PAUSE_ON_IDLE, true);
 
+export const getLowPowerFpsThreshold = () =>
+  Math.max(15, Math.min(58, readNum(KEY_LP_FPS, 40)));
+
+export const getLowPowerWindows = () =>
+  Math.max(1, Math.min(10, Math.round(readNum(KEY_LP_WINDOWS, 3))));
+
 export function useBgSettings() {
   const [pauseOnIdle, setPauseState] = useState(getPauseOnIdle);
   const [orientSens, setOrientState] = useState(getOrientationSensitivity);
+  const [lpFps, setLpFpsState] = useState(getLowPowerFpsThreshold);
+  const [lpWindows, setLpWindowsState] = useState(getLowPowerWindows);
 
   useEffect(() => {
     const onChange = () => {
       setPauseState(getPauseOnIdle());
       setOrientState(getOrientationSensitivity());
+      setLpFpsState(getLowPowerFpsThreshold());
+      setLpWindowsState(getLowPowerWindows());
     };
     window.addEventListener(EVT, onChange);
     return () => window.removeEventListener(EVT, onChange);
@@ -46,6 +58,19 @@ export function useBgSettings() {
     localStorage.setItem(KEY_ORIENT_SENS, String(v));
     window.dispatchEvent(new CustomEvent(EVT));
   }, []);
+  const setLpFps = useCallback((v: number) => {
+    localStorage.setItem(KEY_LP_FPS, String(v));
+    window.dispatchEvent(new CustomEvent(EVT));
+  }, []);
+  const setLpWindows = useCallback((v: number) => {
+    localStorage.setItem(KEY_LP_WINDOWS, String(Math.round(v)));
+    window.dispatchEvent(new CustomEvent(EVT));
+  }, []);
 
-  return { pauseOnIdle, setPauseOnIdle, orientSens, setOrientSens };
+  return {
+    pauseOnIdle, setPauseOnIdle,
+    orientSens, setOrientSens,
+    lpFps, setLpFps,
+    lpWindows, setLpWindows,
+  };
 }

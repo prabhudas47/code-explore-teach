@@ -25,6 +25,7 @@ import { ReduceMotionToggle } from "@/components/ReduceMotionToggle";
 import { BackgroundDebugOverlay } from "@/components/BackgroundDebugOverlay";
 import { LowPowerBackground } from "@/components/LowPowerBackground";
 import { useIdleBgPause } from "@/hooks/useIdleBgPause";
+import { useTabVisibilityPause } from "@/hooks/useTabVisibilityPause";
 import { isLowPowerForced } from "@/lib/bgPerf";
 
 const Index = () => {
@@ -34,6 +35,7 @@ const Index = () => {
   const [adminOpen, setAdminOpen] = useState(false);
 
   useIdleBgPause();
+  useTabVisibilityPause();
 
   const handleFadeComplete = () => {
     setTimeout(() => {
