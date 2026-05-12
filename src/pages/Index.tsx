@@ -35,6 +35,7 @@ const Index = () => {
   const [adminOpen, setAdminOpen] = useState(false);
 
   useIdleBgPause();
+  useTabVisibilityPause();
 
   const handleFadeComplete = () => {
     setTimeout(() => {
