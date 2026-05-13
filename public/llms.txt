@@ -1,0 +1,7 @@
+# DASU Prabhukumar Portfolio
+
+> Portfolio of DASU Prabhukumar — B.Tech Data Science engineer building AI, automation, and analytics projects with Python, SQL, and n8n.
+
+## Pages
+
+- [Home](/): Portfolio overview, projects, skills, education, achievements, and contact information.
