@@ -21,7 +21,7 @@ import { ContactSection } from "@/components/sections/ContactSection";
 import { CinematicSection } from "@/components/sections/CinematicSection";
 import { FooterSection } from "@/components/sections/FooterSection";
 import { AdminPortal } from "@/components/AdminPortal";
-import { ReduceMotionToggle } from "@/components/ReduceMotionToggle";
+
 import { BackgroundDebugOverlay } from "@/components/BackgroundDebugOverlay";
 import { BackgroundModeIndicator } from "@/components/BackgroundModeIndicator";
 import { LowPowerBackground } from "@/components/LowPowerBackground";
