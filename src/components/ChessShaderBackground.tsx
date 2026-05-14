@@ -98,8 +98,8 @@ void main()
         col*=exp(-d*.035);
     }
 
-    float fadeStart = 2.0;
-    float fade = clamp((t-fadeStart)/1.0,0.0,1.0);
+    float fadeStart = 3.5;
+    float fade = clamp((t-fadeStart)/0.5,0.0,1.0);
     col = mix(col, vec3(0), fade);
 
     gl_FragColor=vec4(col,1.);
@@ -380,7 +380,7 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       const pr = renderer.getPixelRatio();
       material.uniforms.iMouse.value.set(mouseRef.current.x * pr, mouseRef.current.y * pr);
 
-      if (rawElapsed > 3 && !fadeCalledRef.current) {
+      if (rawElapsed > 4 && !fadeCalledRef.current) {
         fadeCalledRef.current = true;
         onFadeComplete?.();
       }

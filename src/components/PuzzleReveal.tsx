@@ -10,8 +10,8 @@ export const PuzzleReveal = ({ triggerAt = 12 }: Props) => {
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase('rising'), triggerAt * 1000);
-    const t2 = setTimeout(() => setPhase('text'), (triggerAt + 3) * 1000);
-    const t3 = setTimeout(() => setPhase('fading'), (triggerAt + 6) * 1000);
+    const t2 = setTimeout(() => setPhase('text'), (triggerAt + 0.3) * 1000);
+    const t3 = setTimeout(() => setPhase('fading'), (triggerAt + 1.7) * 1000);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [triggerAt]);
 
