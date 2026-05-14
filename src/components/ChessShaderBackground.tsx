@@ -279,7 +279,7 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       if (!getPauseOnIdle()) return;
       // Don't pause during the cinematic intro fade window
       const elapsed = (Date.now() - startTimeRef.current) / 1000;
-      if (elapsed < 24) return;
+      if (elapsed < 4) return;
       isPausedForIdle = true;
       bgPerf.set({ active: false });
     };
