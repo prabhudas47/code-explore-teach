@@ -279,7 +279,7 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       if (!getPauseOnIdle()) return;
       // Don't pause during the cinematic intro fade window
       const elapsed = (Date.now() - startTimeRef.current) / 1000;
-      if (elapsed < 4) return;
+      if (elapsed < 7) return;
       isPausedForIdle = true;
       bgPerf.set({ active: false });
     };
@@ -380,7 +380,7 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       const pr = renderer.getPixelRatio();
       material.uniforms.iMouse.value.set(mouseRef.current.x * pr, mouseRef.current.y * pr);
 
-      if (rawElapsed > 4 && !fadeCalledRef.current) {
+      if (rawElapsed > 6 && !fadeCalledRef.current) {
         fadeCalledRef.current = true;
         onFadeComplete?.();
       }
