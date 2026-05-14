@@ -89,7 +89,7 @@ const Index = () => {
           }}
         >
           <ChessShaderBackground onFadeComplete={handleFadeComplete} />
-          {!introComplete && <PuzzleReveal triggerAt={8} />}
+          {!introComplete && <PuzzleReveal triggerAt={1.5} />}
         </div>
       )}
 

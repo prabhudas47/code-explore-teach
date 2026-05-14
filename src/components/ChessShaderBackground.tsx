@@ -98,8 +98,8 @@ void main()
         col*=exp(-d*.035);
     }
 
-    float fadeStart = 18.0;
-    float fade = clamp((t-fadeStart)/4.0,0.0,1.0);
+    float fadeStart = 2.0;
+    float fade = clamp((t-fadeStart)/1.0,0.0,1.0);
     col = mix(col, vec3(0), fade);
 
     gl_FragColor=vec4(col,1.);
@@ -279,7 +279,7 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       if (!getPauseOnIdle()) return;
       // Don't pause during the cinematic intro fade window
       const elapsed = (Date.now() - startTimeRef.current) / 1000;
-      if (elapsed < 24) return;
+      if (elapsed < 4) return;
       isPausedForIdle = true;
       bgPerf.set({ active: false });
     };
@@ -380,7 +380,7 @@ export const ChessShaderBackground = ({ onFadeComplete }: Props) => {
       const pr = renderer.getPixelRatio();
       material.uniforms.iMouse.value.set(mouseRef.current.x * pr, mouseRef.current.y * pr);
 
-      if (rawElapsed > 23 && !fadeCalledRef.current) {
+      if (rawElapsed > 3 && !fadeCalledRef.current) {
         fadeCalledRef.current = true;
         onFadeComplete?.();
       }
