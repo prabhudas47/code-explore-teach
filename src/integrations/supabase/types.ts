@@ -32,6 +32,81 @@ export type Database = {
         }
         Relationships: []
       }
+      security_findings: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          ignored_reason: string | null
+          notes: string | null
+          severity: Database["public"]["Enums"]["security_severity"]
+          source: string
+          status: Database["public"]["Enums"]["security_finding_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          ignored_reason?: string | null
+          notes?: string | null
+          severity?: Database["public"]["Enums"]["security_severity"]
+          source?: string
+          status?: Database["public"]["Enums"]["security_finding_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          ignored_reason?: string | null
+          notes?: string | null
+          severity?: Database["public"]["Enums"]["security_severity"]
+          source?: string
+          status?: Database["public"]["Enums"]["security_finding_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      security_scan_runs: {
+        Row: {
+          failed: number
+          finished_at: string | null
+          id: string
+          passed: number
+          results: Json
+          started_at: string
+          status: string
+          trigger: string
+        }
+        Insert: {
+          failed?: number
+          finished_at?: string | null
+          id?: string
+          passed?: number
+          results?: Json
+          started_at?: string
+          status?: string
+          trigger?: string
+        }
+        Update: {
+          failed?: number
+          finished_at?: string | null
+          id?: string
+          passed?: number
+          results?: Json
+          started_at?: string
+          status?: string
+          trigger?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -65,6 +140,8 @@ export type Database = {
     }
     Enums: {
       app_role: "admin"
+      security_finding_status: "open" | "ignored" | "fixed"
+      security_severity: "info" | "low" | "medium" | "high" | "critical"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -193,6 +270,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
+      security_finding_status: ["open", "ignored", "fixed"],
+      security_severity: ["info", "low", "medium", "high", "critical"],
     },
   },
 } as const
